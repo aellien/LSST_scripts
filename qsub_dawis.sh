@@ -6,7 +6,9 @@
 #PSB -S /bin/bash
 
 module load intelpython/3-2020.4
-python /home/ellien/Euclid_ICL/scripts/dawis_LSST.py ${nf}
+echo ${ncl}
+echo ${nf}
+python /home/ellien/LSST_ICL/scripts/dawis_LSST.py ${nf}
 
 
 exit 0
