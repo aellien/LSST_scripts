@@ -1,9 +1,9 @@
 import os
 import dawis
-
+import sys
 
 indir = '/home/ellien/LSST_ICL/simulations/out1'
-infile = 'ICL_V_bright.fits'
+infile = sys.argv[1]
 outdir = '/home/ellien/LSST_ICL/wavelets/out1'
 n_cpus = 6 # Number of CPUs
 tau = 0.8   # Relative Threshold
