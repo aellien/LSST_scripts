@@ -5,7 +5,7 @@ import dawis
 indir = '/home/ellien/LSST_ICL/simulations/out1'
 infile = 'ICL_V_bright.fits'
 outdir = '/home/ellien/LSST_ICL/wavelets/out1'
-n_cpus = 4 # Number of CPUs
+n_cpus = 6 # Number of CPUs
 tau = 0.8   # Relative Threshold
 gamma = 0.2   # Attenuation (CLEAN) factor
 ceps = 1E-5    # Convergence value for epsilon
