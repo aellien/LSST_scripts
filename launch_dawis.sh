@@ -12,6 +12,6 @@ path_simulations="/home/ellien/LSST_ICL/simulations/out1/*rebin*"
 for file in $( ls $path_simulations )
 do
       echo "Launch Dawis on file ${file}"
-      qsub qsub_dawis.sh -v ncl=${file:12:7},nf=${file}
+      qsub qsub_dawis.sh -v ncl=${file:51:7},nf=${file}
       sleep 2
 done
