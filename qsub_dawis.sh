@@ -8,7 +8,7 @@
 module load intelpython/3-2020.4
 echo ${ncl}
 echo ${nf}
-python /home/ellien/LSST_ICL/scripts/dawis_LSST.py ${nf}
+python /home/ellien/LSST_ICL/LSST_scripts/dawis_LSST.py ${nf}
 
 
 exit 0
