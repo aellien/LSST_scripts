@@ -15,7 +15,7 @@ max_span = 3    # Maximum number of wavelet scales spanned by an interscale tree
 lvl_sep_big = 5     # Scale at wich mix_span & max_span are set to 1
 extent_sep = 0.1    # Ratio n_pix/vignet under which the Haar wavelet is used for restoration
 lvl_sep_lin = 2     # Wavelet scale under which the Haar wavelet can be used for restoration
-max_iter = 500      # Maximum number of iterations
+max_iter = 1500      # Maximum number of iterations
 data_dump = True    # Write data at each iteration /!\ demands lot of space on hardware /!\
 gif = True      # Make gifs of the run (need data_dump = True)
 starting_level = 2 # Starting wavelet scale (this is the third scale - Python convention 0 1 2)
