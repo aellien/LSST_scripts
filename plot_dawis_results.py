@@ -44,12 +44,11 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
 
         for object in ol:
 
-
             x_min, y_min, x_max, y_max = object.bbox
             xco = x_min + ( x_max - x_min ) / 2
             yco = y_min + ( y_max - y_min ) / 2
 
-            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+
 
             if object.level >= n_softhard_icl:
 
@@ -57,9 +56,11 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
                     icl[ x_min : x_max, y_min : y_max ] += object.image
                 else:
                     gal[ x_min : x_max, y_min : y_max ] += object.image
+
+                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
             else:
                 gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-
+                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
     rim = np.sum( rdc_array, axis = 2 )
@@ -271,18 +272,18 @@ if __name__ == '__main__':
     path_data = '/home/ellien/LSST_ICL/simulations/out1'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_plots = '/home/ellien/LSST_ICL/plots/out1'
-    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out1/'
+    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out1/'
     gamma = 0.2
     n_levels = 11
     n_softhard_icl = 5
     n_hard_icl = 7
     rc = 100 # pixels, distance to center to be classified as ICL
-    nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
-
+    #nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
+    nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits' ]
     for nf in nfl:
 
         # Read files
