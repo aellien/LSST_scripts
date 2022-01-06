@@ -53,7 +53,7 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
 
             if object.level >= n_softhard_icl:
 
-                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc * 2**object.level:
+                if object.level >= n_hard_icl:
                     icl[ x_min : x_max, y_min : y_max ] += object.image
                 else:
                     gal[ x_min : x_max, y_min : y_max ] += object.image
@@ -275,7 +275,7 @@ if __name__ == '__main__':
     gamma = 0.2
     n_levels = 11
     n_softhard_icl = 5
-    n_hard_icl = 9
+    n_hard_icl = 7
     rc = 100 # pixels, distance to center to be classified as ICL
     nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
             'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
