@@ -54,7 +54,7 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
 
             if object.level >= n_softhard_icl:
 
-                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc * object.level:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc * 2**object.level:
                     icl[ x_min : x_max, y_min : y_max ] += object.image
                 else:
                     gal[ x_min : x_max, y_min : y_max ] += object.image
