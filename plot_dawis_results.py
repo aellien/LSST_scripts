@@ -67,16 +67,16 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
 
     # write to fits
     hduo = fits.PrimaryHDU(res)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( nf, 'results.residuals.fits') ), overwrite = True )
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.residuals.fits') )), overwrite = True )
 
     hduo = fits.PrimaryHDU(icl)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( nf, 'results.icl.fits') ), overwrite = True )
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.icl.fits') )), overwrite = True )
 
     hduo = fits.PrimaryHDU(gal)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( nf, 'results.gal.fits') ), overwrite = True )
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.fits') )), overwrite = True )
 
     hduo = fits.PrimaryHDU(rim)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( nf, 'results.rim.fits') ), overwrite = True )
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.rim.fits') )), overwrite = True )
 
     return rdc, icl, gal, res, rim
 
