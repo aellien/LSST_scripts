@@ -39,7 +39,6 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
     for it in glob(rimpath):
 
         print(it)
-        itn = int(it[-7:-4])
         ol = d.read_objects_from_pickle( it )
         atom = np.zeros(oim.shape)
 
@@ -295,4 +294,4 @@ if __name__ == '__main__':
         xs, ys = oim.shape
 
         rdc, icl, gal, res, rim = make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels )
-        plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
+        #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
