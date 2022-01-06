@@ -33,8 +33,8 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
 
     # Read atoms
     nf = nf[:-4]
-    nf = ''.join( (nf, 'ol.*') )
-    rimpath = os.path.join(path_wavelets, nf)
+    nfl = ''.join( (nf, 'ol.*') )
+    rimpath = os.path.join(path_wavelets, nfl)
 
     for it in glob(rimpath):
 
