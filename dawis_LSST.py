@@ -4,7 +4,7 @@ import sys
 
 indir = '/home/ellien/LSST_ICL/simulations/out1'
 infile = sys.argv[1]
-outdir = '/n03data/ellien/LSST_ICL/wavelets/out1'
+outdir = '/n03data/ellien/LSST_ICL/wavelets/out2'
 n_cpus = 4 # Number of CPUs
 tau = 0.8   # Relative Threshold
 gamma = 0.2   # Attenuation (CLEAN) factor
