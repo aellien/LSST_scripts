@@ -16,9 +16,95 @@ from astropy.visualization import ImageNormalize
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import SymLogNorm
 from scipy.stats import sigmaclip
+from skimage.measure import label, regionprops
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels ):
+
+def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
+
+    # path, list & variables
+    gal = np.zeros( (xs, ys) )
+
+    # Read atoms
+    nf = nf[:-4]
+    nfl = ''.join( (nf, 'ol.*') )
+    rimpath = os.path.join(path_wavelets, nfl)
+
+    '''
+    moim = np.max(oim)
+
+    # make image
+    for it in glob(rimpath):
+
+        ol = d.read_objects_from_pickle( it )
+        atom = np.zeros(oim.shape)
+
+        for object in ol:
+
+            x_min, y_min, x_max, y_max = object.bbox
+            xco = x_min + ( x_max - x_min ) / 2
+            yco = y_min + ( y_max - y_min ) / 2
+
+            if np.max(object.image) > moim:
+                continue
+
+            if object.level <= n_coregal:
+                gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+    # get catalog
+
+    sup = np.zeros( gal.shape )
+    sup[ np.where( gal > 1E-11 ) ] = 1.
+
+    lab = label( sup )
+    reg = regionprops( lab )
+
+    plt.ion()
+    fig, ax = plt.subplots( 1, 3 )
+    ax[0].imshow( oim, norm = ImageNormalize( gal, \
+                                      interval = MinMaxInterval(), \
+                                      stretch = LogStretch()) )
+
+    ax[1].imshow( gal, norm = ImageNormalize( gal, \
+                                      interval = MinMaxInterval(), \
+                                      stretch = LogStretch()) )
+    ax[2].imshow( sup )
+
+    for r in reg:
+        ax[0].plot( r.centroid[1], r.centroid[0], 'r+' )
+        ax[1].plot( r.centroid[1], r.centroid[0], 'r+' )
+    '''
+
+    sigma, mean, gain = d.pg_noise_bissection( oim, max_err = 1E-3, n_sigmas = 3 )
+    aim = d.anscombe_transform( oim, sigma, mean, gain )
+    acdc, awdc = d.bspl_atrous( aim, n_levels )
+    sdc = d.hard_threshold( awdc, n_sig_gal )
+    sup = sdc.array[:,:,level_gal]
+    lab = label( sup )
+    reg = regionprops( lab )
+
+    cat = []
+    for r in reg:
+        cat.append( [ r.centroid[1], r.centroid[0] ] )
+
+    #fig, ax = plt.subplots( 1, 3 )
+    #ax[0].imshow( oim, norm = ImageNormalize( gal, \
+    #                                  interval = MinMaxInterval(), \
+    #                                  stretch = LogStretch()) )
+
+    #ax[1].imshow( gal, norm = ImageNormalize( gal, \
+    #                                  interval = MinMaxInterval(), \
+    #                                  stretch = LogStretch()) )
+    #ax[2].imshow( sup2 )
+
+    #for r in reg2:
+    #    ax[0].plot( r.centroid[1], r.centroid[0], 'r+' )
+    #    ax[1].plot( r.centroid[1], r.centroid[0], 'r+' )
+
+    return np.array(cat)
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels ):
 
     # path, list & variables
     res = np.zeros( (xs, ys) )
@@ -36,6 +122,8 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
     nfl = ''.join( (nf, 'ol.*') )
     rimpath = os.path.join(path_wavelets, nfl)
 
+    moim = np.max(oim)
+
     for it in glob(rimpath):
 
         print(it)
@@ -48,19 +136,43 @@ def make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys
             xco = x_min + ( x_max - x_min ) / 2
             yco = y_min + ( y_max - y_min ) / 2
 
-
+            # rm artifacts
+            if np.max(object.image) > moim:
+                continue
 
             if object.level >= n_softhard_icl:
 
                 if object.level >= n_hard_icl:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
                 else:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image
+                    # galaxies
+                    flagg = False
+                    for pos in cat:
+                        if np.sqrt( ( xco - pos[1] )**2 + ( yco - pos[0] )**2 ) <= rc:
+                            gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                            flagg = True
+                            break
 
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
+                    if flagg == False:
+                        icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
             else:
                 gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+
+            # all objects datacube
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+
+    plt.ion()
+    fig, ax = plt.subplots( 1, 2 )
+    ax[0].imshow( oim, norm = ImageNormalize( gal, \
+                                      interval = MinMaxInterval(), \
+                                      stretch = LogStretch()) )
+
+    ax[1].imshow( gal, norm = ImageNormalize( gal, \
+                                      interval = MinMaxInterval(), \
+                                      stretch = LogStretch()) )
+
+
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
     rim = np.sum( rdc_array, axis = 2 )
@@ -272,18 +384,18 @@ if __name__ == '__main__':
     path_data = '/home/ellien/LSST_ICL/simulations/out1'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_plots = '/home/ellien/LSST_ICL/plots/out1'
-    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out1/'
+    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out1/'
     gamma = 0.2
     n_levels = 11
     n_softhard_icl = 5
     n_hard_icl = 7
-    rc = 100 # pixels, distance to center to be classified as ICL
-    #nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
-    #        'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
-    #        'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
-    #        'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
-    #        'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
-    nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits' ]
+    rc = 13.5 # pixels, distance to center to be classified as ICL
+    nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
+            'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
+            'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
+            'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
+            'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
+
     for nf in nfl:
 
         # Read files
@@ -294,5 +406,8 @@ if __name__ == '__main__':
 
         xs, ys = oim.shape
 
-        rdc, icl, gal, res, rim = make_results( oim, path_wavelets, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels )
+        n_coregal = 3
+        cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
+        rdc, icl, gal, res, rim = make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels )
+
         #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
