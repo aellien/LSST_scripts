@@ -174,15 +174,15 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
             # all objects datacube
             rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
 
-    plt.ion()
-    fig, ax = plt.subplots( 1, 2 )
-    ax[0].imshow( oim, norm = ImageNormalize( gal, \
-                                      interval = MinMaxInterval(), \
-                                      stretch = LogStretch()) )
+    #plt.ion()
+    #fig, ax = plt.subplots( 1, 2 )
+    #ax[0].imshow( oim, norm = ImageNormalize( gal, \
+    #                                  interval = MinMaxInterval(), \
+    #                                  stretch = LogStretch()) )
 
-    ax[1].imshow( gal, norm = ImageNormalize( gal, \
-                                      interval = MinMaxInterval(), \
-                                      stretch = LogStretch()) )
+    #ax[1].imshow( gal, norm = ImageNormalize( gal, \
+    #                                  interval = MinMaxInterval(), \
+    #                                  stretch = LogStretch()) )
 
 
     # Datacube
@@ -216,7 +216,7 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Plots
 
-def plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots ):
+#def plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots ):
 
     fig = plt.figure()
     ax = fig.subplots(3, 3, sharex = True, sharey = True, \
