@@ -403,8 +403,8 @@ if __name__ == '__main__':
     # Paths, lists & variables
     path_data = '/home/ellien/LSST_ICL/simulations/out1'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
-    path_plots = '/home/ellien/LSST_ICL/plots/out1'
-    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out1/'
+    path_plots = '/home/ellien/LSST_ICL/plots/out2'
+    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
     gamma = 0.2
     n_levels = 11
     n_softhard_icl = 5
