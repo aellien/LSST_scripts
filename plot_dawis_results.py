@@ -108,8 +108,10 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
 
     # path, list & variables
     res = np.zeros( (xs, ys) )
-    icl = np.zeros( (xs, ys) )
-    gal = np.zeros( (xs, ys) )
+    icl1 = np.zeros( (xs, ys) )
+    gal1 = np.zeros( (xs, ys) )
+    icl2 = np.zeros( (xs, ys) )
+    gal2 = np.zeros( (xs, ys) )
     rim = np.zeros( (xs, ys) )
 
     rdc_array = np.zeros( (xs, ys, n_levels) )
@@ -143,21 +145,31 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
             if object.level >= n_softhard_icl:
 
                 if object.level >= n_hard_icl:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    icl1[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    icl2[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
                 else:
                     # galaxies
                     flagg = False
                     for pos in cat:
                         if np.sqrt( ( xco - pos[1] )**2 + ( yco - pos[0] )**2 ) <= rc:
-                            gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                            gal1[ x_min : x_max, y_min : y_max ] += object.image * gamma
                             flagg = True
                             break
 
                     if flagg == False:
-                        icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                        icl1[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
             else:
-                gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+                if x_max - x_min >= 2**n_hard_icl or y_max - y_min >= 2**n_hard_icl:
+                    # security
+                    icl1[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    icl2[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+                else:
+                    gal2[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    gal1[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
             # all objects datacube
             rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
@@ -182,14 +194,22 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
     hduo = fits.PrimaryHDU(res)
     hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.residuals.fits') )), overwrite = True )
 
-    hduo = fits.PrimaryHDU(icl)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.icl.fits') )), overwrite = True )
+    hduo = fits.PrimaryHDU(icl1)
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.icl.posgal.fits') )), overwrite = True )
 
-    hduo = fits.PrimaryHDU(gal)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.fits') )), overwrite = True )
+    hduo = fits.PrimaryHDU(gal1)
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.posgal.fits') )), overwrite = True )
+
+    hduo = fits.PrimaryHDU(icl2)
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.icl.hardsep.fits') )), overwrite = True )
+
+    hduo = fits.PrimaryHDU(gal2)
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.hardsep.fits') )), overwrite = True )
 
     hduo = fits.PrimaryHDU(rim)
     hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.rim.fits') )), overwrite = True )
+
+    rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
 
     return rdc, icl, gal, res, rim
 
