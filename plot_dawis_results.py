@@ -211,7 +211,7 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
 
     rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
 
-    return rdc, icl, gal, res, rim
+    return rdc, icl1, gal1, icl2, gal2, res, rim
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Plots
@@ -428,6 +428,6 @@ if __name__ == '__main__':
 
         n_coregal = 3
         cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
-        rdc, icl, gal, res, rim = make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels )
+        rdc, icl1, gal1, icl2, gal2, res, rim = make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, xs, ys, n_levels )
 
         #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
