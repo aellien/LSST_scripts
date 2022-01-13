@@ -138,6 +138,7 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
             xco = x_min + ( x_max - x_min ) / 2
             yco = y_min + ( y_max - y_min ) / 2
 
+
             # rm artifacts
             if np.max(object.image) > moim:
                 continue
@@ -417,7 +418,7 @@ if __name__ == '__main__':
     #        'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
     #        'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
     #        'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
-    nfl = [ 'noise_00761_0000385_0.05_g_2Mpc.rebin.fits' ]
+    nfl = [ 'noise_00761_0000385_0.05_g_2Mpc.rebin.norm.fits' ]
 
     for nf in nfl:
 
