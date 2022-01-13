@@ -406,17 +406,18 @@ if __name__ == '__main__':
     path_data = '/home/ellien/LSST_ICL/simulations/out1'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_plots = '/home/ellien/LSST_ICL/plots/out2'
-    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
+    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out3/'
     gamma = 0.2
     n_levels = 11
     n_softhard_icl = 5
     n_hard_icl = 7
     rc = 13.5 # pixels, distance to center to be classified as ICL
-    nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
-            'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
+    #nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000126_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000174_0.05_g_2Mpc.rebin.fits', \
+    #        'noise_00761_0000385_0.05_g_2Mpc.rebin.fits'  ]
+    nfl = [ 'noise_00761_0000385_0.05_g_2Mpc.rebin.fits' ]
 
     for nf in nfl:
 
