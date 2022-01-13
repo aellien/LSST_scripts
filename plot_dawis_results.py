@@ -145,8 +145,9 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
             if object.level >= n_softhard_icl:
 
                 if object.level >= n_hard_icl:
-                    icl1[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                    icl2[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+                    icl1[ x_min : x_max, y_min : y_max ] += object.image
+                    icl2[ x_min : x_max, y_min : y_max ] += object.image
 
                 else:
                     # galaxies
@@ -158,6 +159,7 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
                             break
 
                     if flagg == False:
+
                         icl1[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
             else:
