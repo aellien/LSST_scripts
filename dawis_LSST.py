@@ -23,5 +23,5 @@ conditions = 'prolongation'
 
 dawis.synthesis_by_analysis( indir = indir, infile = infile, outdir = outdir, n_cpus = n_cpus, n_levels = n_levels, \
                                     tau = tau, gamma = gamma, ceps = ceps, conditions = conditions, min_span = min_span, \
-                                    max_span = max_span, lvl_sep_big = lvl_sep_big, max_iter = max_iter, \
+                                    max_span = max_span, lvl_sep_big = lvl_sep_big, max_iter = max_iter, extent_sep = extent_sep, \
                                     data_dump = data_dump, gif = gif )
