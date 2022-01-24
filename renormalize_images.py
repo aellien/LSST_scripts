@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from astropy.io import fits
+from scipy.ndimage import gaussian_filter
 
 if __name__ == '__main__':
 
@@ -29,4 +30,11 @@ if __name__ == '__main__':
 
         onf = nf[:-4] + 'norm.fits'
         hduo = fits.PrimaryHDU( oim, header = oheader )
-        hduo.writeto( os .path.join( path_data, onf ) )
+        hduo.writeto( os.path.join( path_data, onf ), overwrite = True )
+
+        fim = np.copy(im)
+        fim = gaussian_filter( fim, 1.0 )
+
+        fnf = nf[:-4] + 'gauss.fits'
+        hduo = fits.PrimaryHDU( fim, header = header )
+        hduo.writeto( os.path.join( path_data, fnf ), overwrite = True )

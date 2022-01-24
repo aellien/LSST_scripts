@@ -165,7 +165,7 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
 
             else:
 
-                if x_max - x_min >= 2**n_hard_icl or y_max - y_min >= 2**n_hard_icl:
+                if x_max - x_min >= 2**(n_hard_icl + 2) or y_max - y_min >= 2**(n_hard_icl + 2):
                     # security
                     icl1[ x_min : x_max, y_min : y_max ] += object.image * gamma
                     icl2[ x_min : x_max, y_min : y_max ] += object.image * gamma
@@ -219,7 +219,7 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Plots
 
-#def plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots ):
+'''def plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots ):
 
     fig = plt.figure()
     ax = fig.subplots(3, 3, sharex = True, sharey = True, \
@@ -374,24 +374,9 @@ def make_results( oim, path_wavelets, cat, n_softhard_icl, n_hard_icl, rc, nf, x
     caxor.set_label(r'ADU')
     ax[2][2].set_title('Residuals Galaxies leftover ICL')
 
-    '''
-    axim = ax[2].imshow(nres, norm = SymLogNorm(1E1), vmin = -5E1, vmax = 5E1, \
-                                            origin = 'lower', \
-                                            cmap = 'seismic_r' )
-
-    divider = make_axes_locatable(ax[2])
-    cax = divider.append_axes( 'right', size = "5%", pad = 0.05)
-    caxor = fig.colorbar( axim, cax = cax, \
-                                    orientation = 'vertical',
-                                    pad = 0,
-                                    shrink = 1.0 )
-    caxor.set_label(r'$\Delta$R[%]')
-    ax[2].set_title('Residuals')
-    '''
-
     plt.tight_layout()
     plt.show()
-    #plt.savefig( os.path.join( path_plots, 'Euclid_dawis_results.pdf' ), format = 'pdf' )
+    #plt.savefig( os.path.join( path_plots, 'Euclid_dawis_results.pdf' ), format = 'pdf' )'''
 
 if __name__ == '__main__':
 
@@ -407,11 +392,11 @@ if __name__ == '__main__':
     path_data = '/home/ellien/LSST_ICL/simulations/out1'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_plots = '/home/ellien/LSST_ICL/plots/out2'
-    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out3/'
-    gamma = 0.2
+    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out4/'
+    gamma = 0.5
     n_levels = 11
     n_softhard_icl = 5
-    n_hard_icl = 7
+    n_hard_icl = 6
     rc = 13.5 # pixels, distance to center to be classified as ICL
     #nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.fits', \
     #        'noise_00761_0000120_0.05_g_2Mpc.rebin.fits', \

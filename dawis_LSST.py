@@ -1,6 +1,7 @@
 import os
 import dawis
 import sys
+import shutil
 
 indir = '/home/ellien/LSST_ICL/simulations/out1'
 infile = sys.argv[1]
@@ -20,6 +21,8 @@ data_dump = True    # Write data at each iteration /!\ demands lot of space on h
 gif = True      # Make gifs of the run (need data_dump = True)
 starting_level = 2 # Starting wavelet scale (this is the third scale - Python convention 0 1 2)
 conditions = 'prolongation'
+
+shutil.copyfile( os.path.abspath(__file__), os.path.join( outdir, infile[:-4] + 'input.dawis.py' ) )
 
 dawis.synthesis_by_analysis( indir = indir, infile = infile, outdir = outdir, n_cpus = n_cpus, n_levels = n_levels, \
                                     tau = tau, gamma = gamma, ceps = ceps, conditions = conditions, min_span = min_span, \
