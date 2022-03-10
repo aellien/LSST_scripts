@@ -6,7 +6,7 @@ from scipy.ndimage import gaussian_filter
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/home/ellien/LSST_ICL/simulations/out2/HorizonAGN'
+    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/HorizonAGN'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_plots = '/home/ellien/LSST_ICL/plots/out2'
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
