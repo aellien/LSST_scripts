@@ -3,9 +3,9 @@ import dawis
 import sys
 import shutil
 
-indir = '/n03data/ellien/LSST_ICL/simulations/out2/HorizonAGN'
+indir = os.path.join( '/n03data/ellien/LSST_ICL/simulations/out2/', sys.argv[2] )
 infile = sys.argv[1]
-outdir = '/n03data/ellien/LSST_ICL/wavelets/out2/HorizonAGN/run2'
+outdir = os.path.join( '/n03data/ellien/LSST_ICL/wavelets/out2/', sys.argv[2], 'run1' )
 n_cpus = 6 # Number of CPUs
 tau = 0.8   # Relative Threshold
 gamma = 0.5   # Attenuation (CLEAN) factor
@@ -21,10 +21,12 @@ data_dump = True    # Write data at each iteration /!\ demands lot of space on h
 gif = True      # Make gifs of the run (need data_dump = True)
 starting_level = 2 # Starting wavelet scale (this is the third scale - Python convention 0 1 2)
 conditions = 'prolongation'
+monomodality = False
 
 shutil.copyfile( os.path.abspath(__file__), os.path.join( outdir, infile[:-4] + 'input.dawis.py' ) )
 
 dawis.synthesis_by_analysis( indir = indir, infile = infile, outdir = outdir, n_cpus = n_cpus, n_levels = n_levels, \
                                     tau = tau, gamma = gamma, ceps = ceps, conditions = conditions, min_span = min_span, \
-                                    max_span = max_span, lvl_sep_big = lvl_sep_big, max_iter = max_iter, extent_sep = extent_sep, \
+                                    max_span = max_span, lvl_sep_big = lvl_sep_big, monomodality = monomodality, \
+                                    max_iter = max_iter, extent_sep = extent_sep, \
                                     data_dump = data_dump, gif = gif )
