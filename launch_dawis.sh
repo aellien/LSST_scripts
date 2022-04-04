@@ -9,7 +9,7 @@ do
     do
           echo "Launch Dawis on file ${file}"
           n=$(basename "$file")
-          qsub qsub_dawis.sh -v ncl=${file:0:21},nf=${n},dir=${dir}
+          echo "qsub qsub_dawis.sh -v ncl=${file:0:21},nf=${n},dir=${dir}"
           sleep 2
     done
 done
