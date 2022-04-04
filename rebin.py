@@ -1,3 +1,7 @@
+import os
+import sys
+import glob
+
 def rebin_fits(FILENAME,XBIN=2,YBIN=2):
 
     #---------------------------------------------------------------------------
@@ -11,16 +15,18 @@ def rebin_fits(FILENAME,XBIN=2,YBIN=2):
     fitsFile = fits.open(FILENAME)
     im = np.array(fitsFile[0].data)
     #im = im[:7040,:7040]
-    #print(np.shape(im))
+    print('Input shape: %d x %d' %( im.shape[0], im.shape[1] ))
+    print('XBIN = %d, YBIN = %d' %( XBIN, YBIN ))
 
     #---------------------------------------------------------------------------
     # BINNAGE
     xedge = np.shape(im)[0]%XBIN
     yedge = np.shape(im)[1]%YBIN
     im = im[xedge:,yedge:]
-    binim = np.reshape(im,(int(np.shape(im)[0]/XBIN),XBIN,int(np.shape(im)[1]/YBIN),YBIN)) 
+    binim = np.reshape(im,(int(np.shape(im)[0]/XBIN),XBIN,int(np.shape(im)[1]/YBIN),YBIN))
     binim = np.mean(binim,axis=3)
     binim = np.mean(binim,axis=1)
+    print('New shape: %d x %d' %( binim.shape[0], binim.shape[1]  ))
 
     #---------------------------------------------------------------------------
     # NEW FILE
@@ -35,6 +41,23 @@ def rebin_fits(FILENAME,XBIN=2,YBIN=2):
         newheader['CD2_1'] = oldheader['CD2_1']*float(YBIN)
     except:
         pass
-    
+
     hdu = fits.PrimaryHDU(binim,header=newheader)
     hdu.writeto(FILENAME[:-4]+'rebin.fits',overwrite=True)
+
+if __name__ == '__main__':
+
+    # Paths, lists & variables
+    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
+    path_scripts = '/home/ellien/LSST_ICL/scripts'
+
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+
+    for dir in dirl:
+
+        image_dir = os.path.join( path_data, dir )
+        image_files = glob.glob(image_dir+'/*.fits')
+
+        for im in image_files:
+
+            rebin_fits( im, XBIN = 8, YBIN = 8)
