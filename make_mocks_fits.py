@@ -33,7 +33,8 @@ if __name__ == '__main__':
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
-        image_files = glob.glob(image_dir+'*.hdf5')
+        print(image_dir)
+        image_files = glob.glob(image_dir+'/*.hdf5')
         image_i = 0
         mu_lim = 30 # limiting SB, 3 sigma 10" X 10"
 
