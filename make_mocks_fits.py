@@ -22,31 +22,40 @@ def make_img_map(img, mu_lim=32, pixel_size=0.2, rng=[22,36]):
 
     return imgplot, imgflux
 
+if __name__ == '__main__':
 
-image_dir = '/n03data/ellien/LSST_ICL/simulations/out2/HorizonAGN/' # Replace with path containing your images
-image_files = glob.glob(image_dir+'*.hdf5')
-image_i = 0
-mu_lim = 30 # limiting SB, 3 sigma 10" X 10"
+    # Paths, lists & variables
+    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
+    path_scripts = '/home/ellien/LSST_ICL/scripts'
 
-make_png = False
-make_fits = True
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
 
-print(image_files)
+    for dir in dirl:
 
-for image_file in image_files:
-    with h5py.File(image_file, 'r') as f:
-        image = f['image'][()]
+        image_dir = os.path.join( path_data, dir )
+        image_files = glob.glob(image_dir+'*.hdf5')
+        image_i = 0
+        mu_lim = 30 # limiting SB, 3 sigma 10" X 10"
 
-    imgplot, imgflux = make_img_map(image, mu_lim=mu_lim, rng=[22,mu_lim+3])
+        make_png = False
+        make_fits = True
 
-    if make_png:
-        imgname = image_files[0][-33:-5]+'.png'
-        image_plot = Image.fromarray(np.uint8(downscale_local_mean(imgplot,(4,4))))
-        image_plot.save(imgname)
+        print(image_files)
 
-    if make_fits:
-        # produce fits image with scaling so that -2.5 log10(f) gives AB magnitudes
-        fitsname = image_file[-33:-5]+'_mu%d.fits' %(mu_lim)
-        hdu = fits.PrimaryHDU(imgflux)
-        hdul = fits.HDUList([hdu])
-        hdul.writeto( os.path.join( image_dir, fitsname ), overwrite = True )
+        for image_file in image_files:
+            with h5py.File(image_file, 'r') as f:
+                image = f['image'][()]
+
+            imgplot, imgflux = make_img_map(image, mu_lim=mu_lim, rng=[22,mu_lim+3])
+
+            if make_png:
+                imgname = image_files[0][-33:-5]+'.png'
+                image_plot = Image.fromarray(np.uint8(downscale_local_mean(imgplot,(4,4))))
+                image_plot.save(imgname)
+
+            if make_fits:
+                # produce fits image with scaling so that -2.5 log10(f) gives AB magnitudes
+                fitsname = image_file[-33:-5]+'_mu%d.fits' %(mu_lim)
+                hdu = fits.PrimaryHDU(imgflux)
+                hdul = fits.HDUList([hdu])
+                hdul.writeto( os.path.join( image_dir, fitsname ), overwrite = True )
