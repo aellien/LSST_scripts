@@ -17,7 +17,7 @@ if __name__ == '__main__':
         image_dir = os.path.join( path_data, dir )
         image_files = glob.glob(image_dir+'/*rebin.fits')
 
-        for im in image_files:
+        for nf in image_files:
 
             hdu = fits.open( os.path.join( path_data, nf ) )
             im, header = hdu[0].data, hdu[0].header
