@@ -2,6 +2,7 @@ import numpy as np
 import os
 from astropy.io import fits
 from scipy.ndimage import gaussian_filter
+import glob
 
 if __name__ == '__main__':
 
