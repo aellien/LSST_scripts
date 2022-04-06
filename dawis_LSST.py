@@ -6,14 +6,14 @@ import shutil
 indir = os.path.join( '/n03data/ellien/LSST_ICL/simulations/out2/', sys.argv[2] )
 infile = sys.argv[1]
 outdir = os.path.join( '/n03data/ellien/LSST_ICL/wavelets/out2/', sys.argv[2], 'run1' )
-n_cpus = 6 # Number of CPUs
+n_cpus = 1 # Number of CPUs
 tau = 0.8   # Relative Threshold
 gamma = 0.5   # Attenuation (CLEAN) factor
 ceps = 1E-6    # Convergence value for epsilon
 n_levels = 11    # Number of wavelet scales
 min_span = 1    # Minimum of wavelet scales spanned by an interscale tree (must be >= 1)
 max_span = 2    # Maximum number of wavelet scales spanned by an interscale tree
-lvl_sep_big = 6     # Scale at wich mix_span & max_span are set to 1, and gamma to 1
+lvl_sep_big = 5     # Scale at wich mix_span & max_span are set to 1, and gamma to 1
 extent_sep = 1E-10    # Ratio n_pix/vignet under which the Haar wavelet is used for restoration
 lvl_sep_lin = -1     # Wavelet scale under which the Haar wavelet can be used for restoration
 max_iter = 1500      # Maximum number of iterations
