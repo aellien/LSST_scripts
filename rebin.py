@@ -51,7 +51,7 @@ if __name__ == '__main__':
     path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
 
-    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+    dirl = ['HorizonAGN']#, 'Hydrangea', 'Magneticum', 'TNG-100']
 
     for dir in dirl:
 
