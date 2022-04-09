@@ -384,7 +384,7 @@ if __name__ == '__main__':
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
-        image_files = glob.glob(image_dir+'/*.fits')
+        image_files = glob.glob(image_dir+'/*norm.fits')
 
         for nf in image_files:
 
