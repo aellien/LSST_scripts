@@ -20,6 +20,26 @@ from skimage.measure import label, regionprops
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+def average_size_atom( ol, n_levels ):
+
+    sizes = np.zeros( (n_levels, 4) )
+
+    for object in ol:
+        x_min, y_min, x_max, y_max = object.bbox
+        xs = x_max - x_min
+        ys = y_max - y_min
+        sizes[object.level, 0] += xs
+        sizes[object.level, 1] += 1
+        sizes[object.level, 2] += ys
+        sizes[object.level, 3] += 1
+
+    print(nf)
+    for i in range(n_levels):
+        print(i, 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3])
+
+    return sizes
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
 
     # path, list & variables
@@ -29,51 +49,6 @@ def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
     nf = nf[:-4]
     nfl = ''.join( (nf, 'ol.*') )
     rimpath = os.path.join(path_wavelets, nfl)
-
-    '''
-    moim = np.max(oim)
-
-    # make image
-    for it in glob(rimpath):
-
-        ol = d.read_objects_from_pickle( it )
-        atom = np.zeros(oim.shape)
-
-        for object in ol:
-
-            x_min, y_min, x_max, y_max = object.bbox
-            xco = x_min + ( x_max - x_min ) / 2
-            yco = y_min + ( y_max - y_min ) / 2
-
-            if np.max(object.image) > moim:
-                continue
-
-            if object.level <= n_coregal:
-                gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-
-    # get catalog
-
-    sup = np.zeros( gal.shape )
-    sup[ np.where( gal > 1E-11 ) ] = 1.
-
-    lab = label( sup )
-    reg = regionprops( lab )
-
-    plt.ion()
-    fig, ax = plt.subplots( 1, 3 )
-    ax[0].imshow( oim, norm = ImageNormalize( gal, \
-                                      interval = MinMaxInterval(), \
-                                      stretch = LogStretch()) )
-
-    ax[1].imshow( gal, norm = ImageNormalize( gal, \
-                                      interval = MinMaxInterval(), \
-                                      stretch = LogStretch()) )
-    ax[2].imshow( sup )
-
-    for r in reg:
-        ax[0].plot( r.centroid[1], r.centroid[0], 'r+' )
-        ax[1].plot( r.centroid[1], r.centroid[0], 'r+' )
-    '''
 
     sigma, mean, gain = d.pg_noise_bissection( oim, max_err = 1E-3, n_sigmas = 3 )
     aim = d.anscombe_transform( oim, sigma, mean, gain )
@@ -165,7 +140,7 @@ def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ri
                     iclbcg[ x_min : x_max, y_min : y_max ] += object.image * gamma
                     flag_iclbcg = True
 
-                elif x_max - x_min >= 2**(n_hard_icl) or y_max - y_min >= 2**(n_hard_icl):
+                elif x_max - x_min >= 2**(8) or y_max - y_min >= 2**(8):
 
                     if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
 
@@ -201,7 +176,7 @@ def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ri
     hduo = fits.PrimaryHDU(rim)
     hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.rim.fits') )), overwrite = True )
 
-    rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
+    #rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
 
     return rdc, gal, iclbcg, res, rim
 
@@ -216,6 +191,9 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
     gal = np.zeros( (xs, ys) )
     rim = np.zeros( (xs, ys) )
     unclass = np.zeros( (xs, ys) )
+
+    atom_gal = []
+    coo_gal = []
 
     rdc_array = np.zeros( (xs, ys, n_levels) )
 
@@ -232,13 +210,13 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
     moim = np.max(oim)
     for i, it in enumerate( grimpath ):
 
-        print(it)
+        #print(it)
         ol = d.read_objects_from_pickle( it )
         itl = d.read_interscale_trees_from_pickle( os.path.join( path_wavelets, \
                                     ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ) )
         atom = np.zeros(oim.shape)
-        print(os.path.join( path_wavelets, \
-                                    ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ))
+        #print(os.path.join( path_wavelets, \
+        #                            ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ))
         for j, object in enumerate(ol):
 
             x_min, y_min, x_max, y_max = object.bbox
@@ -261,6 +239,12 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
 
                         if object.level >= n_hard_icl + 1:
                             uicl[ x_min : x_max, y_min : y_max ] += object.image
+
+                else:
+
+                    gal[ x_min : x_max, y_min : y_max ] += object.image
+                    atom_gal.append(object)
+                    coo_gal.append([xco, yco])
 
                     ## galaxies
                     #for pos in cat:
@@ -285,6 +269,8 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
                 #else:
 
                 gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                atom_gal.append(object)
+                coo_gal.append([xco, yco])
                 flag_gal = True
 
             # all objects datacube
@@ -293,6 +279,59 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
             else:
                 rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
 
+
+    bcg = np.copy(gal)
+
+    for i, ogal in enumerate(atom_gal):
+
+        x_min, y_min, x_max, y_max = ogal.bbox
+        xco, yco = coo_gal[i]
+        lvlo = ogal.level
+
+        if lvlo <= 4:
+
+            if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > rc * 2**(lvlo-1):
+
+                if x_max - x_min <= 300 or y_max - y_min <= 300:
+
+                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+                elif np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > ricl:
+
+                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+    satgal = np.copy(gal)
+    satgal -= bcg
+    iclbcg = np.copy(icl)
+    iclbcg += bcg
+    #iclbcg = np.copy(icl)
+    #satgal = np.copy(gal)
+
+    #sizes = average_size_atom(atom_gal, n_levels)
+
+    #for i, ogal in enumerate(atom_gal):
+
+    #    x_min, y_min, x_max, y_max = ogal.bbox
+    #    xco, yco = coo_gal[i]
+    #    lvlo = ogal.level
+
+    #    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc * 2**(lvlo-1):
+
+    #        if ogal.level >= lvl_sep_big:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image
+    #        else:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image * gamma
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+    #    elif x_max - x_min >= 2**(n_hard_icl) or y_max - y_min >= 2**(n_hard_icl):
+
+    #        if ogal.level >= lvl_sep_big:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image
+    #        else:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image * gamma
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
     rim = np.sum( rdc_array, axis = 2 )
@@ -314,27 +353,33 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
     hduo = fits.PrimaryHDU(rim)
     hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.rim.fits') )), overwrite = True )
 
-    rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
+    hduo = fits.PrimaryHDU(satgal)
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.hardsepBCG.fits') )), overwrite = True )
+
+    hduo = fits.PrimaryHDU(iclbcg)
+    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.iclbcg.hardsepBCG.fits') )), overwrite = True )
+
+    #rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
 
     return rdc, icl, gal, uicl, res, rim
 
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/home/ellien/LSST_ICL/simulations/out2/'
-    path_scripts = '/home/ellien/LSST_ICL/scripts'
-    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out2/'
+    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
+    path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
+    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
 
-    dirl = ['Hydrangea', 'Magneticum', 'TNG-100'] #'HorizonAGN'
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
 
     gamma = 0.5
     n_levels = 11
-    lvl_sep_big = 6
-    n_hard_icl = 6
+    lvl_sep_big = 5
+    n_hard_icl = 5
     pixscale = 1.6 # ''/pixel
     physscale = 1 # kpc/''
     rc = 20 # pixels, distance to center to be classified as gal
-    ricl = 5000 # pixels, distance to center to be classified as ICL
+    ricl = 650 # pixels, distance to center to be classified as ICL
 
     for dir in dirl:
 
@@ -343,6 +388,7 @@ if __name__ == '__main__':
 
         for nf in image_files:
 
+            print('\n%s'%nf)
             # Read files
             oimfile = os.path.join( path_data, nf )
             hdu = fits.open(oimfile)
@@ -355,9 +401,11 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1' )
 
+            #sizes = average_size_atom( nf, nfp, n_levels )
+
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
             cat = []
-            rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
+            #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             rdc, icl, gal, uicl, res, rim = make_results_hardsep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
