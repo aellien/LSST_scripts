@@ -8,7 +8,7 @@ for dir in Hydrangea
 do
     #for file in $path/$dir/*norm.fits
     for file in $path/$dir/*norm.fits
-
+    do
           echo "Launch Dawis on file ${file}"
           n=$(basename "$file")
           qsub qsub_dawis.sh -v ncl=${n:0:21},nf=${n},dir=${dir}
