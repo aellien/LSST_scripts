@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # Paths, lists & variables
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/HorizonAGN/run1/'
 
-    lvl_sep_big = 6
+    lvl_sep_big = 5
     monomodality = False
     bspl = 1 / 16. * np.array([ 1, 4, 6, 4, 1 ])
 
@@ -48,4 +48,7 @@ if __name__ == '__main__':
             o.norm_wr = norm_wr
             o.sum_wr = sum_wr
 
-            print(norm_wr, sum_wr)
+            print( np.sum(o.image), o.norm_wr, o.sum_wr )
+
+        ooln = oln[:-12] + 'ol.it%03d.testerr.pkl' %(i+1)
+        write_objects_to_pickle(ol, ooln, overwrite = True)
