@@ -23,8 +23,8 @@ if __name__ == '__main__':
         # Read iteration
         ol = d.read_objects_from_pickle( oln )
         itl = d.read_interscale_trees_from_pickle(  oln[:-12] + 'itl.it%03d.pkl' %(i+1) )
-        wdc = d.wavelet_datacube.from_fits( oln[:-12] + '.wdc.it%03d.fits' %(i+1) )
-        ldc = d.label_datacube.from_fits( oln[:-12] + '.ldc.it%03d.fits' %(i+1) )
+        wdc = d.wavelet_datacube.from_fits( oln[:-12] + 'wdc.it%03d.fits' %(i+1) )
+        ldc = d.label_datacube.from_fits( oln[:-12] + 'ldc.it%03d.fits' %(i+1) )
 
         # If monomodality need to be done again
         for it in itl:
