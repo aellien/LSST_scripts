@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
         # If monomodality need to be done again
         for it in itl:
-            if it.level >= lvl_sep_big :
+            if it.interscale_maximum.level >= lvl_sep_big :
                 if monomodality == True:
                     it, ldc = enforce_monomodality( it, wdc, ldc )
 
