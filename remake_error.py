@@ -38,9 +38,9 @@ if __name__ == '__main__':
             wt, st, lt = it.tubes( wdc, ldc )
 
 
-            wr = wavelet_tube - atrous( o.image, n_levels = wt.shape[2], \
-                                                filter = bspl, \
-                                                conditions = 'prolongation' )[1] * st
+            wr = wt - atrous( o.image, n_levels = wt.shape[2], \
+                                       filter = bspl, \
+                                       conditions = 'prolongation' )[1] * st
 
             norm_wr = np.sqrt( np.sum( wr**2 ) )
             sum_wr = np.sum( wr )
