@@ -50,5 +50,4 @@ if __name__ == '__main__':
 
             print( np.sum(o.image), o.norm_wr, o.sum_wr )
 
-        ooln = oln[:-12] + 'ol.it%03d.testerr.pkl' %(i+1)
-        d.write_objects_to_pickle(ol, ooln, overwrite = True)
+        d.write_objects_to_pickle(ol, oln, overwrite = True)
