@@ -1,24 +1,27 @@
 import dawis as d
 import os
 import sys
+import glob
 
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/home/ellien/LSST_ICL/simulations/out1'
+    path_data = '/home/ellien/LSST_ICL/simulations/out2/'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
-    path_plots = '/home/ellien/LSST_ICL/plots/out2'
-    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out4/'
+    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out2/'
+
+    dirl = ['Hydrangea']
 
     framerate = 3
 
-    # 'noise_00761_0000120_0.05_g_2Mpc.rebin.norm.fits', \
-    nfl = [ 'noise_00761_0000078_0.05_g_2Mpc.rebin.norm.fits', \
-            'noise_00761_0000126_0.05_g_2Mpc.rebin.norm.fits', \
-            'noise_00761_0000174_0.05_g_2Mpc.rebin.norm.fits', \
-            'noise_00761_0000385_0.05_g_2Mpc.rebin.norm.fits'  ]
+    for dir in dirl:
 
-    for nf in nfl:
+        image_dir = os.path.join( path_data, dir )
+        image_files = glob.glob(image_dir+'/*.fits')
 
-        nfp = os.path.join( path_wavelets, nf[:-5] )
-        d.make_gif( framerate, nfp )
+        for nf in image_files:
+
+            split = nf.split('/')
+            nf = split[-1]
+            nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-5] )
+            d.make_gif( framerate, nfp )
