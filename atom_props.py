@@ -89,8 +89,7 @@ if __name__ == '__main__':
 
             for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
-                print(op)
-                print(itlp)
+
                 ol = d.read_objects_from_pickle( op )
                 itl = d.read_interscale_trees_from_pickle( itlp )
 
@@ -102,3 +101,5 @@ if __name__ == '__main__':
             print(len(tol))
 
             df = average_size_atom( tol, n_levels )
+
+            break
