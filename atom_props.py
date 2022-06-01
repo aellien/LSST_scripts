@@ -105,7 +105,7 @@ if __name__ == '__main__':
             print(len(tol))
 
             df = average_size_atom( tol, n_levels )
-            plt.plot( df['z'], df['sx'], color = 'blue', alpha = 0.5 )
-            plt.plot( df['z'], df['sx'], color = 'red', alpha = 0.5 )
+            plt.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
+            plt.plot( df['z'], df['<sx>'], color = 'red', alpha = 0.5 )
 
     plt.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
