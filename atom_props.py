@@ -87,7 +87,7 @@ if __name__ == '__main__':
             tol = []
             titl = []
 
-            for i, ( op, itlp ) in enumerate( zip( opathl, itpathl ):
+            for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
                 print(it)
                 ol = d.read_objects_from_pickle( it )
