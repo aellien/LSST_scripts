@@ -89,7 +89,8 @@ if __name__ == '__main__':
 
             for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
-                print(it)
+                print(op)
+                print(itlp)
                 ol = d.read_objects_from_pickle( op )
                 itl = d.read_interscale_trees_from_pickle( itp )
 
