@@ -432,7 +432,7 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1' )
 
-            #sizes = average_size_atom( nf, nfp, n_levels )
+            sizes = average_size_atom( nf, nfp, n_levels )
 
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
