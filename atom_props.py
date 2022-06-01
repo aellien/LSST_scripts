@@ -15,7 +15,7 @@ from astropy.visualization import ZScaleInterval, MinMaxInterval
 from astropy.visualization import ImageNormalize
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import SymLogNorm
-from scipy.stats import sigmaclip
+from scipy.stats import sigmaclip, median_absolute_deviation
 from skimage.measure import label, regionprops
 from sklearn.utils import resample
 
@@ -35,7 +35,7 @@ def average_size_atom( ol, n_levels ):
 
     data = []
     for i in range(n_levels):
-        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), np.std(sx[i]), np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), np.mad(sx[i]), np.mad[sy[i]] ] )
+        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), np.std(sx[i]), np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), median_absolute_deviation(sx[i]), median_absolute_deviation([sy[i]]) ] )
 
     df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', 'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)'] )
 
