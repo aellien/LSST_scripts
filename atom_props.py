@@ -75,8 +75,10 @@ if __name__ == '__main__':
 
             # Read atoms
             nf = nf[:-4]
-            nfl = ''.join( (nf, 'ol.*') )
-            rimpath = os.path.join(path_wavelets, nfl)
+            split = nf.split('/')
+            nf = split[-1]
+            nfp = os.path.join( path_wavelets, dir, 'run1' )
+            rimpath = os.path.join( path_wavelets, dir, 'run1/*ol*pkl' )
             grimpath = glob.glob(rimpath)
             grimpath.sort()
 
