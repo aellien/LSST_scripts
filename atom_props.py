@@ -89,7 +89,8 @@ if __name__ == '__main__':
 
             for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
-                print('read iteration %d' %(i), end ='\r')
+                #print('read iteration %d' %(i), end ='\r')
+                print(op)
                 ol = d.read_objects_from_pickle( op )
                 itl = d.read_interscale_trees_from_pickle( itlp )
 
