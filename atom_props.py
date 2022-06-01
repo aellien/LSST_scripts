@@ -23,8 +23,8 @@ from sklearn.utils import resample
 
 def average_size_atom( ol, n_levels ):
 
-    sx = list( np.zeros( ( n_levels, 1 ) )
-    sy = list( np.zeros( ( n_levels, 1 ) )
+    sx = list( np.zeros( ( n_levels, 1 ) ))
+    sy = list( np.zeros( ( n_levels, 1 ) ))
 
     for o in ol:
         x_min, y_min, x_max, y_max = o.bbox
@@ -115,8 +115,8 @@ if __name__ == '__main__':
             ax.plot( df['z'], df['med(sy)'], color = 'red', alpha = 0.5 )
             figo.savefig( os.path.join( path_wavelets, dir, 'run1', nf + 'average_size_vs_z.pdf' ), format = 'pdf')
 
-    sxl = list( np.zeros( ( n_levels, 1 ) )
-    syl = list( np.zeros( ( n_levels, 1 ) )
+    sxl = list( np.zeros( ( n_levels, 1 ) ))
+    syl = list( np.zeros( ( n_levels, 1 ) ))
 
     for i in range(n_levels):
         for df in dfl:
