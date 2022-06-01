@@ -79,6 +79,7 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf )
             opath = os.path.join( nfp, '*ol*pkl' )
+            print(opath)
             opathl = glob.glob(opath)
             opathl.sort()
             itpath = os.path.join( nfp, '*itl*pkl' )
