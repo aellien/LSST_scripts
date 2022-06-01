@@ -77,11 +77,11 @@ if __name__ == '__main__':
             nf = nf[:-4]
             split = nf.split('/')
             nf = split[-1]
-            nfp = os.path.join( path_wavelets, dir, 'run1' )
-            opath = os.path.join( path_wavelets, dir, 'run1/*ol*pkl' )
+            nfp = os.path.join( path_wavelets, dir, 'run1', nf )
+            opath = os.path.join( nfp, '*ol*pkl' )
             opathl = glob.glob(opath)
             opathl.sort()
-            itpath = os.path.join( path_wavelets, dir, 'run1/*itl*pkl' )
+            itpath = os.path.join( nfp, '*itl*pkl' )
             itpathl = glob.glob(itpath)
             itpathl.sort()
             tol = []
