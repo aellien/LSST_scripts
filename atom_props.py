@@ -34,7 +34,6 @@ def average_size_atom( ol, n_levels ):
         sizes[o.level, 2] += ys
         sizes[o.level, 3] += 1
 
-    print(nf)
     data = []
     for i in range(n_levels):
         data.append( [ 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3]] )
@@ -52,7 +51,7 @@ if __name__ == '__main__':
     path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
-    path_plots = '/n03data/ellien/LSST_ICL/plots'
+    path_plots = '/home/ellien/LSST_ICL/plots'
 
     dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
 
@@ -102,7 +101,7 @@ if __name__ == '__main__':
                     tol.append(o)
                     titl.append(itl[j])
 
-            print(len(tol))
+            print('\n%d sources in total.' %len(tol))
 
             df = average_size_atom( tol, n_levels )
             plt.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
