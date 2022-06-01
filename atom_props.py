@@ -63,7 +63,7 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    fig, ax_tot = plt.subplots( 1, 1)
+    fig, ax_tot = plt.subplots( 1 )
 
     dfl = []
 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
             tol = []
             titl = []
 
-            figo, ax = plt.subplots( 1, 1 )
+            figo, ax = plt.subplots( 1 )
 
             for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
@@ -114,6 +114,7 @@ if __name__ == '__main__':
             ax.plot( df['z'], df['med(sx)'], color = 'red', alpha = 0.5 )
             ax.plot( df['z'], df['med(sy)'], color = 'red', alpha = 0.5 )
             figo.savefig( os.path.join( path_wavelets, dir, 'run1', nf + 'average_size_vs_z.pdf' ), format = 'pdf')
+            plt.close()
 
     sxl = list( np.zeros( ( n_levels, 1 ) ))
     syl = list( np.zeros( ( n_levels, 1 ) ))
@@ -126,3 +127,5 @@ if __name__ == '__main__':
     ax_tot.errorbar( df['z'], [ np.mean(x) for x in sx ], yerr = [ np.std(x) for x in sx ], color = 'blue', alpha = 0.5 )
     ax_tot.errorbar( df['z'], [ np.mean(y) for y in sy ], yerr = [ np.std(y) for y in sy ], color = 'red', alpha = 0.5 )
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
+
+    plt.close()
