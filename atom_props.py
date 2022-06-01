@@ -133,10 +133,14 @@ if __name__ == '__main__':
     df = pd.DataFrame( data, columns = [ 'z', 'sx', 'sy', 'xmax', 'xmean' ] )
     mean_sx = []
     mean_sy = []
+    norm_mean_sx = []
+    norm_mean_sy = []
     mean_xmax = []
     mean_xmean = []
     std_sx = []
     std_sy = []
+    norm_std_sx = []
+    norm_std_sy = []
     std_xmax = []
     std_xmean = []
     lvls = []
@@ -146,16 +150,27 @@ if __name__ == '__main__':
         mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] ) )
         mean_xmax.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
         mean_xmean.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
+        norm_mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] / 2**df[ df['z'] == 1 ]['z'] ) )
+        norm_mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] / 2**df[ df['z'] == 1 ]['z'] ) )
+        norm_std_sx.append( np.std( df[ df['z'] == i ]['sx'] / 2**df[ df['z'] == 1 ]['z'] ) )
+        norm_std_sy.append( np.std( df[ df['z'] == i ]['sy'] / 2**df[ df['z'] == 1 ]['z'] ) )
         std_sx.append( np.std( df[ df['z'] == i ]['sx'] ) )
         std_sy.append( np.std( df[ df['z'] == i ]['sy'] ) )
         std_xmax.append( np.std( df[ df['z'] == i ]['xmax'] ) )
         std_xmean.append( np.std( df[ df['z'] == i ]['xmax'] ) )
 
-    fig, ax = plt.subplots( 2 )
+    fig, ax = plt.subplots( 2, 2 )
+    lvls = np.array(lvls)
     ax[0].errorbar( lvls, mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
     ax[0].errorbar( lvls, mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
+
     ax[1].errorbar( lvls, mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
     ax[1].errorbar( lvls, mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
+    ax[1].set_yscale('log')
+
+    ax[2].errorbar( lvls, norm_mean_sx, yerr = norm_std_sx, color = 'black', alpha = 0.5 )
+    ax[2].errorbar( lvls, norm_mean_sy, yerr = norm_std_sy, color = 'red', alpha = 0.5 )
+    
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
 
     plt.close()
