@@ -83,8 +83,6 @@ if __name__ == '__main__':
     pixscale = 1.6 # ''/pixel
     physscale = 1 # kpc/''
 
-    fig, ax_tot = plt.subplots( 1 )
-
     dfl = []
     data = []
 
@@ -132,13 +130,23 @@ if __name__ == '__main__':
 
             print('\n%d sources in total.' %len(tol))
 
-    df = pd.DataFrame( data, columns = [ 'z', 'sz', 'sy', 'xmax', 'xmean' ] )
+    df = pd.DataFrame( data, columns = [ 'z', 'sx', 'sy', 'xmax', 'xmean' ] )
 
+    for i in range(n_levels):
+        mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] ) )
+        mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] ) )
+        mean_xmax.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
+        mean_xmean.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
+        std_sx.append( np.std( df[ df['z'] == i ]['sx'] ) )
+        std_sy.append( np.std( df[ df['z'] == i ]['sy'] ) )
+        std_xmax.append( np.std( df[ df['z'] == i ]['xmax'] ) )
+        std_xmean.append( np.std( df[ df['z'] == i ]['xmax'] ) )
 
-    #ax_tot.errorbar( df['z'], [ np.mean(x) for x in sxl ], yerr = [ np.std(x) for x in sxl ], color = 'blue', alpha = 0.5 )
-    #ax_tot.errorbar( df['z'], [ np.mean(y) for y in syl ], yerr = [ np.std(y) for y in syl ], color = 'red', alpha = 0.5 )
-    #ax_tot.errorbar( df['z'], [ np.mean(x) for x in mxl ], yerr = [ np.std(x) for x in mxl ], color = 'green', alpha = 0.5 )
-    #ax_tot.errorbar( df['z'], [ np.mean(y) for y in myl ], yerr = [ np.std(y) for y in myl ], color = 'pink', alpha = 0.5 )
-    #fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
+    fig, ax = plt.subplots( 2 )
+    ax[0].errorbar( mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
+    ax[0].errorbar( mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
+    ax[1].errorbar( mean_xmax, yerr = std_max, color = 'green', alpha = 0.5 )
+    ax[1].errorbar( mean_mean, yerr = std_mean, color = 'pink', alpha = 0.5 )
+    fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
 
     plt.close()
