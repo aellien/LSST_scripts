@@ -81,7 +81,7 @@ if __name__ == '__main__':
             opath = nfp + '*ol*pkl'
             opathl = glob.glob(opath)
             opathl.sort()
-            itpath = nfp + '*itl*pkl' )
+            itpath = nfp + '*itl*pkl' 
             itpathl = glob.glob(itpath)
             itpathl.sort()
             tol = []
@@ -90,7 +90,7 @@ if __name__ == '__main__':
             for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
                 print('read iteration %d' %(i), end ='\r')
-                
+
                 ol = d.read_objects_from_pickle( op )
                 itl = d.read_interscale_trees_from_pickle( itlp )
 
