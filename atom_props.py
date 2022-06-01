@@ -95,4 +95,4 @@ if __name__ == '__main__':
                     tol.append(o)
                     titl.append(itl[j])
 
-            df = average_size_atom( ol, n_levels )
+            df = average_size_atom( tol, n_levels )
