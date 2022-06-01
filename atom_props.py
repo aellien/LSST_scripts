@@ -36,9 +36,9 @@ def average_size_atom( ol, n_levels ):
 
     data = []
     for i in range(n_levels):
-        data.append( [ 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3]] )
+        data.append( [ i, 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3]] )
 
-    df = pd.DataFrame( data, columns = [ 'z', '<sx>', '<sy>'] )
+    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>'] )
 
     return df
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    plt.figure()
+    fig, ax_tot = plt.subplots( 1, 1)
 
     for dir in dirl:
 
@@ -89,6 +89,8 @@ if __name__ == '__main__':
             tol = []
             titl = []
 
+            figo, ax = plt.subplots( 1, 1 )
+
             for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
 
                 print('read iteration %d' %(i), end ='\r')
@@ -104,7 +106,11 @@ if __name__ == '__main__':
             print('\n%d sources in total.' %len(tol))
 
             df = average_size_atom( tol, n_levels )
-            plt.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
-            plt.plot( df['z'], df['<sx>'], color = 'red', alpha = 0.5 )
+            ax_tot.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
+            ax_tot.plot( df['z'], df['<sx>'], color = 'red', alpha = 0.5 )
+            ax.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
+            ax.plot( df['z'], df['<sx>'], color = 'red', alpha = 0.5 )
 
-    plt.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
+            figo.savefig( os.path.join( path_wavelets, dir, 'run1', nf + 'average_size_vs_z.pdf' ), format = 'pdf')
+
+    fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
