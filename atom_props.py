@@ -23,22 +23,21 @@ from sklearn.utils import resample
 
 def average_size_atom( ol, n_levels ):
 
-    sizes = np.zeros( (n_levels, 4) )
+    sx = list( np.zeros( ( n_levels, 1 ) )
+    sy = list( np.zeros( ( n_levels, 1 ) )
 
     for o in ol:
         x_min, y_min, x_max, y_max = o.bbox
         xs = x_max - x_min
         ys = y_max - y_min
-        sizes[o.level, 0] += xs
-        sizes[o.level, 1] += 1
-        sizes[o.level, 2] += ys
-        sizes[o.level, 3] += 1
+        sx[o.level] = np.append( sx[o.level], xs )
+        sy[o.level] = np.append( sy[o.level], ys )
 
     data = []
     for i in range(n_levels):
-        data.append( [ i, 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3]] )
+        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), np.std(sx[i]), np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), np.mad(sx[i]), np.mad[sy[i]] )
 
-    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>'] )
+    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', 'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)'] )
 
     return df
 
@@ -65,6 +64,8 @@ if __name__ == '__main__':
     ricl = 650 # pixels, distance to center to be classified as ICL
 
     fig, ax_tot = plt.subplots( 1, 1)
+
+    dfl = []
 
     for dir in dirl:
 
@@ -106,11 +107,22 @@ if __name__ == '__main__':
             print('\n%d sources in total.' %len(tol))
 
             df = average_size_atom( tol, n_levels )
-            ax_tot.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
-            ax_tot.plot( df['z'], df['<sx>'], color = 'red', alpha = 0.5 )
-            ax.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
-            ax.plot( df['z'], df['<sx>'], color = 'red', alpha = 0.5 )
+            dfl.append(df)
 
+            ax.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
+            ax.plot( df['z'], df['<sx>'], color = 'blue', alpha = 0.5 )
+            ax.plot( df['z'], df['med(sx)'], color = 'red', alpha = 0.5 )
+            ax.plot( df['z'], df['med(sy)'], color = 'red', alpha = 0.5 )
             figo.savefig( os.path.join( path_wavelets, dir, 'run1', nf + 'average_size_vs_z.pdf' ), format = 'pdf')
 
+    sxl = list( np.zeros( ( n_levels, 1 ) )
+    syl = list( np.zeros( ( n_levels, 1 ) )
+
+    for i in range(n_levels):
+        for df in dfl:
+            sxl[i] = np.append( sxl[i], df['<sx>'][i] )
+            syl[i] = np.append( syl[i], df['<sy>'][i] )
+
+    ax_tot.errorbar( df['z'], [ np.mean(x) for x in sx ], yerr = [ np.std(x) for x in sx ], color = 'blue', alpha = 0.5 )
+    ax_tot.errorbar( df['z'], [ np.mean(y) for y in sy ], yerr = [ np.std(y) for y in sy ], color = 'red', alpha = 0.5 )
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
