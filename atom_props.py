@@ -131,7 +131,14 @@ if __name__ == '__main__':
             print('\n%d sources in total.' %len(tol))
 
     df = pd.DataFrame( data, columns = [ 'z', 'sx', 'sy', 'xmax', 'xmean' ] )
-
+    mean_sx = []
+    mean_sy = []
+    mean_xmax = []
+    mean_xmean = []
+    std_sx = []
+    std_sy = []
+    std_xmax = []
+    std_xmean = []
     for i in range(n_levels):
         mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] ) )
         mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] ) )
