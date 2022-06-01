@@ -161,16 +161,16 @@ if __name__ == '__main__':
 
     fig, ax = plt.subplots( 2, 2 )
     lvls = np.array(lvls)
-    ax[0].errorbar( lvls, mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
-    ax[0].errorbar( lvls, mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
+    ax[0][0].errorbar( lvls, mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
+    ax[0][0].errorbar( lvls, mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
 
-    ax[1].errorbar( lvls, mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
-    ax[1].errorbar( lvls, mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
-    ax[1].set_yscale('log')
+    ax[0][1].errorbar( lvls, mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
+    ax[0][1].errorbar( lvls, mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
+    ax[0][1].set_yscale('log')
 
-    ax[2].errorbar( lvls, norm_mean_sx, yerr = norm_std_sx, color = 'black', alpha = 0.5 )
-    ax[2].errorbar( lvls, norm_mean_sy, yerr = norm_std_sy, color = 'red', alpha = 0.5 )
-    
+    ax[1][2].errorbar( lvls, norm_mean_sx, yerr = norm_std_sx, color = 'black', alpha = 0.5 )
+    ax[1][2].errorbar( lvls, norm_mean_sy, yerr = norm_std_sy, color = 'red', alpha = 0.5 )
+
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
 
     plt.close()
