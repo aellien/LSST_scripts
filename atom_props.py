@@ -118,14 +118,21 @@ if __name__ == '__main__':
 
     sxl = list( np.zeros( ( n_levels, 1 ) ))
     syl = list( np.zeros( ( n_levels, 1 ) ))
+    mxl = list( np.zeros( ( n_levels, 1 ) ))
+    myl = list( np.zeros( ( n_levels, 1 ) ))
+
 
     for i in range(n_levels):
         for df in dfl:
             sxl[i] = np.append( sxl[i], df['<sx>'][i] )
             syl[i] = np.append( syl[i], df['<sy>'][i] )
+            mxl[i] = np.append( sxl[i], df['med(sx)'][i] )
+            myl[i] = np.append( syl[i], df['med(sy)'][i] )
 
-    ax_tot.errorbar( df['z'], [ np.mean(x) for x in sx ], yerr = [ np.std(x) for x in sx ], color = 'blue', alpha = 0.5 )
-    ax_tot.errorbar( df['z'], [ np.mean(y) for y in sy ], yerr = [ np.std(y) for y in sy ], color = 'red', alpha = 0.5 )
+    ax_tot.errorbar( df['z'], [ np.mean(x) for x in sxl ], yerr = [ np.std(x) for x in sxl ], color = 'blue', alpha = 0.5 )
+    ax_tot.errorbar( df['z'], [ np.mean(y) for y in syl ], yerr = [ np.std(y) for y in syl ], color = 'red', alpha = 0.5 )
+    ax_tot.errorbar( df['z'], [ np.mean(x) for x in mxl ], yerr = [ np.std(x) for x in mxl ], color = 'green', alpha = 0.5 )
+    ax_tot.errorbar( df['z'], [ np.mean(y) for y in myl ], yerr = [ np.std(y) for y in myl ], color = 'pink', alpha = 0.5 )
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
 
     plt.close()
