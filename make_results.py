@@ -9,6 +9,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import glob
+import pandas as pd
 from astropy.io import fits
 from astropy.visualization import LinearStretch, LogStretch
 from astropy.visualization import ZScaleInterval, MinMaxInterval
@@ -17,12 +18,33 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import SymLogNorm
 from scipy.stats import sigmaclip
 from skimage.measure import label, regionprops
+from sklearn.utils import resample
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+def bootstrap_error( data, n_iter, alpha = 0.95  ):
+
+    n_sample = int( 0.75 * np.size( data ) )
+    statfrac = np.zeros( (n_iter) )
+
+    for i in range( 0, n_iter ):
+
+        newsample = resample( data, n_samples = n_sample )
+        statfrac[i] = np.sum( newsample )
+
+    statfrac = np.sort(statfrac)
+    plow = ( (1.- alpha) / 2. ) * 100.
+    low = np.percentile( statfrac, plow )
+
+    pup = ( alpha + (1. - alpha) / 2.) * 100
+    up = np.percentile( statfrac, pup )
+
+    return low, up
 
 def average_size_atom( ol, n_levels ):
 
     sizes = np.zeros( (n_levels, 4) )
+
 
     for object in ol:
         x_min, y_min, x_max, y_max = object.bbox
@@ -34,10 +56,13 @@ def average_size_atom( ol, n_levels ):
         sizes[object.level, 3] += 1
 
     print(nf)
+    data = []
     for i in range(n_levels):
-        print(i, 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3])
+        data.append( [ 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3]] )
 
-    return sizes
+    df = pd.DataFrame( data, columns = [ 'z', '<sx>', '<sy>'] )
+
+    return df
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
@@ -180,7 +205,6 @@ def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ri
 
     return rdc, gal, iclbcg, res, rim
 
-
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
 
@@ -191,6 +215,13 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
     gal = np.zeros( (xs, ys) )
     rim = np.zeros( (xs, ys) )
     unclass = np.zeros( (xs, ys) )
+
+    lres = []
+    licl = []
+    luicl = []
+    lgal = []
+    lrim = []
+    lunclass = []
 
     atom_gal = []
     coo_gal = []
@@ -407,5 +438,5 @@ if __name__ == '__main__':
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
             cat = []
             #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
-            rdc, icl, gal, uicl, res, rim = make_results_hardsep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
+            #rdc, icl, gal, uicl, res, rim = make_results_hardsep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
