@@ -95,4 +95,6 @@ if __name__ == '__main__':
                     tol.append(o)
                     titl.append(itl[j])
 
+            print(len(tol))
+
             df = average_size_atom( tol, n_levels )
