@@ -145,8 +145,8 @@ if __name__ == '__main__':
     fig, ax = plt.subplots( 2 )
     ax[0].errorbar( mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
     ax[0].errorbar( mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
-    ax[1].errorbar( mean_xmax, yerr = std_max, color = 'green', alpha = 0.5 )
-    ax[1].errorbar( mean_mean, yerr = std_mean, color = 'pink', alpha = 0.5 )
+    ax[1].errorbar( mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
+    ax[1].errorbar( mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
 
     plt.close()
