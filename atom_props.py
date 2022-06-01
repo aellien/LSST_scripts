@@ -52,6 +52,7 @@ if __name__ == '__main__':
     path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
+    path_plots = '/n03data/ellien/LSST_ICL/plots'
 
     dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
 
@@ -64,7 +65,9 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    for dir in ['HorizonAGN']:
+    plt.figure()
+
+    for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
         image_files = glob.glob(image_dir+'/*norm.fits')
@@ -81,7 +84,7 @@ if __name__ == '__main__':
             opath = nfp + '*ol*pkl'
             opathl = glob.glob(opath)
             opathl.sort()
-            itpath = nfp + '*itl*pkl' 
+            itpath = nfp + '*itl*pkl'
             itpathl = glob.glob(itpath)
             itpathl.sort()
             tol = []
@@ -102,5 +105,7 @@ if __name__ == '__main__':
             print(len(tol))
 
             df = average_size_atom( tol, n_levels )
+            plt.plot( df['z'], df['sx'], color = 'blue', alpha = 0.5 )
+            plt.plot( df['z'], df['sx'], color = 'red', alpha = 0.5 )
 
-            break
+    plt.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
