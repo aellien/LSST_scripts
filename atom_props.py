@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
             for i, it in enumerate( grimpath ):
 
-                #print(it)
+                print(it)
                 ol = d.read_objects_from_pickle( it )
                 itl = d.read_interscale_trees_from_pickle( os.path.join( path_wavelets, \
                                             ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ) )
