@@ -139,7 +139,9 @@ if __name__ == '__main__':
     std_sy = []
     std_xmax = []
     std_xmean = []
+    lvls = []
     for i in range(n_levels):
+        lvls.append(i)
         mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] ) )
         mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] ) )
         mean_xmax.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
@@ -150,10 +152,10 @@ if __name__ == '__main__':
         std_xmean.append( np.std( df[ df['z'] == i ]['xmax'] ) )
 
     fig, ax = plt.subplots( 2 )
-    ax[0].errorbar( mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
-    ax[0].errorbar( mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
-    ax[1].errorbar( mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
-    ax[1].errorbar( mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
+    ax[0].errorbar( lvls, mean_sx, yerr = std_sx, color = 'blue', alpha = 0.5 )
+    ax[0].errorbar( lvls, mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
+    ax[1].errorbar( lvls, mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
+    ax[1].errorbar( lvls, mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
 
     plt.close()
