@@ -440,3 +440,5 @@ if __name__ == '__main__':
             #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             #rdc, icl, gal, uicl, res, rim = make_results_hardsep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
+
+            break
