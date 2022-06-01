@@ -78,19 +78,20 @@ if __name__ == '__main__':
             split = nf.split('/')
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1' )
-            rimpath = os.path.join( path_wavelets, dir, 'run1/*ol*pkl' )
-            grimpath = glob.glob(rimpath)
-            grimpath.sort()
-
+            opath = os.path.join( path_wavelets, dir, 'run1/*ol*pkl' )
+            opathl = glob.glob(opath)
+            opathl.sort()
+            itpath = os.path.join( path_wavelets, dir, 'run1/*itl*pkl' )
+            itpathl = glob.glob(itpath)
+            itpathl.sort()
             tol = []
             titl = []
 
-            for i, it in enumerate( grimpath ):
+            for i, ( op, itlp ) in enumerate( zip( opathl, itpathl ):
 
                 print(it)
                 ol = d.read_objects_from_pickle( it )
-                itl = d.read_interscale_trees_from_pickle( os.path.join( path_wavelets, \
-                                            ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ) )
+                itl = d.read_interscale_trees_from_pickle( itp )
 
                 for j, o in enumerate(ol):
 
