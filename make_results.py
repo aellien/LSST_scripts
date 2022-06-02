@@ -20,7 +20,7 @@ from scipy.stats import sigmaclip
 from skimage.measure import label, regionprops
 from sklearn.utils import resample
 from atom_props import *
-from measure_icl_quantities_sizesep import *
+from measure_icl_quantities import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
