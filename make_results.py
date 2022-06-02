@@ -19,6 +19,7 @@ from matplotlib.colors import SymLogNorm
 from scipy.stats import sigmaclip
 from skimage.measure import label, regionprops
 from sklearn.utils import resample
+from atom_props import average_size_atom
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -40,29 +41,6 @@ def bootstrap_error( data, n_iter, alpha = 0.95  ):
     up = np.percentile( statfrac, pup )
 
     return low, up
-
-def average_size_atom( ol, n_levels ):
-
-    sizes = np.zeros( (n_levels, 4) )
-
-
-    for object in ol:
-        x_min, y_min, x_max, y_max = object.bbox
-        xs = x_max - x_min
-        ys = y_max - y_min
-        sizes[object.level, 0] += xs
-        sizes[object.level, 1] += 1
-        sizes[object.level, 2] += ys
-        sizes[object.level, 3] += 1
-
-    print(nf)
-    data = []
-    for i in range(n_levels):
-        data.append( [ 2**i, sizes[i, 0] / sizes[i, 1], sizes[i, 2] / sizes[i, 3]] )
-
-    df = pd.DataFrame( data, columns = [ 'z', '<sx>', '<sy>'] )
-
-    return df
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
@@ -394,6 +372,11 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
 
     return rdc, icl, gal, uicl, res, rim
 
+
+def make_results_sizesep(  ):
+
+    return rdc, icl, gal, uicl, res, rim
+
 if __name__ == '__main__':
 
     # Paths, lists & variables
@@ -412,7 +395,7 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    for dir in dirl:
+    for dir in ['HorizonAGN']:
 
         image_dir = os.path.join( path_data, dir )
         image_files = glob.glob(image_dir+'/*norm.fits')
@@ -432,7 +415,8 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1' )
 
-            sizes = average_size_atom( nf, nfp, n_levels )
+            df_sizes = average_size_atom( ol, n_levels )
+            print(df_sizes)
 
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )

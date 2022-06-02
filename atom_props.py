@@ -148,16 +148,16 @@ if __name__ == '__main__':
         lvls.append(i)
         mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] ) )
         mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] ) )
-        mean_xmax.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
-        mean_xmean.append( np.mean( df[ df['z'] == i ]['xmax'] ) )
-        norm_mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] / 2**df[ df['z'] == 1 ]['z'] ) )
-        norm_mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] / 2**df[ df['z'] == 1 ]['z'] ) )
-        norm_std_sx.append( np.std( df[ df['z'] == i ]['sx'] / 2**df[ df['z'] == 1 ]['z'] ) )
-        norm_std_sy.append( np.std( df[ df['z'] == i ]['sy'] / 2**df[ df['z'] == 1 ]['z'] ) )
+        mean_xmax.append( np.median( df[ df['z'] == i ]['xmax'] ) )
+        mean_xmean.append( np.median( df[ df['z'] == i ]['xmean'] ) )
+        norm_mean_sx.append( np.mean( df[ df['z'] == i ]['sx'] / 2**df[ df['z'] == i ]['z'] ) )
+        norm_mean_sy.append( np.mean( df[ df['z'] == i ]['sy'] / 2**df[ df['z'] == i ]['z'] ) )
+        norm_std_sx.append( np.std( df[ df['z'] == i ]['sx'] / 2**df[ df['z'] == i ]['z'] ) )
+        norm_std_sy.append( np.std( df[ df['z'] == i ]['sy'] / 2**df[ df['z'] == i ]['z'] ) )
         std_sx.append( np.std( df[ df['z'] == i ]['sx'] ) )
         std_sy.append( np.std( df[ df['z'] == i ]['sy'] ) )
-        std_xmax.append( np.std( df[ df['z'] == i ]['xmax'] ) )
-        std_xmean.append( np.std( df[ df['z'] == i ]['xmax'] ) )
+        std_xmax.append( median_absolute_deviation( df[ df['z'] == i ]['xmax'] ) )
+        std_xmean.append( median_absolute_deviation( df[ df['z'] == i ]['xmean'] ) )
 
     fig, ax = plt.subplots( 2, 2 )
     lvls = np.array(lvls)
@@ -165,12 +165,34 @@ if __name__ == '__main__':
     ax[0][0].errorbar( lvls, mean_sy, yerr = std_sy, color = 'red', alpha = 0.5 )
 
     ax[0][1].errorbar( lvls, mean_xmax, yerr = std_xmax, color = 'green', alpha = 0.5 )
-    ax[0][1].errorbar( lvls, mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
     ax[0][1].set_yscale('log')
 
-    ax[1][2].errorbar( lvls, norm_mean_sx, yerr = norm_std_sx, color = 'black', alpha = 0.5 )
-    ax[1][2].errorbar( lvls, norm_mean_sy, yerr = norm_std_sy, color = 'red', alpha = 0.5 )
+    ax[1][1].errorbar( lvls, norm_mean_sx, yerr = norm_std_sx, color = 'black', alpha = 0.5 )
+    ax[1][1].errorbar( lvls, norm_mean_sy, yerr = norm_std_sy, color = 'red', alpha = 0.5 )
+
+    ax[1][0].errorbar( lvls, mean_xmean, yerr = std_xmean, color = 'pink', alpha = 0.5 )
+    ax[1][0].set_yscale('log')
 
     fig.savefig(os.path.join(path_plots, 'average_size_vs_z.pdf'), format = 'pdf')
+
+    plt.figure()
+    for i in range(3, n_levels):
+        print(len(df[ df['z'] == i ]))
+        df[ df['z'] == i ]['sx'].hist(bins = 100)
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.savefig(os.path.join(path_plots, 'average_size_hist_per_z.pdf'), format = 'pdf')
+
+    plt.figure()
+    plt.plot( df[df['z']>=4]['sx'], df[df['z']>=4]['xmax'], 'bo', markersize = 1, alpha = 0.05)
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.savefig(os.path.join(path_plots, 'average_size_vs_xmax.pdf'), format = 'pdf')
+
+    plt.figure()
+    plt.plot( df[df['z']>=4]['sx'], df[df['z']>=4]['xmean'], 'bo', markersize = 1, alpha = 0.05)
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.savefig(os.path.join(path_plots, 'average_size_vs_xmean.pdf'), format = 'pdf')
 
     plt.close()
