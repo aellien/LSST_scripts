@@ -19,7 +19,7 @@ from matplotlib.colors import SymLogNorm
 from scipy.stats import sigmaclip
 from skimage.measure import label, regionprops
 from sklearn.utils import resample
-from atom_props import average_size_atom, read_image_atoms
+from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
