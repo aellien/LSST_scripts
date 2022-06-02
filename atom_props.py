@@ -114,7 +114,7 @@ def derivative( sizes, start, end ):
 
     ds = []
 
-    for i, s in enumerate(sl):
+    for i in range(start, end - 1):
         ds.append( sl[i+1] - sl[i] )
 
     ds = np.array( ds )
