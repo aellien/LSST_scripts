@@ -23,24 +23,7 @@ from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def bootstrap_error( data, n_iter, alpha = 0.95  ):
 
-    n_sample = int( 0.75 * np.size( data ) )
-    statfrac = np.zeros( (n_iter) )
-
-    for i in range( 0, n_iter ):
-
-        newsample = resample( data, n_samples = n_sample )
-        statfrac[i] = np.sum( newsample )
-
-    statfrac = np.sort(statfrac)
-    plow = ( (1.- alpha) / 2. ) * 100.
-    low = np.percentile( statfrac, plow )
-
-    pup = ( alpha + (1. - alpha) / 2.) * 100
-    up = np.percentile( statfrac, pup )
-
-    return low, up
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
@@ -406,8 +389,11 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, y
     lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
 
     sx = df_sizes['<sx>'][lvl_sx]
+    if sx == 0.:
+        sx = df_sizes['<sx>'][lvl_sx +1]
     sy = df_sizes['<sy>'][lvl_sy]
-
+    if sy == 0.:
+        sy = df_sizes['<sx>'][lvl_sy +1]
     print(lvl_sx, sx)
     print(lvl_sy, sy)
 

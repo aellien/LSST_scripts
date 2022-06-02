@@ -21,6 +21,27 @@ from sklearn.utils import resample
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+def bootstrap_error( data, n_iter, alpha = 0.95  ):
+
+    n_sample = int( 0.75 * np.size( data ) )
+    statfrac = np.zeros( (n_iter) )
+
+    for i in range( 0, n_iter ):
+
+        newsample = resample( data, n_samples = n_sample )
+        statfrac[i] = np.mean( newsample )
+
+    statfrac = np.sort(statfrac)
+    plow = ( (1.- alpha) / 2. ) * 100.
+    low = np.percentile( statfrac, plow )
+
+    pup = ( alpha + (1. - alpha) / 2.) * 100
+    up = np.percentile( statfrac, pup )
+
+    return low, up
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 def read_image_atoms( nfp, verbose = False ):
 
     # Object lists
@@ -71,13 +92,18 @@ def average_size_atom( ol, n_levels ):
 
     data = []
     for i in range(n_levels):
-        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), np.std(sx[i]), np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), median_absolute_deviation(sx[i]), median_absolute_deviation(sy[i]), np.mean(sx[i] / 2**i), np.mean(sy[i] / 2**i), np.std(sx[i] / 2**i), np.std(sy[i] / 2**i) ] )
+        lowx, upx = bootstrap_error( sx[i], 1000, alpha = 0.95  )
+        lowy, upy = bootstrap_error( sy[i], 1000, alpha = 0.95  )
+        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), lowx, upx, lowy, upy, np.std(sx[i]), \
+                        np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), \
+                        median_absolute_deviation(sx[i]), median_absolute_deviation(sy[i]), np.mean(sx[i] / 2**i), \
+                        np.mean(sy[i] / 2**i), np.std(sx[i] / 2**i), np.std(sy[i] / 2**i) ] )
 
     for i in range(n_levels - 1):
         data[i].append( (data[i+1][2] - data[i][2]) / 2**i )
         data[i].append( (data[i+1][3] - data[i][3]) / 2**i )
 
-    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', \
+    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'low<sx>', 'up<sx>', 'low<sy>', 'up<sy>', 'std(sx)', 'std(sy)', \
                                         'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)', '<sx_n>', \
                                         '<sy_n>', 'std(sx_n)', 'std(sy_n)', 'dsx_n', 'dsy_n'] )
 
