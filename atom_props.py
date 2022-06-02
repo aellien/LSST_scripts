@@ -71,10 +71,14 @@ def average_size_atom( ol, n_levels ):
 
     data = []
     for i in range(n_levels):
-        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), np.std(sx[i]), np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), median_absolute_deviation(sx[i]), median_absolute_deviation(sy[i]), np.mean(sx[i] / 2**i), np.mean(sy[i] / 2**i), np.std(sx[i] / 2**i), np.std(sy[i] / 2**i) ] )
+        data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), np.std(sx[i]), np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), median_absolute_deviation(sx[i]), median_absolute_deviation([sy[i]]) ] )
 
-    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', 'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)', '<sx_n>', '<sy_n>', 'std(sx_n)', 'std(sy_n)'] )
+    for i in range(n_levels - 1):
+        data[i].append( (data[i+1][2] - data[i][2]) / 2**i )
+        data[i].append( (data[i+1][3] - data[i][3]) / 2**i )
 
+    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', 'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)', 'dsx_n', 'dsy_n'] )
+    
     return df
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
