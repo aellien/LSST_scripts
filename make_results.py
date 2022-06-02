@@ -22,42 +22,6 @@ from sklearn.utils import resample
 from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-'''
-def read_image_atoms( nfp, verbose = False ):
-
-    # Object lists
-    opath = nfp + '*ol*pkl'
-    opathl = glob.glob(opath)
-    opathl.sort()
-
-    # Interscale tree lists
-    itpath = nfp + '*itl*pkl'
-    itpathl = glob.glob(itpath)
-    itpathl.sort()
-
-    tol = []
-    titl = []
-
-    if verbose:
-        print('Reading %s.'%(opath))
-        print('Reading %s.'%(itpath))
-
-    for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
-
-        if verbose :
-            print('Iteration %d' %(i), end ='\r')
-
-        ol = d.read_objects_from_pickle( op )
-        itl = d.read_interscale_trees_from_pickle( itlp )
-
-        for j, o in enumerate(ol):
-
-            tol.append(o)
-            titl.append(itl[j])
-
-    return tol, titl
-'''
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 def bootstrap_error( data, n_iter, alpha = 0.95  ):
 
@@ -453,7 +417,14 @@ if __name__ == '__main__':
 
             ol, itl = read_image_atoms( nfp, verbose = True )
             df_sizes = average_size_atom( ol, n_levels )
+
             print(df_sizes)
+
+            lvl_x, min_x = find_minimum_size_z( df_sizes['<sx_n>'].to_numpy(), 1, n_levels )
+            lvl_y, min_y = find_minimum_size_z( df_sizes['<sy_n>'].to_numpy(), 1, n_levels )
+
+            print( lvl_x, min_x )
+            print( lvl_y, min_y )
 
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
@@ -461,5 +432,3 @@ if __name__ == '__main__':
             #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             #rdc, icl, gal, uicl, res, rim = make_results_hardsep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
             #plot_dawis_results( oim, oicl, ogal, rdc, icl, gal, res, rim, path_plots )
-
-            break

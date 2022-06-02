@@ -55,6 +55,8 @@ def read_image_atoms( nfp, verbose = False ):
 
     return tol, titl
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 def average_size_atom( ol, n_levels ):
 
     sx = list( np.zeros( ( n_levels, 1 ) ))
@@ -75,6 +77,32 @@ def average_size_atom( ol, n_levels ):
 
     return df
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+def find_minimum_size_z( sizes, start, end ):
+
+    sl = sizes[start:end]
+    min = 0
+    lvl = start
+    flag = False
+
+    for i, s in enumerate(sl):
+
+        if s <= min:
+            min = s
+            lvl = i + start
+            flag = True
+
+        else if flag == True:
+            break
+
+        else:
+            continue
+
+    if lvl == start:
+        print('WARING: z_minimum = z_start !')
+
+    return lvl, min
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
