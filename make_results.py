@@ -426,8 +426,8 @@ if __name__ == '__main__':
             print( lvl_x, min_x )
             print( lvl_y, min_y )
 
-            print( np.argmax( derivative( df_sizes['<sx_n>'].to_numpy(), 2, n_levels )))
-            print( np.argmax( derivative( df_sizes['<sy_n>'].to_numpy(), 2, n_levels )))
+            print( np.argmax( derivative( df_sizes['<sx_n>'].to_numpy(), 2, n_levels )) + 2 )
+            print( np.argmax( derivative( df_sizes['<sy_n>'].to_numpy(), 2, n_levels )) + 2 )
 
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
