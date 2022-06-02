@@ -400,7 +400,7 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, y
 
     ol, itl = read_image_atoms( nfp, verbose = True )
     df_sizes = average_size_atom( ol, n_levels )
-    print(df)
+    print(df_sizes)
 
     lvl_sx = np.argmax( derivative( df_sizes['<sx_n>'].to_numpy(), 2, n_levels )) + 2
     lvl_sy = np.argmax( derivative( df_sizes['<sy_n>'].to_numpy(), 2, n_levels )) + 2
