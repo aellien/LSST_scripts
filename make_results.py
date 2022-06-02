@@ -451,7 +451,7 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
 
-            ol = read_image_atoms( nfp, verbose = True )
+            ol, itl = read_image_atoms( nfp, verbose = True )
             df_sizes = average_size_atom( ol, n_levels )
             print(df_sizes)
 
