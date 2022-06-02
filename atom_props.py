@@ -108,14 +108,10 @@ def find_minimum_size_z( sizes, start, end ):
 
 def derivative( sizes, start, end ):
 
-    sl = sizes[start:end]
-    min =  sizes[start]
-    lvl = start
-
     ds = []
 
     for i in range(start, end - 1):
-        ds.append( sl[i+1] - sl[i] )
+        ds.append( ( sizes[i+1] - sizes[i] ) / 2**i )
 
     ds = np.array( ds )
 
