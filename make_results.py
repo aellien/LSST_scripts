@@ -22,7 +22,7 @@ from sklearn.utils import resample
 from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+'''
 def read_image_atoms( nfp, verbose = False ):
 
     # Object lists
@@ -56,7 +56,7 @@ def read_image_atoms( nfp, verbose = False ):
             titl.append(itl[j])
 
     return tol, titl
-
+'''
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 def bootstrap_error( data, n_iter, alpha = 0.95  ):
