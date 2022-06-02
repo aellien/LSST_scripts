@@ -88,7 +88,7 @@ def find_minimum_size_z( sizes, start, end ):
 
     for i, s in enumerate(sl):
 
-        if s <= min:
+        if s <= min and s != 0.:
             min = s
             lvl = i + start
             flag = True
