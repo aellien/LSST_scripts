@@ -23,6 +23,42 @@ from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+def read_image_atoms( nfp, verbose = False ):
+
+    # Object lists
+    opath = nfp + '*ol*pkl'
+    opathl = glob.glob(opath)
+    opathl.sort()
+
+    # Interscale tree lists
+    itpath = nfp + '*itl*pkl'
+    itpathl = glob.glob(itpath)
+    itpathl.sort()
+
+    tol = []
+    titl = []
+
+    if verbose:
+        print('Reading %s.'%(opath))
+        print('Reading %s.'%(itpath))
+
+    for i, ( op, itlp ) in enumerate( zip( opathl, itpathl )):
+
+        if verbose :
+            print('Iteration %d' %(i), end ='\r')
+
+        ol = d.read_objects_from_pickle( op )
+        itl = d.read_interscale_trees_from_pickle( itlp )
+
+        for j, o in enumerate(ol):
+
+            tol.append(o)
+            titl.append(itl[j])
+
+    return tol, titl
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 def bootstrap_error( data, n_iter, alpha = 0.95  ):
 
     n_sample = int( 0.75 * np.size( data ) )
