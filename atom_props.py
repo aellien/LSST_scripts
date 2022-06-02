@@ -93,7 +93,7 @@ def find_minimum_size_z( sizes, start, end ):
             lvl = i + start
             flag = True
 
-        else if flag == True:
+        elif flag == True:
             break
 
         else:
