@@ -10,7 +10,7 @@ from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
+def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
 
     # path, list & variables
     res = np.zeros( (xs, ys) )
