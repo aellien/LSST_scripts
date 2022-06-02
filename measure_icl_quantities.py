@@ -64,6 +64,8 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
     frac_icl_l = []
     for k in range( n_iter ):
 
+        print(k)
+
         ksx = np.random.uniform( low_sx, up_sx  )
         ksy = np.random.uniform( low_sy, up_sy  )
 
