@@ -82,7 +82,7 @@ def average_size_atom( ol, n_levels ):
 def find_minimum_size_z( sizes, start, end ):
 
     sl = sizes[start:end]
-    min = 0
+    min =  sizes[start]
     lvl = start
     flag = False
 
