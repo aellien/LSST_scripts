@@ -402,8 +402,8 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, y
     df_sizes = average_size_atom( ol, n_levels )
     print(df_sizes)
 
-    lvl_sx = np.argmax( df_sizes['dx_n'][2:] ) + 2
-    lvl_sy = np.argmax( df_sizes['dy_n'][2:] ) + 2
+    lvl_sx = np.argmax( df_sizes['dsx_n'][2:] ) + 2
+    lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
 
     sx = df_sizes['<sx>'][lvl_sx]
     sy = df_sizes['<sy>'][lvl_sy]

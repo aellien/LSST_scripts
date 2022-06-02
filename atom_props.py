@@ -77,7 +77,9 @@ def average_size_atom( ol, n_levels ):
         data[i].append( (data[i+1][2] - data[i][2]) / 2**i )
         data[i].append( (data[i+1][3] - data[i][3]) / 2**i )
 
-    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', 'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)', '<sx_n>', '<sy_n>', 'std(sx_n)', 'std(sy_n)', 'dsx_n', 'dsy_n'] )
+    df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'std(sx)', 'std(sy)', \
+                                        'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)', '<sx_n>', \
+                                        '<sy_n>', 'std(sx_n)', 'std(sy_n)', 'dsx_n', 'dsy_n'] )
 
     return df
 
