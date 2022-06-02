@@ -19,7 +19,7 @@ from matplotlib.colors import SymLogNorm
 from scipy.stats import sigmaclip
 from skimage.measure import label, regionprops
 from sklearn.utils import resample
-from atom_props import average_size_atom
+from atom_props import average_size_atom, read_image_atoms
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -395,7 +395,7 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    for dir in ['HorizonAGN']:
+    for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
         image_files = glob.glob(image_dir+'/*norm.fits')
@@ -413,8 +413,9 @@ if __name__ == '__main__':
 
             split = nf.split('/')
             nf = split[-1]
-            nfp = os.path.join( path_wavelets, dir, 'run1' )
+            nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
 
+            ol = read_image_atoms( nfp, verbose = True )
             df_sizes = average_size_atom( ol, n_levels )
             print(df_sizes)
 
