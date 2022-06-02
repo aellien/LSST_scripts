@@ -115,10 +115,10 @@ def derivative( sizes, start, end ):
     ds = []
 
     for i, s in enumerate(sl):
-        ds.append( s[i+1] - s[i] )
+        ds.append( sl[i+1] - sl[i] )
 
     ds = np.array( ds )
-    
+
     return ds
 
 
