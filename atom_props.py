@@ -106,6 +106,24 @@ def find_minimum_size_z( sizes, start, end ):
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+def derivative( sizes, start, end ):
+
+    sl = sizes[start:end]
+    min =  sizes[start]
+    lvl = start
+
+    ds = []
+
+    for i, s in enumerate(sl):
+        ds.append( s[i+1] - s[i] )
+
+    ds = np.array( ds )
+    
+    return ds
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 def average_lum_atom( ol, n_levels ):
 
     sx = list( np.zeros( ( n_levels, 1 ) ))

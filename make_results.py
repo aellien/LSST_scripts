@@ -420,11 +420,14 @@ if __name__ == '__main__':
 
             print(df_sizes)
 
-            lvl_x, min_x = find_minimum_size_z( df_sizes['<sx_n>'].to_numpy(), 1, n_levels )
-            lvl_y, min_y = find_minimum_size_z( df_sizes['<sy_n>'].to_numpy(), 1, n_levels )
+            lvl_x, min_x = find_minimum_size_z( df_sizes['<sx_n>'].to_numpy(), 2, n_levels )
+            lvl_y, min_y = find_minimum_size_z( df_sizes['<sy_n>'].to_numpy(), 2, n_levels )
 
             print( lvl_x, min_x )
             print( lvl_y, min_y )
+
+            print( np.max( derivative( df_sizes['<sx_n>'].to_numpy(), 2, n_levels )))
+            print( np.max( derivative( df_sizes['<sy_n>'].to_numpy(), 2, n_levels )))
 
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
