@@ -105,7 +105,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
 
         #print( k, ksx, ksy, np.size(xicl), np.size(xgal), flux_icl, flux_gal,flux_icl / ( flux_icl + flux_gal)  )
 
-    return flux_icl_l, flux_gal_l, frac_icl_l
+    return flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l
 
 if __name__ == '__main__':
 
