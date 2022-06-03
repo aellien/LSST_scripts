@@ -527,14 +527,14 @@ if __name__ == '__main__':
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
 
             #rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
-            flux_icl_l, flux_gal_l, frac_icl_l = measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
+            flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l = measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
 
             lowFicl, upFicl = bootstrap_error( np.array(flux_icl_l), 1000, alpha = 0.95  )
             lowFgal, upFgal = bootstrap_error( np.array(flux_gal_l), 1000, alpha = 0.95  )
             lowficl, upficl = bootstrap_error( np.array(frac_icl_l), 1000, alpha = 0.95  )
 
-            print('Flux ICL = %f +-(%f, %f), std = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l)) )
-            print('Flux gal = %f +-(%f, %f), std = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l)) )
+            print('Flux ICL = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l)), np.sqrt(np.sum(err_wr_icl_l**2)) )
+            print('Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l)), np.sqrt(np.sum(err_wr_gal_l**2)) )
             print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
             break
