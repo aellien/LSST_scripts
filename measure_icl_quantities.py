@@ -62,9 +62,9 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
     for j, o in enumerate(ol):
         x_min, y_min, x_max, y_max = o.bbox
         if o.level >= lvl_sep_big:
-            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level, o.sum_wr, o.norm_wr ] )
+            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
-            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level, o.sum_wr, o.norm_wr ] )
+            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
     afs = np.array(afs)
 
     n_iter = 1000
@@ -88,24 +88,24 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
         mask = np.zeros( afs[:,0].shape, dtype='bool')
         mask[xicl] = True
         flux_icl = np.sum(afs[xicl][:,2])
-        err_wr_icl = np.sqrt( np.sum( afs[xicl][:, 5]**2 ))
+        #err_wr_icl = np.sqrt( np.sum( afs[xicl][:, 5]**2 ))
 
         #x1 = np.where( afs[:,0] < ksx )[0]
         #x2 = np.where( afs[:,1] < ksy )[0]
         #xgal = np.unique( np.append(x1, x2) )
         xgal = np.where(mask == False)[0]
         flux_gal = np.sum(afs[xgal][:,2])
-        err_wr_gal = np.sqrt( np.sum( afs[xgal][:, 5]**2 ))
+        #err_wr_gal = np.sqrt( np.sum( afs[xgal][:, 5]**2 ))
 
         flux_icl_l.append( flux_icl )
-        err_wr_icl_l.append( err_wr_icl )
+        #err_wr_icl_l.append( err_wr_icl )
         flux_gal_l.append( flux_gal )
-        err_wr_gal_l.append( err_wr_gal )
+        #err_wr_gal_l.append( err_wr_gal )
         frac_icl_l.append( flux_icl / ( flux_icl + flux_gal) )
 
         #print( k, ksx, ksy, np.size(xicl), np.size(xgal), flux_icl, flux_gal,flux_icl / ( flux_icl + flux_gal)  )
 
-    return flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l
+    return flux_icl_l, flux_gal_l, frac_icl_l
 
 if __name__ == '__main__':
 
