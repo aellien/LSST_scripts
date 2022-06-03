@@ -58,82 +58,39 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
     print(lvl_sx, sx, low_sx, up_sx)
     print(lvl_sy, sy, low_sy, up_sy)
 
-    n_iter = 1000
+    afs = []
+    for j, o in enumerate(ol):
+        x_min, y_min, x_max, y_max = object.bbox
+        if o.level >= lvl_sep_big:
+            afs.append( x_max - x_min, y_max - y_min, np.sum(o.image), o.level )
+        else:
+            afs.append( x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level )
+    afs = np.array(afs)
+
+    n_iter = 100
     flux_icl_l = []
     flux_gal_l = []
     frac_icl_l = []
+
     for k in range( n_iter ):
 
         print(k)
-
         ksx = np.random.uniform( low_sx, up_sx  )
         ksy = np.random.uniform( low_sy, up_sy  )
 
-        icl = np.zeros( (xs, ys) )
-        gal = np.zeros( (xs, ys) )
+        x1 = np.where( afs[:,0] >= ksx )[0]
+        x2 = np.where( afs[:,1] >= ksy )[0]
+        x = np.unique( np.append(x1, x2) )
+        flux_icl = np.sum(afs[x][2])
 
-        atom_gal = []
-        coo_gal = []
+        x1 = np.where( afs[:,0] < ksx )[0]
+        x2 = np.where( afs[:,1] < ksy )[0]
+        x = np.unique( np.append(x1, x2) )
+        flux_gal = np.sum(afs[x][2])
 
-        for j, object in enumerate(ol):
-
-            x_min, y_min, x_max, y_max = object.bbox
-            lvlo = object.level
-            xco = itl[j].interscale_maximum.x_max
-            yco = itl[j].interscale_maximum.y_max
-
-            # ICL or gal based on size
-            if x_max - x_min >= sx or y_max - y_min >= sy:
-
-                if object.level >= lvl_sep_big:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image
-                else:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
-
-            else:
-
-                if object.level >= lvl_sep_big:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image
-                else:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                atom_gal.append(object)
-                coo_gal.append([xco, yco])
-
-            # All object dc
-            if object.level >= lvl_sep_big:
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
-            else:
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
-
-        flux_icl_l.append( np.sum(icl) )
-        flux_gal_l.append( np.sum(gal) )
-        frac_icl_l.append( np.sum(icl) / ( np.sum(icl) + np.sum(gal) ) )
-    '''
-    bcg = np.copy(gal)
-
-    for i, ogal in enumerate(atom_gal):
-
-        x_min, y_min, x_max, y_max = ogal.bbox
-        xco, yco = coo_gal[i]
-        lvlo = ogal.level
-
-        if lvlo <= 4:
-
-            if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > rc * 2**(lvlo-1):
-
-                if x_max - x_min <= 300 or y_max - y_min <= 300:
-
-                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-                elif np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > ricl:
-
-                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-    satgal = np.copy(gal)
-    satgal -= bcg
-    iclbcg = np.copy(icl)
-    iclbcg += bcg
-    '''
+        flux_icl_l.append( flux_icl )
+        flux_gal_l.append( flux_gal )
+        frac_icl_l.append( flux_icl / ( flux_icl + flux_gal) )
 
     return flux_icl_l, flux_gal_l, frac_icl_l
 
