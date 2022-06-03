@@ -539,7 +539,7 @@ if __name__ == '__main__':
             print('Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
             print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-            results = results.append( [ [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]]columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+            results = results.append( [ [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
             break
             n_coregal = 3
             #cat = make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 )
