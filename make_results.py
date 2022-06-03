@@ -533,9 +533,9 @@ if __name__ == '__main__':
             lowFgal, upFgal = bootstrap_error( np.array(flux_gal_l), 1000, alpha = 0.95  )
             lowficl, upficl = bootstrap_error( np.array(frac_icl_l), 1000, alpha = 0.95  )
 
-            print('Flux ICL = %f +-(%f, %f)' %(np.mean(flux_icl_l), lowFicl, upFicl))
-            print('Flux gal = %f +-(%f, %f)' %(np.mean(flux_gal_l), lowFgal, upFgal))
-            print('Fraction ICL = %f +-(%f, %f)' %(np.mean(frac_icl_l), lowficl, upficl))
+            print('Flux ICL = %f +-(%f, %f)' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l)))
+            print('Flux gal = %f +-(%f, %f)' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l)))
+            print('Fraction ICL = %f +-(%f, %f)' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l)))
 
             break
             n_coregal = 3
