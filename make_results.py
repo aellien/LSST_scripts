@@ -533,8 +533,8 @@ if __name__ == '__main__':
             lowFgal, upFgal = bootstrap_error( np.array(flux_gal_l), 1000, alpha = 0.95  )
             lowficl, upficl = bootstrap_error( np.array(frac_icl_l), 1000, alpha = 0.95  )
 
-            print('Flux ICL = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l)), np.sqrt(np.sum(err_wr_icl_l**2)) )
-            print('Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l)), np.sqrt(np.sum(err_wr_gal_l**2)) )
+            print('Flux ICL = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l), np.sqrt(np.sum(err_wr_icl_l**2))) )
+            print('Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(err_wr_gal_l**2))) )
             print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
             break
