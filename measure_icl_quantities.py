@@ -83,14 +83,14 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
         x1 = np.where( afs[:,0] >= ksx )[0]
         x2 = np.where( afs[:,1] >= ksy )[0]
         xicl = np.unique( np.append(x1, x2) )
+        mask = np.zeros( afs[:,0].shape, dtype='bool')
+        mask[xicl] = True
         flux_icl = np.sum(afs[xicl][:,2])
-        #print( afs[xicl][3] )
 
-        x1 = np.where( afs[:,0] < ksx )[0]
-        x2 = np.where( afs[:,1] < ksy )[0]
-        xgal = np.unique( np.append(x1, x2) )
-        flux_gal = np.sum(afs[xgal][:,2])
-        #print( afs[xgal][3] )
+        #x1 = np.where( afs[:,0] < ksx )[0]
+        #x2 = np.where( afs[:,1] < ksy )[0]
+        #xgal = np.unique( np.append(x1, x2) )
+        flux_gal = np.sum(afs[np.where(mask == False)][:,2])
 
         flux_icl_l.append( flux_icl )
         flux_gal_l.append( flux_gal )
