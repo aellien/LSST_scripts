@@ -64,7 +64,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
         if o.level >= lvl_sep_big:
             afs.append( x_max - x_min, y_max - y_min, np.sum(o.image), o.level )
         else:
-            afs.append( x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level )
+            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
     afs = np.array(afs)
 
     n_iter = 100
