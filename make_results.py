@@ -506,7 +506,7 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    results = pd.Dataframe(columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+    results = pd.DataFrame(columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
 
     for dir in dirl:
 
