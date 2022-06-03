@@ -67,30 +67,31 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
             afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
     afs = np.array(afs)
 
-    n_iter = 100
+    n_iter = 1000
     flux_icl_l = []
     flux_gal_l = []
     frac_icl_l = []
 
     for k in range( n_iter ):
 
-        print(k)
         ksx = np.random.uniform( low_sx, up_sx  )
         ksy = np.random.uniform( low_sy, up_sy  )
 
         x1 = np.where( afs[:,0] >= ksx )[0]
         x2 = np.where( afs[:,1] >= ksy )[0]
-        x = np.unique( np.append(x1, x2) )
-        flux_icl = np.sum(afs[x][2])
+        xicl = np.unique( np.append(x1, x2) )
+        flux_icl = np.sum(afs[xicl][2])
 
         x1 = np.where( afs[:,0] < ksx )[0]
         x2 = np.where( afs[:,1] < ksy )[0]
-        x = np.unique( np.append(x1, x2) )
-        flux_gal = np.sum(afs[x][2])
+        xgal = np.unique( np.append(x1, x2) )
+        flux_gal = np.sum(afs[xgal][2])
 
         flux_icl_l.append( flux_icl )
         flux_gal_l.append( flux_gal )
         frac_icl_l.append( flux_icl / ( flux_icl + flux_gal) )
+
+        print( k, ksx, ksy, np.size(xicl), np.size(xgal) )
 
     return flux_icl_l, flux_gal_l, frac_icl_l
 
