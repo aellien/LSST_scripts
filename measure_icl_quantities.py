@@ -74,8 +74,8 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
 
     for k in range( n_iter ):
 
-        ksx = np.random.uniform( low_sx, up_sx  )
-        ksy = np.random.uniform( low_sy, up_sy  )
+        ksx = np.random.normal( sx, 0.1 * sx  )
+        ksy = np.random.normal( sy, 0.1 * sy  )
 
         x1 = np.where( afs[:,0] >= ksx )[0]
         x2 = np.where( afs[:,1] >= ksy )[0]
