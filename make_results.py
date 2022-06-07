@@ -506,7 +506,7 @@ if __name__ == '__main__':
     rc = 20 # pixels, distance to center to be classified as gal
     ricl = 650 # pixels, distance to center to be classified as ICL
 
-    results = pd.DataFrame(columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+    results = []
 
     for dir in dirl:
 
@@ -539,11 +539,11 @@ if __name__ == '__main__':
             print('Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
             print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-
-            newresults = pd.DataFrame( [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
-            print(results)
-            print(newresults)
-            results = pd.concat( [ results, newresults], axis = 1, ignore_index=True)
+            if not results:
+                results = pd.DataFrame( [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+            else:
+                newresults = pd.DataFrame( [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])                 
+                results = pd.concat( [ results, newresults], axis = 1, ignore_index=True)
 
 
             break
