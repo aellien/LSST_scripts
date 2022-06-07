@@ -540,9 +540,9 @@ if __name__ == '__main__':
             print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
             if not results:
-                results = pd.DataFrame( [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+                results = pd.DataFrame( [[ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
             else:
-                newresults = pd.DataFrame( [ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])                 
+                newresults = pd.DataFrame( [[ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])                 
                 results = pd.concat( [ results, newresults], axis = 1, ignore_index=True)
 
 
