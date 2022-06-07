@@ -539,10 +539,10 @@ if __name__ == '__main__':
             print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
             if flag == False:
-                results = pd.DataFrame( [[ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+                results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'dir', 'name', 'ICL fraction', 'err up', 'err low' ])
                 flag = True
             else:
-                newresults = pd.DataFrame( [[ nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'name', 'ICL fraction', 'err up', 'err low' ])
+                newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'dir', 'name', 'ICL fraction', 'err up', 'err low' ])
                 results = pd.concat( [ results, newresults], ignore_index=True)
 
             n_coregal = 3
