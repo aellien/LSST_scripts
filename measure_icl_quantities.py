@@ -40,23 +40,13 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_it
     low_sx = df_sizes['low<sx>'][lvl_sep]
     up_sx = df_sizes['up<sx>'][lvl_sep]
 
-    if sx == 0.:
-        sx = df_sizes['<sx>'][lvl_sep + 1]
-        low_sx = df_sizes['low<sx>'][lvl_sep + 1]
-        up_sx = df_sizes['up<sx>'][lvl_sep + 1]
-
     sy = df_sizes['<sy>'][lvl_sep]
     low_sy = df_sizes['low<sy>'][lvl_sep]
     up_sy = df_sizes['up<sy>'][lvl_sep]
 
-    if sy == 0.:
-        sy = df_sizes['<sx>'][lvl_sep +1]
-        low_sy = df_sizes['low<sy>'][lvl_sep +1]
-        up_sy = df_sizes['up<sy>'][lvl_sep +1]
-
     if verbose:
-        print( 'x axis | level = %d  | <sx> = %d pix | low<sx> = %d | up<sx> = %d ' %(lvl_sx, sx, low_sx, up_sx))
-        print( 'y axis | level = %d  | <sx> = %d pix | low<sy> = %d | up<sy> = %d ' %(lvl_sy, sy, low_sy, up_sy))
+        print( 'x axis | level = %d  | <sx> = %d pix | low<sx> = %d | up<sx> = %d ' %(lvl_sep, sx, low_sx, up_sx))
+        print( 'y axis | level = %d  | <sx> = %d pix | low<sy> = %d | up<sy> = %d ' %(lvl_sep, sy, low_sy, up_sy))
 
     # Store atom properties of interest in numpy array for speed up compuatations
     for j, o in enumerate(ol):
@@ -104,6 +94,80 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_it
         frac_icl_l.append( flux_icl / ( flux_icl + flux_gal) )
 
     return flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_levels, n_iter = 1000, verbose = False ):
+
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
+
+    # Atom wavelet scale separation
+    for j, o in enumerate(ol):
+        x_min, y_min, x_max, y_max = o.bbox
+        if o.level >= lvl_sep_big:
+            if o.level >= lvl_sep:
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+        else:
+            if o.level >= lvl_sep:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+
+    atom_gal = np.array(atom_gal)
+    atom_icl = np.array(atom_icl)
+
+    flux_icl = np.sum( atom_icl[:,2] )
+    flux_gal = np.sum( atom_gal[:,2] )
+    frac_icl = flux_icl / ( flux_gal + flux_icl )
+
+    # Up error computations
+    atom_icl = []
+    atom_gal = []
+    for j, o in enumerate(ol):
+        x_min, y_min, x_max, y_max = o.bbox
+        if o.level >= lvl_sep_big:
+            if o.level >= lvl_sep - 1:
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+        else:
+            if o.level >= lvl_sep - 1:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+
+    flux_up_icl = np.sum( atom_icl[:,2] )
+    flux_up_gal = np.sum( atom_gal[:,2] )
+    frac_up_icl = flux_up_icl / ( flux_up_gal + flux_up_icl )
+
+    # Low error computations
+    atom_icl = []
+    atom_gal = []
+    for j, o in enumerate(ol):
+        x_min, y_min, x_max, y_max = o.bbox
+        if o.level >= lvl_sep_big:
+            if o.level >= lvl_sep + 1:
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+        else:
+            if o.level >= lvl_sep + 1:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+
+    flux_low_icl = np.sum( atom_icl[:,2] )
+    flux_low_gal = np.sum( atom_gal[:,2] )
+    frac_low_icl = flux_low_icl / ( flux_low_gal + flux_low_icl )
+
+    return flux_icl, flux_gal, frac_icl, flux_up_icl, flux_up_gal, frac_up_icl, flux_low_icl, flux_low_gal, frac_low_icl
 
 if __name__ == '__main__':
 

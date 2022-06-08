@@ -500,6 +500,7 @@ if __name__ == '__main__':
     gamma = 0.5
     n_levels = 11
     lvl_sep_big = 5
+    lvl_sep = 5
     n_hard_icl = 5
     pixscale = 1.6 # ''/pixel
     physscale = 1 # kpc/''
@@ -534,15 +535,22 @@ if __name__ == '__main__':
             lowFgal, upFgal = bootstrap_error( np.array(flux_gal_l), 1000, alpha = 0.95  )
             lowficl, upficl = bootstrap_error( np.array(frac_icl_l), 1000, alpha = 0.95  )
 
-            print('Flux ICL = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l), np.sqrt(np.sum(np.array(err_wr_icl_l)**2))) )
-            print('Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
-            print('Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
+            print('SIZESEP | Flux ICL = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l), np.sqrt(np.sum(np.array(err_wr_icl_l)**2))) )
+            print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
+            print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
+
+            results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep = lvl_sep, n_levels, n_iter = 1000, verbose = False )
+
+            print('WAVSEP |     LVL = %d      |      LVL = %d      |      LVL = %d      |' %(lvl_sep - 1, lvl_sep, lvl_sep + 1))
+            print('WAVSEP |   Flux ICL = %1.3e   |    Flux ICL = %1.3e   |    Flux ICL = %1.3e   |  ' %( results_wavsep[3], results_wavsep[4], results_wavsep[5] ) )
+            print('WAVSEP |   Flux gal = %1.3e   |    Flux gal = %1.3e   |    Flux gal = %1.3e   |  ' %(results_wavsep[0], results_wavsep[1], results_wavsep[2] ) )
+            print('WAVSEP | Fraction ICL = %1.3f |  Fraction ICL = %1.3f |  Fraction ICL = %1.3f | ' %(results_wavsep[6], results_wavsep[7], results_wavsep[8] ) )
 
             if flag == False:
-                results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'dir', 'name', 'ICL fraction', 'err up', 'err low' ])
+                results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
                 flag = True
             else:
-                newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l) ]], columns = [ 'dir', 'name', 'ICL fraction', 'err up', 'err low' ])
+                newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
                 results = pd.concat( [ results, newresults], ignore_index=True)
 
             n_coregal = 3
