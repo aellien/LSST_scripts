@@ -100,7 +100,7 @@ def average_size_atom( ol, n_levels ):
         lowy, upy = bootstrap_error( sy[i], 1000, alpha = 0.95  )
 
         # Normalized derivative
-        if not sx[i]:
+        if len(sx[i]) == 1.:
             dsx = 0.
         else:
             dsx = ( np.mean( sx[i] ) - np.mean( sx[i+1] ) ) / 2**i
