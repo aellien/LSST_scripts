@@ -539,7 +539,7 @@ if __name__ == '__main__':
             print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
             print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-            results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep = lvl_sep, n_levels, n_iter = 1000, verbose = False )
+            results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, n_iter = 1000, verbose = False )
 
             print('WAVSEP |     LVL = %d      |      LVL = %d      |      LVL = %d      |' %(lvl_sep - 1, lvl_sep, lvl_sep + 1))
             print('WAVSEP |   Flux ICL = %1.3e   |    Flux ICL = %1.3e   |    Flux ICL = %1.3e   |  ' %( results_wavsep[3], results_wavsep[4], results_wavsep[5] ) )
