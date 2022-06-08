@@ -103,12 +103,12 @@ def average_size_atom( ol, n_levels ):
         if len(sx[i]) == 1.:
             dsx = 0.
         else:
-            dsx = ( np.mean( sx[i] ) - np.mean( sx[i+1] ) ) / 2**i
+            dsx = ( np.mean( sx[i+1] ) - np.mean( sx[i] ) ) / 2**i
 
         if len(sy[i]) == 1.:
             dsy = 0.
         else:
-            dsy = ( np.mean( sy[i] ) - np.mean( sy[i+1] ) ) / 2**i
+            dsy = ( np.mean( sy[i+1] ) - np.mean( sy[i] ) ) / 2**i
 
         # Append to data set
         data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), lowx, upx, lowy, upy, np.std(sx[i]), \
