@@ -80,9 +80,12 @@ def read_image_atoms( nfp, verbose = False ):
 
 def average_size_atom( ol, n_levels ):
 
+    # Paths, lists & variables
     sx = list( np.zeros( ( n_levels, 1 ) ))
     sy = list( np.zeros( ( n_levels, 1 ) ))
+    data = []
 
+    # Group atoms per wavelet scale
     for o in ol:
         x_min, y_min, x_max, y_max = o.bbox
         xs = x_max - x_min
@@ -90,19 +93,30 @@ def average_size_atom( ol, n_levels ):
         sx[o.level] = np.append( sx[o.level], xs )
         sy[o.level] = np.append( sy[o.level], ys )
 
-    data = []
     for i in range(n_levels):
+
+        # Bootstrap percentiles on size
         lowx, upx = bootstrap_error( sx[i], 1000, alpha = 0.95  )
         lowy, upy = bootstrap_error( sy[i], 1000, alpha = 0.95  )
+
+        # Normalized derivative
+        if not sx[i]:
+            dsx = 0.
+        else:
+            dsx = ( np.mean( sx[i] ) - np.mean( sx[i+1] ) ) / 2**i
+
+        if not sy[i]:
+            dsy = 0.
+        else:
+            dsy = ( np.mean( sy[i] ) - np.mean( sy[i+1] ) ) / 2**i
+
+        # Append to data set
         data.append( [ i, 2**i, np.mean(sx[i]), np.mean(sy[i]), lowx, upx, lowy, upy, np.std(sx[i]), \
                         np.std(sy[i]), np.median(sx[i]), np.median(sy[i]), \
                         median_absolute_deviation(sx[i]), median_absolute_deviation(sy[i]), np.mean(sx[i] / 2**i), \
-                        np.mean(sy[i] / 2**i), np.std(sx[i] / 2**i), np.std(sy[i] / 2**i) ] )
+                        np.mean(sy[i] / 2**i), np.std(sx[i] / 2**i), np.std(sy[i] / 2**i), dsx, dsy ] )
 
-    for i in range(n_levels - 1):
-        data[i].append( (data[i+1][2] - data[i][2]) / 2**i )
-        data[i].append( (data[i+1][3] - data[i][3]) / 2**i )
-
+    # Parse data set into dataframe
     df = pd.DataFrame( data, columns = [ 'z', 'sz', '<sx>', '<sy>', 'low<sx>', 'up<sx>', 'low<sy>', 'up<sy>', 'std(sx)', 'std(sy)', \
                                         'med(sx)', 'med(sy)', 'mad(sx)', 'mad(sy)', '<sx_n>', \
                                         '<sy_n>', 'std(sx_n)', 'std(sy_n)', 'dsx_n', 'dsy_n'] )
