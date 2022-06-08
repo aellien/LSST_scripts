@@ -142,7 +142,7 @@ def derivative( sizes, start, end ):
 
     ds = []
 
-    for i range(start, end - 1):
+    for i in range(start, end - 1):
 
         if ( sizes[i] == 0. ) and ( sizes[ i + 1] == 0. ):
             ds.append(0.)
