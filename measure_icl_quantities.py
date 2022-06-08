@@ -33,7 +33,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_it
     lvl_sx = np.argmax( df_sizes['dsx_n'][2:] ) + 2
     lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
 
-    lvl_sep = np.argmax(  ( df_sizes['dsx_n'][2:] + df_sizes['dsy_n'][2:] ) / 2  )
+    lvl_sep = np.argmax(  ( df_sizes['dsx_n'][2:] + df_sizes['dsy_n'][2:] ) / 2  ) + 2
 
     # Get mean size of size derivative maximum
     sx = df_sizes['<sx>'][lvl_sep]
