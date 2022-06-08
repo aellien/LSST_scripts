@@ -10,33 +10,30 @@ from atom_props import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
+def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_iter = 1000, pdf = 'uniform', verbose = False ):
 
-    # path, list & variables
-    res = np.zeros( (xs, ys) )
+    # Paths, list & variables
+    flux_icl_l   = []
+    err_wr_icl_l = []
+    flux_gal_l   = []
+    err_wr_gal_l = []
+    frac_icl_l   = []
+    data_atom    = []
 
-    rim = np.zeros( (xs, ys) )
-    unclass = np.zeros( (xs, ys) )
-
-    lres = []
-    licl = []
-    luicl = []
-    lgal = []
-    lrim = []
-    lunclass = []
-
-    rdc_array = np.zeros( (xs, ys, n_levels) )
-
-    xc = xs / 2.
-    yc = ys / 2.
-
+    # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
-    df_sizes = average_size_atom( ol, n_levels )
-    print(df_sizes)
 
+    # Compute mean size
+    df_sizes = average_size_atom( ol, n_levels )
+
+    if verbose:
+        print(df_sizes)
+
+    # Find wavelet scale of size derivative maximum
     lvl_sx = np.argmax( df_sizes['dsx_n'][2:] ) + 2
     lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
 
+    # Get mean size of size derivative maximum
     sx = df_sizes['<sx>'][lvl_sx]
     low_sx = df_sizes['low<sx>'][lvl_sx]
     up_sx = df_sizes['up<sx>'][lvl_sx]
@@ -55,46 +52,47 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
         low_sy = df_sizes['low<sy>'][lvl_sy +1]
         up_sy = df_sizes['up<sy>'][lvl_sy +1]
 
-    print(lvl_sx, sx, low_sx, up_sx)
-    print(lvl_sy, sy, low_sy, up_sy)
+    if verbose:
+        print( 'x axis | level = %d  | <sx> = %d pix | low<sx> = %d | up<sx> = %d ' %(lvl_sx, sx, low_sx, up_sx))
+        print( 'y axis | level = %d  | <sx> = %d pix | low<sy> = %d | up<sy> = %d ' %(lvl_sy, sy, low_sy, up_sy))
 
-    afs = []
+    # Store atom properties of interest in numpy array for speed up compuatations
     for j, o in enumerate(ol):
         x_min, y_min, x_max, y_max = o.bbox
         if o.level >= lvl_sep_big:
-            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            data_atom.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
-            afs.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
-    afs = np.array(afs)
+            data_atom.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+    data_atom = np.array(data_atom)
 
-    n_iter = 1000
-    flux_icl_l = []
-    err_wr_icl_l = []
-    flux_gal_l = []
-    err_wr_gal_l = []
-    frac_icl_l = []
-
+    # Monte Carlo sampling
     for k in range( n_iter ):
 
-        # ksx = np.random.normal( sx, 0.1 * sx  )
-        # ksy = np.random.normal( sy, 0.1 * sy  )
+        # Draw instance
+        if pdf == 'normal':
+            sig = 0.1
+            ksx = np.random.normal( sx, sig * sx  )
+            ksy = np.random.normal( sy, sig * sy  )
+            print('Normal distribution, assuming std = %f x average size' %(sig))
 
-        ksx = np.random.uniform( low_sx, up_sx  )
-        ksy = np.random.uniform( low_sy, up_sy  )
+        elif pdf == 'uniform':
+            ksx = np.random.uniform( low_sx, up_sx  )
+            ksy = np.random.uniform( low_sy, up_sy  )
 
-        x1 = np.where( afs[:,0] >= ksx )[0]
-        x2 = np.where( afs[:,1] >= ksy )[0]
-        xicl = np.unique( np.append(x1, x2) )
-        mask = np.zeros( afs[:,0].shape, dtype='bool')
+        # Atom size separation
+        x1 = np.where( data_atom[:,0] >= ksx )[0]
+        x2 = np.where( data_atom[:,1] >= ksy )[0]
+        xicl = np.unique( np.append( x1, x2 ) )
+        mask = np.zeros( data_atom[:,0].shape, dtype = 'bool')
         mask[xicl] = True
-        flux_icl = np.sum(afs[xicl][:,2])
+
+        # ICL flux
+        flux_icl = np.sum(data_atom[xicl][:,2])
         #err_wr_icl = np.sqrt( np.sum( afs[xicl][:, 5]**2 ))
 
-        #x1 = np.where( afs[:,0] < ksx )[0]
-        #x2 = np.where( afs[:,1] < ksy )[0]
-        #xgal = np.unique( np.append(x1, x2) )
+        # Galaxy flux
         xgal = np.where(mask == False)[0]
-        flux_gal = np.sum(afs[xgal][:,2])
+        flux_gal = np.sum(data_atom[xgal][:,2])
         #err_wr_gal = np.sqrt( np.sum( afs[xgal][:, 5]**2 ))
 
         flux_icl_l.append( flux_icl )
@@ -102,8 +100,6 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc
         flux_gal_l.append( flux_gal )
         #err_wr_gal_l.append( err_wr_gal )
         frac_icl_l.append( flux_icl / ( flux_icl + flux_gal) )
-
-        #print( k, ksx, ksy, np.size(xicl), np.size(xgal), flux_icl, flux_gal,flux_icl / ( flux_icl + flux_gal)  )
 
     return flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l
 
