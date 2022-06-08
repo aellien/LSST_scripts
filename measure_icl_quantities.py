@@ -33,24 +33,26 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_it
     lvl_sx = np.argmax( df_sizes['dsx_n'][2:] ) + 2
     lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
 
+    lvl_sep = np.argmax(  ( df_sizes['dsx_n'][2:] + df_sizes['dsy_n'][2:] ) / 2  )
+
     # Get mean size of size derivative maximum
-    sx = df_sizes['<sx>'][lvl_sx]
-    low_sx = df_sizes['low<sx>'][lvl_sx]
-    up_sx = df_sizes['up<sx>'][lvl_sx]
+    sx = df_sizes['<sx>'][lvl_sep]
+    low_sx = df_sizes['low<sx>'][lvl_sep]
+    up_sx = df_sizes['up<sx>'][lvl_sep]
 
     if sx == 0.:
-        sx = df_sizes['<sx>'][lvl_sx + 1]
-        low_sx = df_sizes['low<sx>'][lvl_sx + 1]
-        up_sx = df_sizes['up<sx>'][lvl_sx + 1]
+        sx = df_sizes['<sx>'][lvl_sep + 1]
+        low_sx = df_sizes['low<sx>'][lvl_sep + 1]
+        up_sx = df_sizes['up<sx>'][lvl_sep + 1]
 
-    sy = df_sizes['<sy>'][lvl_sy]
-    low_sy = df_sizes['low<sy>'][lvl_sy]
-    up_sy = df_sizes['up<sy>'][lvl_sy]
+    sy = df_sizes['<sy>'][lvl_sep]
+    low_sy = df_sizes['low<sy>'][lvl_sep]
+    up_sy = df_sizes['up<sy>'][lvl_sep]
 
     if sy == 0.:
-        sy = df_sizes['<sx>'][lvl_sy +1]
-        low_sy = df_sizes['low<sy>'][lvl_sy +1]
-        up_sy = df_sizes['up<sy>'][lvl_sy +1]
+        sy = df_sizes['<sx>'][lvl_sep +1]
+        low_sy = df_sizes['low<sy>'][lvl_sep +1]
+        up_sy = df_sizes['up<sy>'][lvl_sep +1]
 
     if verbose:
         print( 'x axis | level = %d  | <sx> = %d pix | low<sx> = %d | up<sx> = %d ' %(lvl_sx, sx, low_sx, up_sx))

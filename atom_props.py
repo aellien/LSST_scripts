@@ -78,7 +78,7 @@ def read_image_atoms( nfp, verbose = False ):
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def average_size_atom( ol, n_levels ):
+def average_size_atom( ol, n_levels, n_iter = 1000, alpha = 0.95 ):
 
     # Paths, lists & variables
     sx = list( np.zeros( ( n_levels, 1 ) ))
@@ -96,8 +96,8 @@ def average_size_atom( ol, n_levels ):
     for i in range(n_levels):
 
         # Bootstrap percentiles on size
-        lowx, upx = bootstrap_error( sx[i], 1000, alpha = 0.95  )
-        lowy, upy = bootstrap_error( sy[i], 1000, alpha = 0.95  )
+        lowx, upx = bootstrap_error( sx[i], n_iter, alpha = alpha  )
+        lowy, upy = bootstrap_error( sy[i], n_iter, alpha = alpha  )
 
         # Normalized derivative
         if len(sx[i]) == 1.:
