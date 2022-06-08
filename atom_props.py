@@ -142,24 +142,14 @@ def derivative( sizes, start, end ):
 
     ds = []
 
-    for i in range(start, end - 1):
+    for i range(start, end - 1):
 
-        if ( sizes[i] == 0. ) and ( sizes[ i + 1] == 0. ):
-            ds.append(0.)
+        if sizes[i] == 0.:
 
-        elif ( sizes[i] == 0. ) and ( sizes[ i + 1] != 0. ):
-            if ( i >= 1 ) and ( sizes[i - 1] != 0. ):
-                ds.append( ( sizes[i + 1] - sizes[i - 1] ) / 2**i )
-            else:
-                ds.append(0.)
-
-        elif ( sizes[i] != 0. ) and ( sizes[ i + 1] == 0. ):
-            if ( i < end - 2 ) and ( sizes[i + 2] != 0. ):
-                ds.append( ( sizes[i + 2] - sizes[i] ) / 2**i )
-            else:
-                ds.append(0.)
+            ds.append( 0. )
 
         else:
+
             ds.append( ( sizes[i+1] - sizes[i] ) / 2**i )
 
     ds = np.array( ds )
