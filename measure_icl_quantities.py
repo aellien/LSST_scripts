@@ -143,6 +143,8 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 
+    atom_gal = np.array(atom_gal)
+    atom_icl = np.array(atom_icl)
     flux_up_icl = np.sum( atom_icl[:,2] )
     flux_up_gal = np.sum( atom_gal[:,2] )
     frac_up_icl = flux_up_icl / ( flux_up_gal + flux_up_icl )
@@ -163,6 +165,8 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 
+    atom_gal = np.array(atom_gal)
+    atom_icl = np.array(atom_icl)
     flux_low_icl = np.sum( atom_icl[:,2] )
     flux_low_gal = np.sum( atom_gal[:,2] )
     frac_low_icl = flux_low_icl / ( flux_low_gal + flux_low_icl )
