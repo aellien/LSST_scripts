@@ -2,9 +2,9 @@
 #
 # HorizonAGN  Hydrangea  Magneticum  TNG-100
 
-path="/n03data/ellien/LSST_ICL/simulations/out2"
+path="/n03data/ellien/LSST_ICL/simulations" #out3
 
-for dir in Hydrangea
+for dir in out3
 do
     #for file in $path/$dir/*norm.fits
     for file in $path/$dir/*norm.fits
