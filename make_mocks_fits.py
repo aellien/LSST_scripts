@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
         image_dir = os.path.join( path_data, dir )
         print(image_dir)
-        image_files = glob.glob(image_dir+'/*.hdf5')
+        image_files = glob.glob(image_dir+'/*001[57]*.hdf5')
         image_i = 0
         mu_lim = 30.3 # limiting SB, 3 sigma 10" X 10"
 
