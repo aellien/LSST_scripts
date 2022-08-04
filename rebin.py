@@ -48,10 +48,10 @@ def rebin_fits(FILENAME,XBIN=2,YBIN=2):
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
+    path_data = '/n03data/ellien/LSST_ICL/simulations/out4/'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
 
-    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+    dirl = ['TNG-100']
 
     for dir in dirl:
 
@@ -60,4 +60,4 @@ if __name__ == '__main__':
 
         for im in image_files:
 
-            rebin_fits( im, XBIN = 8, YBIN = 8)
+            rebin_fits( im, XBIN = 4, YBIN = 4)
