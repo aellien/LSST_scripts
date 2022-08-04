@@ -7,10 +7,10 @@ import glob
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/n03data/ellien/LSST_ICL/simulations/out4/'
+    path_data = '/n03data/ellien/LSST_ICL/simulations/' #out3
     path_scripts = '/home/ellien/LSST_ICL/scripts'
 
-    dirl = [ 'TNG-100']
+    dirl = [ 'out3']
 
     for dir in dirl:
 
