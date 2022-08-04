@@ -25,10 +25,11 @@ def make_img_map(img, mu_lim=32, pixel_size=0.2, rng=[22,36]):
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
+    path_data = '/n03data/ellien/LSST_ICL/simulations/out2'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
+    path_output = '/n03data/ellien/LSST_ICL/simulations/out4'
 
-    dirl = [ 'Hydrangea', 'Magneticum', 'TNG-100']
+    dirl = ['TNG-100']
 
     for dir in dirl:
 
@@ -36,7 +37,7 @@ if __name__ == '__main__':
         print(image_dir)
         image_files = glob.glob(image_dir+'/*.hdf5')
         image_i = 0
-        mu_lim = 30 # limiting SB, 3 sigma 10" X 10"
+        mu_lim = 30.3 # limiting SB, 3 sigma 10" X 10"
 
         make_png = False
         make_fits = True
@@ -44,19 +45,23 @@ if __name__ == '__main__':
         print(image_files)
 
         for image_file in image_files:
+
+            print(image_file)
             with h5py.File(image_file, 'r') as f:
                 image = f['image'][()]
 
             imgplot, imgflux = make_img_map(image, mu_lim=mu_lim, rng=[22,mu_lim+3])
 
             if make_png:
-                imgname = image_files[0][-33:-5]+'.png'
+                imgname = image_files[0][:-5]+'.png'
                 image_plot = Image.fromarray(np.uint8(downscale_local_mean(imgplot,(4,4))))
                 image_plot.save(imgname)
 
             if make_fits:
                 # produce fits image with scaling so that -2.5 log10(f) gives AB magnitudes
-                fitsname = image_file[-33:-5]+'_mu%d.fits' %(mu_lim)
+                fitsname = image_file[:-5]+'_mu%2.1f.fits' %(mu_lim)
                 hdu = fits.PrimaryHDU(imgflux)
                 hdul = fits.HDUList([hdu])
                 hdul.writeto( os.path.join( image_dir, fitsname ), overwrite = True )
+
+            print('done')

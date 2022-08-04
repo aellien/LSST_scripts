@@ -48,7 +48,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_it
         print( 'x axis | level = %d  | <sx> = %d pix | low<sx> = %d | up<sx> = %d ' %(lvl_sep, sx, low_sx, up_sx))
         print( 'y axis | level = %d  | <sx> = %d pix | low<sy> = %d | up<sy> = %d ' %(lvl_sep, sy, low_sy, up_sy))
 
-    # Store atom properties of interest in numpy array for speed up compuatations
+    # Store atom properties of interest in numpy array for speed up computations
     for j, o in enumerate(ol):
         x_min, y_min, x_max, y_max = o.bbox
         if o.level >= lvl_sep_big:
