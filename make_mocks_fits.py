@@ -29,13 +29,13 @@ if __name__ == '__main__':
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_output = '/n03data/ellien/LSST_ICL/simulations/out4'
 
-    dirl = ['TNG-100']
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum']
 
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
         print(image_dir)
-        image_files = glob.glob(image_dir+'/*001[57]*.hdf5')
+        image_files = glob.glob(image_dir+'/*.hdf5')
         image_i = 0
         mu_lim = 30.3 # limiting SB, 3 sigma 10" X 10"
 
@@ -62,6 +62,6 @@ if __name__ == '__main__':
                 fitsname = image_file[:-5]+'_mu%2.1f.fits' %(mu_lim)
                 hdu = fits.PrimaryHDU(imgflux)
                 hdul = fits.HDUList([hdu])
-                hdul.writeto( os.path.join( image_dir, fitsname ), overwrite = True )
+                hdul.writeto( os.path.join( path_output, fitsname ), overwrite = True )
 
             print('done')

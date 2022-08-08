@@ -6,11 +6,11 @@ import glob
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/home/ellien/LSST_ICL/simulations/out2/'
+    path_data = '/home/ellien/LSST_ICL/simulations/out3/'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
-    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out2/'
+    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out3/'
 
-    dirl = ['Hydrangea']
+    dirl = ['2Mpc']
 
     framerate = 3
 
