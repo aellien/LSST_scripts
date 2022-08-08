@@ -3,9 +3,9 @@ import dawis
 import sys
 import shutil
 
-indir = os.path.join( '/n03data/ellien/LSST_ICL/simulations/out3/', sys.argv[2] )
+indir = os.path.join( '/n03data/ellien/LSST_ICL/simulations/out4/', sys.argv[2] )
 infile = sys.argv[1]
-outdir = os.path.join( '/n03data/ellien/LSST_ICL/wavelets/out3/', sys.argv[2], 'run1' )
+outdir = os.path.join( '/n03data/ellien/LSST_ICL/wavelets/out4/', sys.argv[2], 'run1' )
 n_cpus = 4 # Number of CPUs
 tau = 0.1   # Relative Threshold /!\ different des autres simus
 gamma = 0.8   # Attenuation (CLEAN) factor
