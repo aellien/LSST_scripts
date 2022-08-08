@@ -2,7 +2,7 @@
 #PBS -o /home/ellien/LSST_ICL/logs/icl_LSST_${dir}_${ncl}.out
 #PBS -j oe
 #PBS -N icl_LSST
-#PBS -l nodes=1:ppn=4,walltime=24:00:00
+#PBS -l nodes=1:ppn=4,walltime=47:00:00
 #PSB -S /bin/bash
 
 module load intelpython/3-2020.4
