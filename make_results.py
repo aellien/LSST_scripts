@@ -1,5 +1,5 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# Last modif: 08/2021
+# Last modif: 08/2022
 # Author: Amael Ellien
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Modules
@@ -23,11 +23,7 @@ from atom_props import *
 from measure_icl_quantities import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
+def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3, dislay = True ):
 
     # path, list & variables
     gal = np.zeros( (xs, ys) )
@@ -49,19 +45,23 @@ def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3 ):
     for r in reg:
         cat.append( [ r.centroid[1], r.centroid[0] ] )
 
-    #fig, ax = plt.subplots( 1, 3 )
-    #ax[0].imshow( oim, norm = ImageNormalize( gal, \
-    #                                  interval = MinMaxInterval(), \
-    #                                  stretch = LogStretch()) )
+    if display == True:
 
-    #ax[1].imshow( gal, norm = ImageNormalize( gal, \
-    #                                  interval = MinMaxInterval(), \
-    #                                  stretch = LogStretch()) )
-    #ax[2].imshow( sup2 )
+        fig, ax = plt.subplots( 1, 3 )
+        ax[0].imshow( oim, norm = ImageNormalize( gal, \
+                                          interval = MinMaxInterval(), \
+                                          stretch = LogStretch()) )
 
-    #for r in reg2:
-    #    ax[0].plot( r.centroid[1], r.centroid[0], 'r+' )
-    #    ax[1].plot( r.centroid[1], r.centroid[0], 'r+' )
+        ax[1].imshow( gal, norm = ImageNormalize( gal, \
+                                          interval = MinMaxInterval(), \
+                                          stretch = LogStretch()) )
+        ax[2].imshow( sup2 )
+
+        for r in reg2:
+            ax[0].plot( r.centroid[1], r.centroid[0], 'r+' )
+            ax[1].plot( r.centroid[1], r.centroid[0], 'r+' )
+
+        plt.show()
 
     return np.array(cat)
 
