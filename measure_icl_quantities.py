@@ -113,10 +113,10 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
             if o.level >= lvl_sep:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
             else:
-                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
             if o.level >= lvl_sep:
-                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 
@@ -136,10 +136,10 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
             if o.level >= lvl_sep - 1:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
             else:
-                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
             if o.level >= lvl_sep - 1:
-                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 
@@ -158,10 +158,10 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
             if o.level >= lvl_sep + 1:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
             else:
-                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
             if o.level >= lvl_sep + 1:
-                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 

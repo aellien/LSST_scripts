@@ -168,8 +168,9 @@ def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ri
     return rdc, gal, iclbcg, res, rim
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
-
+def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels ):
+    '''Simple separation based on wavelet scale, given by parameter 'n_lvl'.
+    '''
     # path, list & variables
     res = np.zeros( (xs, ys) )
     icl = np.zeros( (xs, ys) )
@@ -194,137 +195,38 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
     yc = ys / 2.
 
     # Read atoms
-    nf = nf[:-4]
-    nfl = ''.join( (nf, 'ol.*') )
-    rimpath = os.path.join(path_wavelets, nfl)
-    grimpath = glob.glob(rimpath)
-    grimpath.sort()
+    ol, itl = read_image_atoms( nfp, verbose = True )
 
-    moim = np.max(oim)
-    for i, it in enumerate( grimpath ):
+    for j, object in enumerate(ol):
 
-        #print(it)
-        ol = d.read_objects_from_pickle( it )
-        itl = d.read_interscale_trees_from_pickle( os.path.join( path_wavelets, \
-                                    ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ) )
-        atom = np.zeros(oim.shape)
-        #print(os.path.join( path_wavelets, \
-        #                            ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ))
-        for j, object in enumerate(ol):
+        x_min, y_min, x_max, y_max = object.bbox
+        lvlo = object.level
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
 
-            x_min, y_min, x_max, y_max = object.bbox
-            lvlo = object.level
-            xco = itl[j].interscale_maximum.x_max
-            yco = itl[j].interscale_maximum.y_max
+        flag_icl = False
+        flag_gal = False
+        flag_uicl = False
 
-            flag_icl = False
-            flag_gal = False
-            flag_uicl = False
+        if object.level >= lvl_sep_big:
 
-            if object.level >= lvl_sep_big:
-
-                if object.level >= n_hard_icl:
-
-                    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
-
-                        icl[ x_min : x_max, y_min : y_max ] += object.image
-                        flag_icl = True
-
-                        if object.level >= n_hard_icl + 1:
-                            uicl[ x_min : x_max, y_min : y_max ] += object.image
-
-                else:
-
-                    gal[ x_min : x_max, y_min : y_max ] += object.image
-                    atom_gal.append(object)
-                    coo_gal.append([xco, yco])
-
-                    ## galaxies
-                    #for pos in cat:
-                    #    if np.sqrt( ( xco - pos[1] )**2 + ( yco - pos[0] )**2 ) <= rc:
-                    #        gal1[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                    #        flag_gal = True
-                    #        break
-
-                    #if flag_gal == False:
-
-                    #    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
-
+            if object.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += object.image
             else:
+                gal[ x_min : x_max, y_min : y_max ] += object.image
 
-                #if x_max - x_min >= 2**(n_hard_icl) or y_max - y_min >= 2**(n_hard_icl):
+        else:
 
-                #    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
-
-                #        icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                #        flag_icl = True
-
-                #else:
-
+            if object.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+            else:
                 gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                atom_gal.append(object)
-                coo_gal.append([xco, yco])
-                flag_gal = True
 
-            # all objects datacube
-            if object.level >= lvl_sep_big:
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
-            else:
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+        if object.level >= lvl_sep_big:
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
+        else:
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
 
-
-    bcg = np.copy(gal)
-
-    for i, ogal in enumerate(atom_gal):
-
-        x_min, y_min, x_max, y_max = ogal.bbox
-        xco, yco = coo_gal[i]
-        lvlo = ogal.level
-
-        if lvlo <= 4:
-
-            if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > rc * 2**(lvlo-1):
-
-                if x_max - x_min <= 300 or y_max - y_min <= 300:
-
-                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-                elif np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > ricl:
-
-                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-    satgal = np.copy(gal)
-    satgal -= bcg
-    iclbcg = np.copy(icl)
-    iclbcg += bcg
-    #iclbcg = np.copy(icl)
-    #satgal = np.copy(gal)
-
-    #sizes = average_size_atom(atom_gal, n_levels)
-
-    #for i, ogal in enumerate(atom_gal):
-
-    #    x_min, y_min, x_max, y_max = ogal.bbox
-    #    xco, yco = coo_gal[i]
-    #    lvlo = ogal.level
-
-    #    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc * 2**(lvlo-1):
-
-    #        if ogal.level >= lvl_sep_big:
-    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image
-    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image
-    #        else:
-    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image * gamma
-    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-    #    elif x_max - x_min >= 2**(n_hard_icl) or y_max - y_min >= 2**(n_hard_icl):
-
-    #        if ogal.level >= lvl_sep_big:
-    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image
-    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image
-    #        else:
-    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image * gamma
-    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
     rim = np.sum( rdc_array, axis = 2 )
@@ -332,31 +234,20 @@ def make_results_hardsep( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl,
 
     # write to fits
     hduo = fits.PrimaryHDU(res)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.residuals.fits') )), overwrite = True )
+    hduo.writeto( nfp + 'results.residuals.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(icl)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.icl.hardsep.fits') )), overwrite = True )
+    hduo.writeto( nfp + 'results.icl.wavsep.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(gal)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.hardsep.fits') )), overwrite = True )
-
-    hduo = fits.PrimaryHDU(uicl)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.uicl.hardsep.fits') )), overwrite = True )
+    hduo.writeto( nfp + 'results.gal.wavsep.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(rim)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.rim.fits') )), overwrite = True )
+    hduo.writeto( nfp + 'results.rim.fits', overwrite = True )
 
-    hduo = fits.PrimaryHDU(satgal)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.hardsepBCG.fits') )), overwrite = True )
+    return rdc, icl, gal, res, rim
 
-    hduo = fits.PrimaryHDU(iclbcg)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.iclbcg.hardsepBCG.fits') )), overwrite = True )
-
-    #rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
-
-    return rdc, icl, gal, uicl, res, rim
-
-
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
 
     # path, list & variables
@@ -488,24 +379,120 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, y
 
     return rdc, icl, gal, res, rim
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def trash():
+
+    '''
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
+
+                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                    flag_icl = True
+
+                    if object.level >= n_hard_icl + 1:
+                        uicl[ x_min : x_max, y_min : y_max ] += object.image
+            else:
+                gal[ x_min : x_max, y_min : y_max ] += object.image
+                atom_gal.append(object)
+                coo_gal.append([xco, yco])
+                ## galaxies
+                #for pos in cat:
+                #    if np.sqrt( ( xco - pos[1] )**2 + ( yco - pos[0] )**2 ) <= rc:
+                #        gal1[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                #        flag_gal = True
+                #        break
+                #if flag_gal == False:
+                #    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+        else:
+            #if x_max - x_min >= 2**(n_hard_icl) or y_max - y_min >= 2**(n_hard_icl):
+            #    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
+            #        icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+            #        flag_icl = True
+            #else:
+            gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+            atom_gal.append(object)
+            coo_gal.append([xco, yco])
+            flag_gal = True
+        # all objects datacube
+        if object.level >= lvl_sep_big:
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
+        else:
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+
+
+    bcg = np.copy(gal)
+
+    for i, ogal in enumerate(atom_gal):
+
+        x_min, y_min, x_max, y_max = ogal.bbox
+        xco, yco = coo_gal[i]
+        lvlo = ogal.level
+
+        if lvlo <= 4:
+
+            if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > rc * 2**(lvlo-1):
+
+                if x_max - x_min <= 300 or y_max - y_min <= 300:
+
+                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+                elif np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > ricl:
+
+                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+    satgal = np.copy(gal)
+    satgal -= bcg
+    iclbcg = np.copy(icl)
+    iclbcg += bcg
+    '''
+    #iclbcg = np.copy(icl)
+    #satgal = np.copy(gal)
+
+    #sizes = average_size_atom(atom_gal, n_levels)
+
+    #for i, ogal in enumerate(atom_gal):
+
+    #    x_min, y_min, x_max, y_max = ogal.bbox
+    #    xco, yco = coo_gal[i]
+    #    lvlo = ogal.level
+
+    #    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc * 2**(lvlo-1):
+
+    #        if ogal.level >= lvl_sep_big:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image
+    #        else:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image * gamma
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+    #    elif x_max - x_min >= 2**(n_hard_icl) or y_max - y_min >= 2**(n_hard_icl):
+
+    #        if ogal.level >= lvl_sep_big:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image
+    #        else:
+    #            iclbcg[ x_min : x_max, y_min : y_max ] += ogal.image * gamma
+    #            satgal[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+    return None
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/n03data/ellien/LSST_ICL/simulations/out2/'
+    path_data = '/home/ellien/LSST_ICL/simulations/out3/'
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
-    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out2/'
+    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out3/'
 
-    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+    dirl = ['2Mpc']
 
-    gamma = 0.5
+    gamma = 0.8
     n_levels = 11
-    lvl_sep_big = 5
-    lvl_sep = 5
-    n_hard_icl = 5
-    pixscale = 1.6 # ''/pixel
+    lvl_sep_big = 6
+    lvl_sep = 4
+    pixscale = 0.4 # ''/pixel
     physscale = 1 # kpc/''
     rc = 20 # pixels, distance to center to be classified as gal
-    ricl = 650 # pixels, distance to center to be classified as ICL
+    ricl = 500 # pixels, distance to center to be classified as ICL
 
     flag = False
     for dir in dirl:
@@ -528,7 +515,7 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
 
-            #rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
+            rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
             flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l = measure_icl_quantities_sizesep(  oim, nfp, gamma, lvl_sep_big, n_levels, n_iter = 1000, pdf = 'uniform', verbose = True )
 
             lowFicl, upFicl = bootstrap_error( np.array(flux_icl_l), 1000, alpha = 0.95  )
@@ -539,9 +526,10 @@ if __name__ == '__main__':
             print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
             print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-            results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, n_iter = 1000, verbose = False )
+            rdc, icl, gal, res, rim = make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels )
+            results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, n_iter = 1000, verbose = False )
 
-            print('WAVSEP | LVL = %d              | LVL = %d            | LVL = %d         |' %(lvl_sep - 1, lvl_sep, lvl_sep + 1))
+            print('WAVSEP | LVL = %d              | LVL = %d              | LVL = %d            |' %(lvl_sep - 1, lvl_sep, lvl_sep + 1))
             print('WAVSEP | Flux ICL = %1.3e | Flux ICL = %1.3e | Flux ICL = %1.3e |  ' %( results_wavsep[3], results_wavsep[0], results_wavsep[6] ) )
             print('WAVSEP | Flux gal = %1.3e | Flux gal = %1.3e | Flux gal = %1.3e |  ' %(results_wavsep[4], results_wavsep[1], results_wavsep[7] ) )
             print('WAVSEP | Fraction ICL = %1.3f | Fraction ICL = %1.3f |  Fraction ICL = %1.3f | ' %(results_wavsep[5], results_wavsep[2], results_wavsep[8] ) )
