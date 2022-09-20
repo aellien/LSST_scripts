@@ -520,12 +520,12 @@ if __name__ == '__main__':
                 print('WAVSEP | Flux gal = %1.3e | Flux gal = %1.3e | Flux gal = %1.3e |  ' %(results_wavsep[4], results_wavsep[1], results_wavsep[7] ) )
                 print('WAVSEP | Fraction ICL = %1.3f | Fraction ICL = %1.3f |  Fraction ICL = %1.3f | ' %(results_wavsep[5], results_wavsep[2], results_wavsep[8] ) )
 
-                if flag == False:
-                    results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
-                    flag = True
-                else:
-                    newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
-                    results = pd.concat( [ results, newresults], ignore_index=True)
+                #if flag == False:
+                #    results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
+                #    flag = True
+                #else:
+                #    newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
+                #    results = pd.concat( [ results, newresults], ignore_index=True)
 
                 rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
 
