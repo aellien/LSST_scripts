@@ -66,7 +66,7 @@ def make_galaxy_catalog( oim, nf, n_levels, n_sig_gal = 50, level_gal = 3, disla
     return np.array(cat)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
+def make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
 
     # path, list & variables
     res = np.zeros( (xs, ys) )
@@ -80,70 +80,55 @@ def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ri
     yc = ys / 2.
 
     # Read atoms
-    nf = nf[:-4]
-    nfl = ''.join( (nf, 'ol.*') )
-    rimpath = os.path.join(path_wavelets, nfl)
-    grimpath = glob.glob(rimpath)
-    grimpath.sort()
+    ol, itl = read_image_atoms( nfp, verbose = True )
+    for j, object in enumerate(ol):
 
-    moim = np.max(oim)
-    for i, it in enumerate( grimpath ):
+        x_min, y_min, x_max, y_max = object.bbox
+        lvlo = object.level
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
 
-        print(it)
-        ol = d.read_objects_from_pickle( it )
-        itl = d.read_interscale_trees_from_pickle( os.path.join( path_wavelets, \
-                                    ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ) )
-        atom = np.zeros(oim.shape)
-        print(os.path.join( path_wavelets, \
-                                    ''.join( (nf, 'itl.it%03d.pkl'%(i+1)) ) ))
-        for j, object in enumerate(ol):
+        flag_iclbcg = False
+        flag_gal = False
 
-            x_min, y_min, x_max, y_max = object.bbox
-            lvlo = object.level
-            xco = itl[j].interscale_maximum.x_max
-            yco = itl[j].interscale_maximum.y_max
+        if object.level >= lvl_sep_big:
 
-            flag_iclbcg = False
-            flag_gal = False
+            if object.level >= n_hard_icl:
 
-            if object.level >= lvl_sep_big:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
 
-                if object.level >= n_hard_icl:
-
-                    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
-
-                        iclbcg[ x_min : x_max, y_min : y_max ] += object.image
-                        flag_iclbcg = True
-
-                else:
-
-                    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                        iclbcg[ x_min : x_max, y_min : y_max ] += object.image
-                        flag_iclbcg = True
+                    iclbcg[ x_min : x_max, y_min : y_max ] += object.image
+                    flag_iclbcg = True
 
             else:
 
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
+                    iclbcg[ x_min : x_max, y_min : y_max ] += object.image
+                    flag_iclbcg = True
+
+        else:
+
+            if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
+                iclbcg[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                flag_iclbcg = True
+
+            elif x_max - x_min >= 2**(8) or y_max - y_min >= 2**(8):
+
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
+
                     iclbcg[ x_min : x_max, y_min : y_max ] += object.image * gamma
                     flag_iclbcg = True
 
-                elif x_max - x_min >= 2**(8) or y_max - y_min >= 2**(8):
-
-                    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
-
-                        iclbcg[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                        flag_iclbcg = True
-
-                else:
-
-                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-                    flag_gal = True
-
-            # all objects datacube
-            if object.level >= lvl_sep_big:
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
             else:
-                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+
+                gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                flag_gal = True
+
+        # all objects datacube
+        if object.level >= lvl_sep_big:
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
+        else:
+            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
 
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
@@ -152,16 +137,16 @@ def make_results_hardsepBCG( oim, path_wavelets, lvl_sep_big, n_hard_icl, rc, ri
 
     # write to fits
     hduo = fits.PrimaryHDU(res)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.residuals.fits') )), overwrite = True )
+    hduo.writeto(nfp + 'results.residuals.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(gal)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.hardsepBCG.fits') )), overwrite = True )
+    hduo.writeto(nfp + 'results.gal.hardsepBCG.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(iclbcg)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.iclbcg.hardsepBCG.fits') )), overwrite = True )
+    hduo.writeto(nfp + 'results.iclbcg.hardsepBCG.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(rim)
-    hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.rim.fits') )), overwrite = True )
+    hduo.writeto(nfp + 'results.rim.fits', overwrite = True )
 
     #rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
 
