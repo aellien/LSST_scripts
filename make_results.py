@@ -545,6 +545,6 @@ if __name__ == '__main__':
                 rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels )
 
                 print('HARDSEPBCG | LVL = %d ' %lvl_sep)
-                print('HARDSEPBCG | Flux ICL + BCG = %1.3e' %( np.sum(iclbcg) )
-                print('HARDSEPBCG | Flux gal = %1.3e' %( np.sum(gal) )
+                print('HARDSEPBCG | Flux ICL + BCG = %1.3e' %np.sum(iclbcg) )
+                print('HARDSEPBCG | Flux gal = %1.3e' %np.sum(gal) )
                 print('HARDSEPBCG | Fraction ICL + BCG = %1.3f' %( np.sum(iclbcg) / (np.sum(gal) + np.sum(iclbcg)) ) )
