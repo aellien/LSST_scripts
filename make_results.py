@@ -26,6 +26,7 @@ from measure_icl_quantities import *
 def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_sep = 3, display = True ):
 
     # path, list & variables
+    xs, ys = oim.shape()
     gal = np.zeros( (xs, ys) )
 
     sigma, mean, gain = d.pg_noise_bissection( oim, max_err = 1E-3, n_sigmas = 3 )
@@ -277,7 +278,6 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plo
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = False ):
 
     # Paths, list & variables
@@ -325,7 +325,6 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_v
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def make_results_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = False  ):
     '''
     Wavelet + spatial separation. ICL and ICL+BCG.
