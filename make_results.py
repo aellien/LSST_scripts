@@ -863,7 +863,7 @@ if __name__ == '__main__':
                 icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, plot_vignet = True )
                 results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, r_lsst, verbose = False )
 
-                print('BCGSIZESEP | %12s%9d |' %('LVL = ', lvl_sep ))
+                print('BCGSIZESEP | %12s%9d |' %('LVL = ', size_sep ))
                 print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
                 print('BCGSIZESEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgsizesep[1] ) )
                 print('BCGSIZESEP | %12s%1.3e | ' %( 'fICL = ', results_bcgsizesep[2] ) )
