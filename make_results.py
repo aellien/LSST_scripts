@@ -488,23 +488,23 @@ if __name__ == '__main__':
         image_files = glob.glob(image_dir+'/*norm.fits')
 
         for nf in image_files:
+
+            print('\n%s'%nf)
+            # Read files
+            oimfile = os.path.join( path_data, dir, nf )
+            hdu = fits.open(oimfile)
+            header = hdu[0].header
+            oim = hdu[0].data
+
+            xs, ys = oim.shape
+
+            split = nf.split('/')
+            nf = split[-1]
+            nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
             '''
             #-------------------------------------------------------------------
             # WAVSEP
             for lvl_sep in lvl_sep_l:
-
-                print('\n%s'%nf)
-                # Read files
-                oimfile = os.path.join( path_data, dir, nf )
-                hdu = fits.open(oimfile)
-                header = hdu[0].header
-                oim = hdu[0].data
-
-                xs, ys = oim.shape
-
-                split = nf.split('/')
-                nf = split[-1]
-                nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
 
                 #rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
                 #flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l = measure_icl_quantities_sizesep(  oim, nfp, gamma, lvl_sep_big, n_levels, n_iter = 1000, pdf = 'uniform', verbose = True )
