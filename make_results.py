@@ -475,7 +475,7 @@ if __name__ == '__main__':
     lvl_sep_big = 6
     lvl_sep_l = [ 3, 4, 5, 6, 7 ]
     size_sep_l = [ 20, 40, 60, 80, 100 ] # kpc
-    sbt_l = [ 26, 26.5, 27, 27.5, 28 ]
+    sbt_l = [ 26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
