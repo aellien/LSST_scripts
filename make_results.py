@@ -492,7 +492,7 @@ if __name__ == '__main__':
 
                 print('\n%s'%nf)
                 # Read files
-                oimfile = os.path.join( path_data, nf )
+                oimfile = os.path.join( path_data, dir, nf )
                 hdu = fits.open(oimfile)
                 header = hdu[0].header
                 oim = hdu[0].data
