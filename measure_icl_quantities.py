@@ -97,7 +97,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, lvl_sep_big, n_levels, n_it
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_levels, n_iter = 1000, verbose = False ):
+def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_levels, r_lsst, verbose = False ):
 
     # Paths, list & variables
     atom_icl = []

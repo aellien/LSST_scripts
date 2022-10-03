@@ -473,11 +473,12 @@ if __name__ == '__main__':
     gamma = 0.8
     n_levels = 11
     lvl_sep_big = 6
-    lvl_sep_l = [ 4 ]
-    pixscale = 0.4 # ''/pixel
+    lvl_sep_l = [ 4, 5, 6 ]
+    pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
     rc = 40 # pixels, distance to center to be classified as gal
     ricl = 1000 # pixels, distance to center to be classified as ICL
+    r_lsst = 1000 * physscale / pixscale # pixels, ICL measured within this radius (LSST choice)
 
     flag = False
     for dir in dirl:
@@ -488,6 +489,7 @@ if __name__ == '__main__':
         for nf in image_files:
 
             for lvl_sep in lvl_sep_l:
+
                 print('\n%s'%nf)
                 # Read files
                 oimfile = os.path.join( path_data, nf )
@@ -513,12 +515,12 @@ if __name__ == '__main__':
                 #print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
                 rdc, icl, gal, res, rim = make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels )
-                results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, n_iter = 1000, verbose = False )
+                results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
-                print('WAVSEP | LVL = %d              | LVL = %d              | LVL = %d            |' %(lvl_sep - 1, lvl_sep, lvl_sep + 1))
-                print('WAVSEP | Flux ICL = %1.3e | Flux ICL = %1.3e | Flux ICL = %1.3e |  ' %( results_wavsep[3], results_wavsep[0], results_wavsep[6] ) )
-                print('WAVSEP | Flux gal = %1.3e | Flux gal = %1.3e | Flux gal = %1.3e |  ' %(results_wavsep[4], results_wavsep[1], results_wavsep[7] ) )
-                print('WAVSEP | Fraction ICL = %1.3f | Fraction ICL = %1.3f |  Fraction ICL = %1.3f | ' %(results_wavsep[5], results_wavsep[2], results_wavsep[8] ) )
+                print('WAVSEP | %12s%d | %12s%d | %12s%d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
+                print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
+                print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
+                print('WAVSEP | %12s%1.3f | %12s%1.3f | %12s%1.3f | ' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
 
                 #if flag == False:
                 #    results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
@@ -527,9 +529,9 @@ if __name__ == '__main__':
                 #    newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
                 #    results = pd.concat( [ results, newresults], ignore_index=True)
 
-                rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
+                #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
 
-                print('HARDSEPBCG | LVL = %d ' %lvl_sep)
-                print('HARDSEPBCG | Flux ICL + BCG = %1.3e' %np.sum(iclbcg) )
-                print('HARDSEPBCG | Flux gal = %1.3e' %np.sum(gal) )
-                print('HARDSEPBCG | Fraction ICL + BCG = %1.3f' %( np.sum(iclbcg) / (np.sum(gal) + np.sum(iclbcg)) ) )
+                #print('HARDSEPBCG | LVL = %d ' %lvl_sep)
+                #print('HARDSEPBCG | Flux ICL + BCG = %1.3e' %np.sum(iclbcg) )
+                #print('HARDSEPBCG | Flux gal = %1.3e' %np.sum(gal) )
+                #print('HARDSEPBCG | Fraction ICL + BCG = %1.3f' %( np.sum(iclbcg) / (np.sum(gal) + np.sum(iclbcg)) ) )
