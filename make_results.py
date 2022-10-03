@@ -630,7 +630,7 @@ if __name__ == '__main__':
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
-    rc = 20 # kpc, distance to center to be classified as gal
+    rc = 30 # kpc, distance to center to be classified as gal
     rc_pix = rc  * physscale / pixscale # pixels
     n_sig_gal = 50
     ricl = 1000 # pixels, distance to center to be classified as ICL
