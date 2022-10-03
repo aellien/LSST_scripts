@@ -23,7 +23,7 @@ from atom_props import *
 from measure_icl_quantities import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_sep = 3, dislay = True ):
+def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_sep = 3, display = True ):
 
     # path, list & variables
     gal = np.zeros( (xs, ys) )
