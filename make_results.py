@@ -406,8 +406,8 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = gal / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = icl / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.spawavsep_%d.pdf'%lvl_sep, format = 'pdf' )
         plt.close('all')
@@ -470,8 +470,8 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = im_gal / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = im_icl / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.bcgwavsep_%d.pdf'%lvl_sep, format = 'pdf' )
         plt.close('all')
@@ -533,8 +533,8 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = im_gal / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = im_icl / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.bcgsizesep_%d.pdf'%size_sep, format = 'pdf' )
         plt.close('all')
@@ -788,17 +788,6 @@ if __name__ == '__main__':
             # WAVSEP
             for lvl_sep in lvl_sep_l:
 
-                #rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
-                #flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l = measure_icl_quantities_sizesep(  oim, nfp, gamma, lvl_sep_big, n_levels, n_iter = 1000, pdf = 'uniform', verbose = True )
-
-                #lowFicl, upFicl = bootstrap_error( np.array(flux_icl_l), 1000, alpha = 0.95  )
-                #lowFgal, upFgal = bootstrap_error( np.array(flux_gal_l), 1000, alpha = 0.95  )
-                #lowficl, upficl = bootstrap_error( np.array(frac_icl_l), 1000, alpha = 0.95  )
-
-                #print('SIZESEP | Flux ICL = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_icl_l), np.mean(flux_icl_l) - lowFicl, upFicl - np.mean(flux_icl_l), np.std(flux_icl_l), np.sqrt(np.sum(np.array(err_wr_icl_l)**2))) )
-                #print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
-                #print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
-
                 icl, gal = make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
@@ -819,6 +808,7 @@ if __name__ == '__main__':
             #-------------------------------------------------------------------
             # SIZESEP
             for size_sep in size_sep_l:
+
                 size_sep_pix = size_sep * 2. / pixscale * physscale
                 icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
                 results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
@@ -830,6 +820,7 @@ if __name__ == '__main__':
             #-------------------------------------------------------------------
             # SBT
             for sbt in sbt_l:
+
                 norm = header['NORM']
                 icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = True)
                 results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
@@ -842,6 +833,7 @@ if __name__ == '__main__':
             # SPAWAVSEP
             cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
             for lvl_sep in lvl_sep_l:
+
                 icl, gal = make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
@@ -853,6 +845,7 @@ if __name__ == '__main__':
             #-------------------------------------------------------------------
             # BCGWAVSEP
             for lvl_sep in lvl_sep_l:
+
                 icl, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
@@ -868,15 +861,7 @@ if __name__ == '__main__':
                 icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
                 results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
 
-                print('BCGSIZESEP | %12s%9d |' %('LVL = ', size_sep ))
+                print('BCGSIZESEP | %12s%9d |' %('SIZE = ', size_sep ))
                 print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
                 print('BCGSIZESEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgsizesep[1] ) )
                 print('BCGSIZESEP | %12s%1.3e | ' %( 'fICL = ', results_bcgsizesep[2] ) )
-
-
-            #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
-
-            #print('HARDSEPBCG | LVL = %d ' %lvl_sep)
-            #print('HARDSEPBCG | Flux ICL + BCG = %1.3e' %np.sum(iclbcg) )
-            #print('HARDSEPBCG | Flux gal = %1.3e' %np.sum(gal) )
-            #print('HARDSEPBCG | Fraction ICL + BCG = %1.3f' %( np.sum(iclbcg) / (np.sum(gal) + np.sum(iclbcg)) ) )
