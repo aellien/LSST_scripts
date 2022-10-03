@@ -550,8 +550,8 @@ if __name__ == '__main__':
             # SBT
             for sbt in sbt_l:
                 norm = header['NORM']
-                results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
-                print('SBT | %12s%9d |' %('mu = ', sbt ))
+                results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
+                print('SBT | %12s%7.1f |' %('mu = ', sbt ))
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
                 print('SBT | %12s%1.3e |  ' %( 'Flux gal = ', results_wavsep[1] ) )
                 print('SBT | %12s%1.3e | ' %( 'fICL = ', results_wavsep[2] ) )

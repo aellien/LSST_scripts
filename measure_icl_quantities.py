@@ -322,7 +322,7 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, n_levels, r_lsst, verbose = False  ):
+def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, norm, n_levels, r_lsst, verbose = False  ):
 
     # Paths, list & variables
     atom_icl = []
@@ -345,7 +345,7 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, n_level
     im_tot[~mask] = 0.
     im_tot *= norm # renormalize for SB
     im_tot[im_tot < 10E-30] = 10E-30 # get rid of nul pixels
-    im_tot_sb = - 2.5 * np.log10(im_tot)
+    im_tot_sb = - 2.5 * np.log10(im_tot / pixscale**2 )
 
     pos_icl = np.where(im_tot_sb > sbt)
     flux_icl = np.sum( im_tot[pos_icl] )
