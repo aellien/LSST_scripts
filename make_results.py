@@ -365,7 +365,7 @@ def make_results_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, y
                         flag_gal = True
                         break
 
-                if flag_gal = True:
+                if flag_gal == True:
                     if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc:
                         icl[ x_min : x_max, y_min : y_max ] += object.image
                     else:
@@ -388,7 +388,7 @@ def make_results_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, y
                         flag_gal = True
                         break
 
-                if flag_gal = True:
+                if flag_gal == True:
                     if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc:
                         icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
                     else:
@@ -659,7 +659,7 @@ if __name__ == '__main__':
             split = nf.split('/')
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
-
+            '''
             #-------------------------------------------------------------------
             # WAVSEP
             for lvl_sep in lvl_sep_l:
@@ -713,7 +713,7 @@ if __name__ == '__main__':
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
                 print('SBT | %12s%1.3e |  ' %( 'Flux gal = ', results_wavsep[1] ) )
                 print('SBT | %12s%1.3e | ' %( 'fICL = ', results_wavsep[2] ) )
-
+            '''
             #-------------------------------------------------------------------
             # SPAWAVSEP
             for lvl_sep in lvl_sep_l:

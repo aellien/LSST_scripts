@@ -395,7 +395,7 @@ def measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_
                         flag_gal = True
                         break
 
-                if flag_gal = True:
+                if flag_gal == True:
                     if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc: #BCG
                         icl[ x_min : x_max, y_min : y_max ] += object.image
                     else:
@@ -418,7 +418,7 @@ def measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_
                         flag_gal = True
                         break
 
-                if flag_gal = True:
+                if flag_gal == True:
                     if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc:
                         icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
                     else:
