@@ -33,7 +33,7 @@ def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_gal = 3, display =
     aim = d.anscombe_transform( oim, sigma, mean, gain )
     acdc, awdc = d.bspl_atrous( aim, n_levels )
     sdc = d.hard_threshold( awdc, n_sig_gal )
-    sup = sdc.array[:,:,level_sep]
+    sup = sdc.array[:,:,level_gal]
     lab = label( sup )
     reg = regionprops( lab )
 
