@@ -26,7 +26,7 @@ from measure_icl_quantities import *
 def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_sep = 3, display = True ):
 
     # path, list & variables
-    xs, ys = oim.shape()
+    xs, ys = oim.shape
     gal = np.zeros( (xs, ys) )
 
     sigma, mean, gain = d.pg_noise_bissection( oim, max_err = 1E-3, n_sigmas = 3 )
