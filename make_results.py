@@ -859,7 +859,7 @@ if __name__ == '__main__':
 
             #-------------------------------------------------------------------
             # BCGSIZESEP
-            for lvl_sep in lvl_sep_l:
+            for size_sep in size_sep_l:
                 icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, plot_vignet = True )
                 results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, r_lsst, verbose = False )
 
