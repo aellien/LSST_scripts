@@ -153,7 +153,7 @@ def make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs
     return rdc, gal, iclbcg, res, rim
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels ):
+def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot = False ):
     '''Simple separation based on wavelet scale, given by parameter 'lvl_sep'.
     '''
     # path, list & variables
@@ -217,10 +217,18 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels ):
     hduo = fits.PrimaryHDU(rim)
     hduo.writeto( nfp + 'results.rim.fits', overwrite = True )
 
+    if plot == True:
+
+       fig, ax = plt.subplots(1, 2)
+       ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+       ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+       plt.tight_layout()
+       plt.savefig( nfp + 'results.wavsep_%d.fits'%lvl_sep, format = 'pdf' )
+
     return None
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels ):
+def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plot = False ):
 
     # Paths, list & variables
     atom_icl = []
@@ -256,16 +264,24 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels ):
     atom_gal = np.array(atom_gal)
 
     hduo = fits.PrimaryHDU(im_icl)
-    hduo.writeto( nfp + 'results.icl.sizesep.fits', overwrite = True )
+    hduo.writeto( nfp + 'results.icl.sizesep_%d.fits'%size_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(im_gal)
-    hduo.writeto( nfp + 'results.gal.sizesep.fits', overwrite = True )
+    hduo.writeto( nfp + 'results.gal.sizesep_%d.fits'%size_sep, overwrite = True )
+
+    if plot == True:
+
+       fig, ax = plt.subplots(1, 2)
+       ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+       ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+       plt.tight_layout()
+       plt.savefig( nfp + 'results.sizesep_%d.fits'%size_sep, format = 'pdf' )
 
     return
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels ):
+def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot = False ):
 
     # Paths, list & variables
     atom_icl = []
@@ -294,10 +310,19 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels ):
     im_gal[im_gal > sbt] = 0.
 
     hduo = fits.PrimaryHDU(im_icl)
-    hduo.writeto( nfp + 'results.icl.sbt.fits', overwrite = True )
+    hduo.writeto( nfp + 'results.icl.sbt_%2.1f.fits'%sbt, overwrite = True )
 
     hduo = fits.PrimaryHDU(im_gal)
-    hduo.writeto( nfp + 'results.gal.sbt.fits', overwrite = True )
+    hduo.writeto( nfp + 'results.gal.sbt_%2.1f.fits'%sbt, overwrite = True )
+
+    if plot == True:
+        fig, ax = plt.subplots(1, 2)
+        gal[gal == 0. ] = sbt
+        icl[icl == 0. ] = sbt
+        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), vmin = gal.min(), vmax = sbt, stretch = LinearStretch() ), cmap = 'binary_r')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), vmin = sbt, vmax = 35, stretch = LinearStretch() ), cmap ='binary_r')
+        plt.tight_layout()
+        plt.savefig( nfp + 'results.sbt_%2.1f.fits'%sbt, format = 'pdf' )
 
     return None
 
@@ -557,7 +582,7 @@ if __name__ == '__main__':
                 #print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
                 #print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-                make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels )
+                make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot = True )
                 results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
                 print('WAVSEP | %12s%9d | %12s%9d | %12s%9d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
@@ -578,7 +603,7 @@ if __name__ == '__main__':
             # SIZESEP
             for size_sep in size_sep_l:
                 size_sep_pix = size_sep * 2. / pixscale * physscale
-                make_results_sizesep( oim, nfp, lvl_sep_big, size_sep_pix, xs, ys, n_levels )
+                make_results_sizesep( oim, nfp, lvl_sep_big, size_sep_pix, xs, ys, n_levels, plot = True )
                 results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[6], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[3] ) )
@@ -589,7 +614,7 @@ if __name__ == '__main__':
             # SBT
             for sbt in sbt_l:
                 norm = header['NORM']
-                make_results_sbt(oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels)
+                make_results_sbt(oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot = True)
                 results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
                 print('SBT | %12s%7.1f |' %('mu = ', sbt ))
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
