@@ -129,13 +129,13 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
         if o.level >= lvl_sep_big:
             if o.level >= lvl_sep:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
-                im_icl += o.image
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
             if o.level >= lvl_sep:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
-                im_icl += o.image
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 
