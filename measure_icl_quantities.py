@@ -1,5 +1,5 @@
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# last modif : 06/2022
+# last modif : 10/2022
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 import numpy as np
@@ -7,6 +7,21 @@ from astropy.io import fits
 import os
 import glob
 from atom_props import *
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+def create_circular_mask( h, w, center = None, radius = None ):
+
+    if center is None: # use the middle of the image
+        center = (int(w/2), int(h/2))
+    if radius is None: # use the smallest distance between the center and image walls
+        radius = min(center[0], center[1], w-center[0], h-center[1])
+
+    Y, X = np.ogrid[:h, :w]
+    dist_from_center = np.sqrt((X - center[0])**2 + (Y-center[1])**2)
+
+    mask = dist_from_center <= radius
+    return mask
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -102,6 +117,8 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
     # Paths, list & variables
     atom_icl = []
     atom_gal = []
+    xs, ys = oim.shape
+    im_icl = np.zeros((xs, ys))
 
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
@@ -112,18 +129,22 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
         if o.level >= lvl_sep_big:
             if o.level >= lvl_sep:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl += o.image
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
         else:
             if o.level >= lvl_sep:
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+                im_icl += o.image
             else:
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
 
     atom_gal = np.array(atom_gal)
     atom_icl = np.array(atom_icl)
 
-    flux_icl = np.sum( atom_icl[:,2] )
+    mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
+    flux_icl = np.sum( im_icl[mask] )
+    print('check %1.3e'%np.sum(atom_icl[:,2]))
     flux_gal = np.sum( atom_gal[:,2] )
     frac_icl = flux_icl / ( flux_gal + flux_icl )
 
