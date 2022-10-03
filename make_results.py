@@ -845,7 +845,7 @@ if __name__ == '__main__':
                 print('SPAWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_spawavsep[0] ) )
                 print('SPAWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_spawavsep[1] ) )
                 print('SPAWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_spawavsep[2] ) )
-            '''
+
             #-------------------------------------------------------------------
             # BCGWAVSEP
             for lvl_sep in lvl_sep_l:
@@ -856,7 +856,7 @@ if __name__ == '__main__':
                 print('BCGWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgwavsep[0] ) )
                 print('BCGWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgwavsep[1] ) )
                 print('BCGWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_bcgwavsep[2] ) )
-
+            '''
             #-------------------------------------------------------------------
             # BCGSIZESEP
             for size_sep in size_sep_l:
