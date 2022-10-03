@@ -537,7 +537,7 @@ if __name__ == '__main__':
             # SIZESEP
             for size_sep in size_sep_l:
 
-                results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, size_sep = size_sep, err_size = 0.2, lvl_sep_big = lvl_sep_big, n_levels = n_levels, verbose = False )
+                results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep, err_size = 0.2, lvl_sep_big = lvl_sep_big, n_levels = n_levels, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
