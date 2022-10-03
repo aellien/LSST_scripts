@@ -476,7 +476,7 @@ def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_
     return flux_icl, flux_gal, frac_icl
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
+def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, r_lsst, verbose = False ):
 
     # Paths, list & variables
     atom_icl = []
