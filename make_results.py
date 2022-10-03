@@ -487,6 +487,8 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
     xs, ys = oim.shape
     im_icl = np.zeros((xs, ys))
     im_gal = np.zeros((xs, ys))
+    xc = xs / 2.
+    yc = ys / 2.
 
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
@@ -497,7 +499,7 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
         sy = y_max - y_min
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
-        
+
         if o.level >= lvl_sep_big:
             if (sx >= size_sep) or (sy >= size_sep):
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
@@ -862,8 +864,9 @@ if __name__ == '__main__':
             #-------------------------------------------------------------------
             # BCGSIZESEP
             for size_sep in size_sep_l:
-                icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, plot_vignet = True )
-                results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, r_lsst, verbose = False )
+                size_sep_pix = size_sep * 2. / pixscale * physscale
+                icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
+                results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
 
                 print('BCGSIZESEP | %12s%9d |' %('LVL = ', size_sep ))
                 print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
