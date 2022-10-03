@@ -272,8 +272,8 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plo
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.sizesep_%d.pdf'%size_sep, format = 'pdf' )
         plt.close('all')
@@ -318,10 +318,10 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_v
 
     if plot_vignet == True:
         fig, ax = plt.subplots(1, 2)
-        gal[gal == 0. ] = sbt
-        icl[icl == 0. ] = sbt
-        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), vmin = gal.min(), vmax = sbt, stretch = LinearStretch() ), cmap = 'binary_r')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), vmin = sbt, vmax = 35, stretch = LinearStretch() ), cmap ='binary_r')
+        im_gal[im_gal == 0. ] = sbt
+        im_icl[im_icl == 0. ] = sbt
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), vmin = im_gal.min(), vmax = sbt, stretch = LinearStretch() ), cmap = 'binary_r')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), vmin = sbt, vmax = 35, stretch = LinearStretch() ), cmap ='binary_r')
         plt.tight_layout()
         plt.savefig( nfp + 'results.sbt_%2.1f.pdf'%sbt, format = 'pdf' )
         plt.close('all')
