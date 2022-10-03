@@ -475,6 +475,7 @@ if __name__ == '__main__':
     lvl_sep_big = 6
     lvl_sep_l = [ 3, 4, 5, 6, 7 ]
     size_sep_l = [ 20, 40, 60, 80, 100 ] # kpc
+    sbt_l = [ 26, 26.5, 27, 27.5, 28 ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
@@ -502,7 +503,7 @@ if __name__ == '__main__':
             split = nf.split('/')
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
-
+            '''
             #-------------------------------------------------------------------
             # WAVSEP
             for lvl_sep in lvl_sep_l:
@@ -527,10 +528,12 @@ if __name__ == '__main__':
                 print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
 
                 #if flag == False:
-                #    results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
+                #    results = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), \
+                #results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
                 #    flag = True
                 #else:
-                #    newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
+                #    newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name',\
+                # 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
                 #    results = pd.concat( [ results, newresults], ignore_index=True)
 
             #-------------------------------------------------------------------
@@ -539,10 +542,19 @@ if __name__ == '__main__':
                 size_sep_pix = size_sep * 2. / pixscale * physscale
                 results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
-                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
-                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
-                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
-
+                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[6], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[3] ) )
+                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[7], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[4] ) )
+                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_wavsep[8], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[5] ) )
+            '''
+            #-------------------------------------------------------------------
+            # SBT
+            for sbt in sbt_l:
+                norm = header['NORM']
+                results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
+                print('SBT | %12s%9d |' %('mu = ', sbt ))
+                print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
+                print('SBT | %12s%1.3e |  ' %( 'Flux gal = ', results_wavsep[1] ) )
+                print('SBT | %12s%1.3e | ' %( 'fICL = ', results_wavsep[2] ) )
 
             #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
 

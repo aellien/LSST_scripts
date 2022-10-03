@@ -103,7 +103,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep
     atom_gal = []
     im_icl = np.zeros((xs, ys))
     im_gal = np.zeros((xs, ys))
-    
+
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
@@ -320,7 +320,40 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
 
     return flux_icl, flux_gal, frac_icl, flux_up_icl, flux_up_gal, frac_up_icl, flux_low_icl, flux_low_gal, frac_low_icl
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+def measure_icl_quantities_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, n_levels, r_lsst, verbose = False  ):
+
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+    xs, ys = oim.shape
+    im_tot = np.zeros((xs, ys))
+
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
+
+    # Atom wavelet scale separation
+    for j, o in enumerate(ol):
+        x_min, y_min, x_max, y_max = o.bbox
+        if o.level >= lvl_sep_big:
+            im_tot[ x_min : x_max, y_min : y_max ] += o.image
+        else:
+            im_tot[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+    mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
+    im_tot[~mask] = 0.
+    im_tot *= norm # renormalize for SB
+    im_tot[im_tot < 10E-10] = 10E-10 # get rid of nul pixels
+    im_tot_sb = - 2.5 * np.log10(im_tot)
+
+    icl_flux = np.sum(im_tot_sb[im_tot_sb > sbt])
+    icl_gal = np.sum(im_tot_sb[im_tot_sb <= sbt])
+    frac_icl = flux_icl / ( flux_gal + flux_icl )
+
+    return flux_icl, flux_gal, frac_icl, flux_up_icl
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if __name__ == '__main__':
 
