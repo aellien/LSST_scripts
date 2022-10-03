@@ -363,7 +363,7 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
                         break
 
                 if flag_gal == True:
-                    if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc:
+                    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
                         icl[ x_min : x_max, y_min : y_max ] += object.image
                     else:
                         gal[ x_min : x_max, y_min : y_max ] += object.image
@@ -386,7 +386,7 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
                         break
 
                 if flag_gal == True:
-                    if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc:
+                    if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
                         icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
                     else:
                         gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
@@ -631,10 +631,10 @@ if __name__ == '__main__':
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
     rc = 30 # kpc, distance to center to be classified as gal
-    rc_pix = rc  * physscale / pixscale # pixels
+    rc_pix = rc  / physscale / pixscale # pixels
     n_sig_gal = 50
     ricl = 1000 # pixels, distance to center to be classified as ICL
-    r_lsst = 1000 * physscale / pixscale # pixels, ICL measured within this radius (LSST choice)
+    r_lsst = 1000 / physscale / pixscale # pixels, ICL measured within this radius (LSST choice)
 
     flag = False
     for dir in dirl:
