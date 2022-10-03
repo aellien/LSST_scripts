@@ -833,7 +833,7 @@ if __name__ == '__main__':
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
                 print('SBT | %12s%1.3e |  ' %( 'Flux gal = ', results_wavsep[1] ) )
                 print('SBT | %12s%1.3e | ' %( 'fICL = ', results_wavsep[2] ) )
-            '''
+
             #-------------------------------------------------------------------
             # SPAWAVSEP
             cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
@@ -856,7 +856,7 @@ if __name__ == '__main__':
                 print('BCGWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgwavsep[0] ) )
                 print('BCGWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgwavsep[1] ) )
                 print('BCGWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_bcgwavsep[2] ) )
-
+            '''
             #-------------------------------------------------------------------
             # BCGSIZESEP
             for lvl_sep in lvl_sep_l:
