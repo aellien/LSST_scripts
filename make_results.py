@@ -521,10 +521,10 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
     atom_gal = np.array(atom_gal)
 
     hduo = fits.PrimaryHDU(im_icl)
-    hduo.writeto( nfp + 'results.iclbcg.spasizesep_%d.fits'%size_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.iclbcg.bcgsizesep_%d.fits'%size_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(im_gal)
-    hduo.writeto( nfp + 'results.gal.spasizesep_%d.fits'%size_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.gal.bcgsizesep_%d.fits'%size_sep, overwrite = True )
 
     if plot_vignet == True:
 
@@ -532,7 +532,7 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.spasizesep_%d.pdf'%size_sep, format = 'pdf' )
+        plt.savefig( nfp + 'results.bcgsizesep_%d.pdf'%size_sep, format = 'pdf' )
         plt.close('all')
 
     return im_icl, im_gal

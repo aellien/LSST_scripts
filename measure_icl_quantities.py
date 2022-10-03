@@ -469,8 +469,8 @@ def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_
                     im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
     mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
-    flux_icl = np.sum( icl[mask] )
-    flux_gal = np.sum( gal[mask] )
+    flux_icl = np.sum( im_icl[mask] )
+    flux_gal = np.sum( im_gal[mask] )
     frac_icl = flux_icl / ( flux_gal + flux_icl )
 
     return flux_icl, flux_gal, frac_icl
@@ -515,8 +515,8 @@ def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, siz
                     im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
     mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
-    flux_icl = np.sum( icl[mask] )
-    flux_gal = np.sum( gal[mask] )
+    flux_icl = np.sum( im_icl[mask] )
+    flux_gal = np.sum( im_gal[mask] )
     frac_icl = flux_icl / ( flux_gal + flux_icl )
 
     return flux_icl, flux_gal, frac_icl
