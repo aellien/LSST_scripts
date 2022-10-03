@@ -224,7 +224,7 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_
        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
        plt.tight_layout()
        plt.savefig( nfp + 'results.wavsep_%d.fits'%lvl_sep, format = 'pdf' )
-
+        plt.close('all')
     return None
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -276,7 +276,7 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plo
        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
        plt.tight_layout()
        plt.savefig( nfp + 'results.sizesep_%d.fits'%size_sep, format = 'pdf' )
-
+        plt.close('all')
     return
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -323,7 +323,7 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_v
         ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), vmin = sbt, vmax = 35, stretch = LinearStretch() ), cmap ='binary_r')
         plt.tight_layout()
         plt.savefig( nfp + 'results.sbt_%2.1f.fits'%sbt, format = 'pdf' )
-
+        plt.close('all')
     return None
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
