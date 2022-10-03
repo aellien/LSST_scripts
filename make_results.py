@@ -23,7 +23,7 @@ from atom_props import *
 from measure_icl_quantities import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_sep = 3, display = True ):
+def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_gal = 3, display = True ):
 
     # path, list & variables
     xs, ys = oim.shape
@@ -341,7 +341,7 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, rc, n_sig_gal, lvl_sep
     xc = xs / 2.
     yc = ys / 2.
 
-    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_sep = lvl_sep, display = False )
+    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
 
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
