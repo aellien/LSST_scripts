@@ -68,6 +68,8 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep
     # Up error computations
     atom_icl = []
     atom_gal = []
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
 
     for j, o in enumerate(ol):
 
@@ -99,7 +101,9 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep
     # Low error computations
     atom_icl = []
     atom_gal = []
-
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
+    
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
