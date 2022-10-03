@@ -344,14 +344,16 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, n_level
     mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
     im_tot[~mask] = 0.
     im_tot *= norm # renormalize for SB
-    im_tot[im_tot < 10E-10] = 10E-10 # get rid of nul pixels
+    im_tot[im_tot < 10E-30] = 10E-30 # get rid of nul pixels
     im_tot_sb = - 2.5 * np.log10(im_tot)
 
-    icl_flux = np.sum(im_tot_sb[im_tot_sb > sbt])
-    icl_gal = np.sum(im_tot_sb[im_tot_sb <= sbt])
+    pos_icl = np.where(im_tot_sb > sbt)
+    flux_icl = np.sum( im_tot[pos_icl] )
+    pos_gal = np.where(im_tot_sb <= sbt)
+    flux_gal = np.sum( im_tot[pos_gal] )
     frac_icl = flux_icl / ( flux_gal + flux_icl )
 
-    return flux_icl, flux_gal, frac_icl, flux_up_icl
+    return flux_icl, flux_gal, frac_icl
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
