@@ -441,32 +441,32 @@ def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_
 
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
-    for j, o in enumerate(ol):
+    for j, object in enumerate(ol):
 
-        x_min, y_min, x_max, y_max = o.bbox
-        sx = x_max - x_min
-        sy = y_max - y_min
+        x_min, y_min, x_max, y_max = object.bbox
+        lvlo = object.level
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
 
-        if o.level >= lvl_sep_big:
-            if (sx >= size_sep) or (sy >= size_sep):
-                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
-                im_icl[ x_min : x_max, y_min : y_max ] += o.image
+        if object.level >= lvl_sep_big:
+
+            if object.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += object.image
             else:
-                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
-                    im_icl[ x_min : x_max, y_min : y_max ] += o.image
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image
                 else:
-                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
-                    im_gal[ x_min : x_max, y_min : y_max ] += o.image
+                    gal[ x_min : x_max, y_min : y_max ] += object.image
+
         else:
-            if (sx >= size_sep) or (sy >= size_sep):
-                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
-                im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+            if object.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
             else:
-                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
-                    im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
                 else:
-                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
-                    im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
     mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
     flux_icl = np.sum( im_icl[mask] )
