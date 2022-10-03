@@ -293,10 +293,10 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels ):
     im_gal = np.copy(im_tot_sb)
     im_gal[im_gal > sbt] = 0.
 
-    hduo = fits.PrimaryHDU(icl)
+    hduo = fits.PrimaryHDU(im_icl)
     hduo.writeto( nfp + 'results.icl.sbt.fits', overwrite = True )
 
-    hduo = fits.PrimaryHDU(gal)
+    hduo = fits.PrimaryHDU(im_gal)
     hduo.writeto( nfp + 'results.gal.sbt.fits', overwrite = True )
 
     return None
