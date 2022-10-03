@@ -517,7 +517,7 @@ if __name__ == '__main__':
                 rdc, icl, gal, res, rim = make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels )
                 results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
-                print('WAVSEP | %12s%d | %12s%d | %12s%d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
+                print('WAVSEP | %12s%5d | %12s%5d | %12s%5d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
                 print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
                 print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
                 print('WAVSEP | %12s%1.3f | %12s%1.3f | %12s%1.3f | ' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
