@@ -845,7 +845,7 @@ if __name__ == '__main__':
                 print('SPAWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_spawavsep[0] ) )
                 print('SPAWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_spawavsep[1] ) )
                 print('SPAWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_spawavsep[2] ) )
-
+            '''
             #-------------------------------------------------------------------
             # BCGWAVSEP
             for lvl_sep in lvl_sep_l:
@@ -856,12 +856,12 @@ if __name__ == '__main__':
                 print('BCGWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgwavsep[0] ) )
                 print('BCGWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgwavsep[1] ) )
                 print('BCGWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_bcgwavsep[2] ) )
-            '''
+
             #-------------------------------------------------------------------
             # BCGSIZESEP
             for lvl_sep in lvl_sep_l:
-                icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-                results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False )
+                icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, plot_vignet = True )
+                results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, xs, ys, n_levels, r_lsst, verbose = False )
 
                 print('BCGSIZESEP | %12s%9d |' %('LVL = ', lvl_sep ))
                 print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
