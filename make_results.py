@@ -488,7 +488,7 @@ if __name__ == '__main__':
         image_files = glob.glob(image_dir+'/*norm.fits')
 
         for nf in image_files:
-
+            '''
             #-------------------------------------------------------------------
             # WAVSEP
             for lvl_sep in lvl_sep_l:
@@ -531,13 +531,13 @@ if __name__ == '__main__':
                 #else:
                 #    newresults = pd.DataFrame( [[ dir, nf, np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), results_wavsep[2], results_wavsep[5], results_wavsep[8] ]], columns = [ 'dir', 'name', 'ICL fraction sizesep', 'err up', 'err low', 'ICL fraction wavsep', 'ICL fraction wavsep up', 'ICL fraction wavsep low' ])
                 #    results = pd.concat( [ results, newresults], ignore_index=True)
-
+            '''
 
             #-------------------------------------------------------------------
             # SIZESEP
             for size_sep in size_sep_l:
 
-                results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep, err_size = 0.2, lvl_sep_big = lvl_sep_big, n_levels = n_levels, verbose = False )
+                results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep, err_size = 0.2, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )

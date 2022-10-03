@@ -25,7 +25,7 @@ def create_circular_mask( h, w, center = None, radius = None ):
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep_big, n_levels, verbose = False ):
+def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep_big, n_levels, r_lsst, verbose = False ):
 
     # Paths, list & variables
     atom_icl = []
