@@ -7,6 +7,7 @@ from astropy.io import fits
 import os
 import glob
 from atom_props import *
+from make_results import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -351,6 +352,87 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, nor
     flux_icl = np.sum( im_tot[pos_icl] )
     pos_gal = np.where(im_tot_sb <= sbt)
     flux_gal = np.sum( im_tot[pos_gal] )
+    frac_icl = flux_icl / ( flux_gal + flux_icl )
+
+    return flux_icl, flux_gal, frac_icl
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+def measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False ):
+
+    # path, list & variables
+    icl = np.zeros( (xs, ys) )
+    gal = np.zeros( (xs, ys) )
+
+    atom_gal = []
+    coo_gal = []
+
+    rdc_array = np.zeros( (xs, ys, n_levels) )
+
+    xc = xs / 2.
+    yc = ys / 2.
+
+    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_sep = lvl_sep, dislay = False )
+
+    # Read atoms
+    ol, itl = read_image_atoms( nfp, verbose = True )
+
+    for j, object in enumerate(ol):
+
+        x_min, y_min, x_max, y_max = object.bbox
+        lvlo = object.level
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
+
+        if object.level >= lvl_sep_big:
+
+            if object.level < lvl_sep:
+
+                flag_gal = False
+                for pos in cat_gal:
+
+                    if np.sqrt( ( xco - pos[1] )**2 + ( yco - pos[0] )**2 ) <= rc:
+                        flag_gal = True
+                        break
+
+                if flag_gal = True:
+                    if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc: #BCG
+                        icl[ x_min : x_max, y_min : y_max ] += object.image
+                    else:
+                        gal[ x_min : x_max, y_min : y_max ] += object.image
+
+                if flag_gal == False:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image
+
+            else:
+                icl[ x_min : x_max, y_min : y_max ] += object.image
+
+        else:
+
+            if object.level < lvl_sep:
+
+                flag_gal = False
+                for pos in cat_gal:
+
+                    if np.sqrt( ( xco - pos[1] )**2 + ( yco - pos[0] )**2 ) <= rc:
+                        flag_gal = True
+                        break
+
+                if flag_gal = True:
+                    if np.sqrt( ( xco - xs )**2 + ( yco - ys )**2 ) <= rc:
+                        icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    else:
+                        gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+                if flag_gal == False:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+            else:
+                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+    mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
+    flux_icl = np.sum( icl[mask] )
+    flux_gal = np.sum( gal[mask] )
     frac_icl = flux_icl / ( flux_gal + flux_icl )
 
     return flux_icl, flux_gal, frac_icl
