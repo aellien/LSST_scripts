@@ -452,22 +452,22 @@ def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep,
         if object.level >= lvl_sep_big:
 
             if object.level >= lvl_sep:
-                icl[ x_min : x_max, y_min : y_max ] += object.image
+                im_icl[ x_min : x_max, y_min : y_max ] += object.image
             else:
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                    im_icl[ x_min : x_max, y_min : y_max ] += object.image
                 else:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image
+                    im_gal[ x_min : x_max, y_min : y_max ] += object.image
 
         else:
 
             if object.level >= lvl_sep:
-                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                im_icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
             else:
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    im_icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
                 else:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    im_gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
     mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
     flux_icl = np.sum( im_icl[mask] )
