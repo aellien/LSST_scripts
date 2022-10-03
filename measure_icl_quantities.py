@@ -358,7 +358,7 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, nor
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
+def measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
 
     # path, list & variables
     icl = np.zeros( (xs, ys) )
@@ -371,8 +371,6 @@ def measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, rc, n_sig_ga
 
     xc = xs / 2.
     yc = ys / 2.
-
-    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
 
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )

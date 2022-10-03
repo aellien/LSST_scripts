@@ -325,7 +325,7 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels,
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = False  ):
+def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = False  ):
     '''
     Wavelet + spatial separation. ICL and ICL+BCG.
     '''
@@ -340,8 +340,6 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, rc, n_sig_gal, lvl_sep
 
     xc = xs / 2.
     yc = ys / 2.
-
-    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
 
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
@@ -715,10 +713,10 @@ if __name__ == '__main__':
             '''
             #-------------------------------------------------------------------
             # SPAWAVSEP
+            cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
             for lvl_sep in lvl_sep_l:
-
-                icl, gal = make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-                results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
+                icl, gal = make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+                results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
                 print('SPAWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
                 print('SPAWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_spawavsep[0] ) )
