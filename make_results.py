@@ -159,17 +159,8 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels ):
     # path, list & variables
     res = np.zeros( (xs, ys) )
     icl = np.zeros( (xs, ys) )
-    uicl = np.zeros( (xs, ys) )
     gal = np.zeros( (xs, ys) )
     rim = np.zeros( (xs, ys) )
-    unclass = np.zeros( (xs, ys) )
-
-    lres = []
-    licl = []
-    luicl = []
-    lgal = []
-    lrim = []
-    lunclass = []
 
     atom_gal = []
     coo_gal = []
@@ -188,10 +179,6 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels ):
         lvlo = object.level
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
-
-        flag_icl = False
-        flag_gal = False
-        flag_uicl = False
 
         if object.level >= lvl_sep_big:
 
@@ -230,119 +217,43 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels ):
     hduo = fits.PrimaryHDU(rim)
     hduo.writeto( nfp + 'results.rim.fits', overwrite = True )
 
-    return rdc, icl, gal, res, rim
+    return None
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
+def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels ):
 
-    # path, list & variables
-    res = np.zeros( (xs, ys) )
-    icl = np.zeros( (xs, ys) )
-    uicl = np.zeros( (xs, ys) )
-    gal = np.zeros( (xs, ys) )
-    rim = np.zeros( (xs, ys) )
-    unclass = np.zeros( (xs, ys) )
-
-    lres = []
-    licl = []
-    luicl = []
-    lgal = []
-    lrim = []
-    lunclass = []
-
+    # Paths, list & variables
+    atom_icl = []
     atom_gal = []
-    coo_gal = []
+    xs, ys = oim.shape
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
 
-    rdc_array = np.zeros( (xs, ys, n_levels) )
-
-    xc = xs / 2.
-    yc = ys / 2.
-
+    # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
-    df_sizes = average_size_atom( ol, n_levels )
-    print(df_sizes)
+    for j, o in enumerate(ol):
 
-    lvl_sx = np.argmax( df_sizes['dsx_n'][2:] ) + 2
-    lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
+        x_min, y_min, x_max, y_max = o.bbox
+        sx = x_max - x_min
+        sy = y_max - y_min
 
-    sx = df_sizes['<sx>'][lvl_sx]
-    if sx == 0.:
-        sx = df_sizes['<sx>'][lvl_sx +1]
-    sy = df_sizes['<sy>'][lvl_sy]
-    if sy == 0.:
-        sy = df_sizes['<sx>'][lvl_sy +1]
-    print(lvl_sx, sx)
-    print(lvl_sy, sy)
-
-    for j, object in enumerate(ol):
-
-        x_min, y_min, x_max, y_max = object.bbox
-        lvlo = object.level
-        xco = itl[j].interscale_maximum.x_max
-        yco = itl[j].interscale_maximum.y_max
-
-        flag_icl = False
-        flag_gal = False
-        flag_uicl = False
-
-        # ICL or gal based on size
-        if x_max - x_min >= sx or y_max - y_min >= sy:
-
-            if object.level >= lvl_sep_big:
-                icl[ x_min : x_max, y_min : y_max ] += object.image
+        if o.level >= lvl_sep_big:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image
             else:
-                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
-
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_gal[ x_min : x_max, y_min : y_max ] += o.image
         else:
-
-            if object.level >= lvl_sep_big:
-                gal[ x_min : x_max, y_min : y_max ] += object.image
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
             else:
-                gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
-            atom_gal.append(object)
-            coo_gal.append([xco, yco])
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image) * gamma, o.level ] )
+                im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
-        # All object dc
-        if object.level >= lvl_sep_big:
-            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
-        else:
-            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
-
-    '''
-    bcg = np.copy(gal)
-
-    for i, ogal in enumerate(atom_gal):
-
-        x_min, y_min, x_max, y_max = ogal.bbox
-        xco, yco = coo_gal[i]
-        lvlo = ogal.level
-
-        if lvlo <= 4:
-
-            if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > rc * 2**(lvlo-1):
-
-                if x_max - x_min <= 300 or y_max - y_min <= 300:
-
-                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-                elif np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > ricl:
-
-                    bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
-
-    satgal = np.copy(gal)
-    satgal -= bcg
-    iclbcg = np.copy(icl)
-    iclbcg += bcg
-    '''
-
-    # Datacube
-    rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
-    rim = np.sum( rdc_array, axis = 2 )
-    res = oim - rim
-
-    # write to fits
-    hduo = fits.PrimaryHDU(res)
-    hduo.writeto( nfp + 'results.residuals.fits', overwrite = True )
+    atom_icl = np.array(atom_icl)
+    atom_gal = np.array(atom_gal)
 
     hduo = fits.PrimaryHDU(icl)
     hduo.writeto( nfp + 'results.icl.sizesep.fits', overwrite = True )
@@ -350,23 +261,150 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, y
     hduo = fits.PrimaryHDU(gal)
     hduo.writeto( nfp + 'results.gal.sizesep.fits', overwrite = True )
 
-    hduo = fits.PrimaryHDU(rim)
-    hduo.writeto( nfp + 'results.rim.fits', overwrite = True )
+    return
 
-    #hduo = fits.PrimaryHDU(satgal)
-    #hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.gal.hardsepBCG.fits') )), overwrite = True )
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    #hduo = fits.PrimaryHDU(iclbcg)
-    #hduo.writeto(os.path.join( path_wavelets, ''.join( ( nf, 'results.iclbcg.hardsepBCG.fits') )), overwrite = True )
+def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels ):
 
-    ##rdc.to_fits( os.path.join( path_wavelets, ''.join( ( nf, 'results.rdc.fits') )), overwrite = True )
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+    xs, ys = oim.shape
+    im_tot = np.zeros((xs, ys))
 
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
 
-    return rdc, icl, gal, res, rim
+    # Atom wavelet scale separation
+    for j, o in enumerate(ol):
+        x_min, y_min, x_max, y_max = o.bbox
+        if o.level >= lvl_sep_big:
+            im_tot[ x_min : x_max, y_min : y_max ] += o.image
+        else:
+            im_tot[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+    im_tot *= norm # renormalize for SB
+    im_tot[im_tot < 10E-30] = 10E-30 # get rid of nul pixels
+    im_tot_sb = - 2.5 * np.log10(im_tot / pixscale**2 )
+
+    im_icl = np.copy(im_tot_sb)
+    im_icl[im_icl <= sbt] = 0.
+    im_gal = np.copy(im_tot_sb)
+    im_gal[im_gal > sbt] = 0.
+
+    hduo = fits.PrimaryHDU(icl)
+    hduo.writeto( nfp + 'results.icl.sbt.fits', overwrite = True )
+
+    hduo = fits.PrimaryHDU(gal)
+    hduo.writeto( nfp + 'results.gal.sbt.fits', overwrite = True )
+
+    return None
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def trash():
 
+    '''
+        # path, list & variables
+        res = np.zeros( (xs, ys) )
+        icl = np.zeros( (xs, ys) )
+        uicl = np.zeros( (xs, ys) )
+        gal = np.zeros( (xs, ys) )
+        rim = np.zeros( (xs, ys) )
+        unclass = np.zeros( (xs, ys) )
+
+        lres = []
+        licl = []
+        luicl = []
+        lgal = []
+        lrim = []
+        lunclass = []
+
+        atom_gal = []
+        coo_gal = []
+
+        rdc_array = np.zeros( (xs, ys, n_levels) )
+
+        xc = xs / 2.
+        yc = ys / 2.
+
+        ol, itl = read_image_atoms( nfp, verbose = True )
+        df_sizes = average_size_atom( ol, n_levels )
+        print(df_sizes)
+
+        lvl_sx = np.argmax( df_sizes['dsx_n'][2:] ) + 2
+        lvl_sy = np.argmax( df_sizes['dsy_n'][2:] ) + 2
+
+        sx = df_sizes['<sx>'][lvl_sx]
+        if sx == 0.:
+            sx = df_sizes['<sx>'][lvl_sx +1]
+        sy = df_sizes['<sy>'][lvl_sy]
+        if sy == 0.:
+            sy = df_sizes['<sx>'][lvl_sy +1]
+        print(lvl_sx, sx)
+        print(lvl_sy, sy)
+
+        for j, object in enumerate(ol):
+
+            x_min, y_min, x_max, y_max = object.bbox
+            lvlo = object.level
+            xco = itl[j].interscale_maximum.x_max
+            yco = itl[j].interscale_maximum.y_max
+
+            flag_icl = False
+            flag_gal = False
+            flag_uicl = False
+
+            # ICL or gal based on size
+            if x_max - x_min >= sx or y_max - y_min >= sy:
+
+                if object.level >= lvl_sep_big:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                else:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+            else:
+
+                if object.level >= lvl_sep_big:
+                    gal[ x_min : x_max, y_min : y_max ] += object.image
+                else:
+                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                atom_gal.append(object)
+                coo_gal.append([xco, yco])
+
+            # All object dc
+            if object.level >= lvl_sep_big:
+                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
+            else:
+                rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+
+
+        bcg = np.copy(gal)
+
+        for i, ogal in enumerate(atom_gal):
+
+            x_min, y_min, x_max, y_max = ogal.bbox
+            xco, yco = coo_gal[i]
+            lvlo = ogal.level
+
+            if lvlo <= 4:
+
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > rc * 2**(lvlo-1):
+
+                    if x_max - x_min <= 300 or y_max - y_min <= 300:
+
+                        bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+                    elif np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) > ricl:
+
+                        bcg[ x_min : x_max, y_min : y_max ] -= ogal.image * gamma
+
+        satgal = np.copy(gal)
+        satgal -= bcg
+        iclbcg = np.copy(icl)
+        iclbcg += bcg
+
+    '''
     '''
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= ricl:
 
@@ -503,7 +541,7 @@ if __name__ == '__main__':
             split = nf.split('/')
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
-            '''
+
             #-------------------------------------------------------------------
             # WAVSEP
             for lvl_sep in lvl_sep_l:
@@ -519,7 +557,7 @@ if __name__ == '__main__':
                 #print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
                 #print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-                rdc, icl, gal, res, rim = make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels )
+                make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels )
                 results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
                 print('WAVSEP | %12s%9d | %12s%9d | %12s%9d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
@@ -540,16 +578,18 @@ if __name__ == '__main__':
             # SIZESEP
             for size_sep in size_sep_l:
                 size_sep_pix = size_sep * 2. / pixscale * physscale
+                make_results_sizesep( oim, nfp, lvl_sep_big, size_sep_pix, xs, ys, n_levels )
                 results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[6], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[3] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[7], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[4] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_wavsep[8], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[5] ) )
-            '''
+
             #-------------------------------------------------------------------
             # SBT
             for sbt in sbt_l:
                 norm = header['NORM']
+                make_results_sbt(oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels)
                 results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
                 print('SBT | %12s%7.1f |' %('mu = ', sbt ))
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
