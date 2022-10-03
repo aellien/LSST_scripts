@@ -255,10 +255,10 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels ):
     atom_icl = np.array(atom_icl)
     atom_gal = np.array(atom_gal)
 
-    hduo = fits.PrimaryHDU(icl)
+    hduo = fits.PrimaryHDU(im_icl)
     hduo.writeto( nfp + 'results.icl.sizesep.fits', overwrite = True )
 
-    hduo = fits.PrimaryHDU(gal)
+    hduo = fits.PrimaryHDU(im_gal)
     hduo.writeto( nfp + 'results.gal.sizesep.fits', overwrite = True )
 
     return
