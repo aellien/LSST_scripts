@@ -415,6 +415,129 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
     return icl, gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n_levels, plot_vignet = False  ):
+    '''
+    Wavelet + spatial separation. ICL and ICL+BCG.
+    '''
+    # path, list & variables
+    icl = np.zeros( (xs, ys) )
+    gal = np.zeros( (xs, ys) )
+
+    atom_gal = []
+    coo_gal = []
+
+    rdc_array = np.zeros( (xs, ys, n_levels) )
+
+    xc = xs / 2.
+    yc = ys / 2.
+
+    # Read atoms
+    ol, itl = read_image_atoms( nfp, verbose = True )
+
+    for j, object in enumerate(ol):
+
+        x_min, y_min, x_max, y_max = object.bbox
+        lvlo = object.level
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
+
+        if object.level >= lvl_sep_big:
+
+            if object.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += object.image
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                else:
+                    gal[ x_min : x_max, y_min : y_max ] += object.image
+
+        else:
+
+            if object.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
+                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                else:
+                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+
+    hduo = fits.PrimaryHDU(icl)
+    hduo.writeto( nfp + 'results.iclbcg.bcgwavsep_%d.fits'%lvl_sep, overwrite = True )
+
+    hduo = fits.PrimaryHDU(gal)
+    hduo.writeto( nfp + 'results.gal.bcgwavsep_%d.fits'%lvl_sep, overwrite = True )
+
+    if plot_vignet == True:
+
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        plt.tight_layout()
+        plt.savefig( nfp + 'results.bcgwavsep_%d.pdf'%lvl_sep, format = 'pdf' )
+        plt.close('all')
+
+    return icl, gal
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys, n_levels, plot_vignet = False ):
+
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+    xs, ys = oim.shape
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
+
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
+    for j, o in enumerate(ol):
+
+        x_min, y_min, x_max, y_max = o.bbox
+        sx = x_max - x_min
+        sy = y_max - y_min
+
+        if o.level >= lvl_sep_big:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image
+                else:
+                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    im_gal[ x_min : x_max, y_min : y_max ] += o.image
+        else:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                else:
+                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+    atom_icl = np.array(atom_icl)
+    atom_gal = np.array(atom_gal)
+
+    hduo = fits.PrimaryHDU(im_icl)
+    hduo.writeto( nfp + 'results.iclbcg.spasizesep_%d.fits'%size_sep, overwrite = True )
+
+    hduo = fits.PrimaryHDU(im_gal)
+    hduo.writeto( nfp + 'results.gal.spasizesep_%d.fits'%size_sep, overwrite = True )
+
+    if plot_vignet == True:
+
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        plt.tight_layout()
+        plt.savefig( nfp + 'results.spasizesep_%d.pdf'%size_sep, format = 'pdf' )
+        plt.close('all')
+
+    return im_icl, im_gal
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def trash():
 
     '''
@@ -722,6 +845,29 @@ if __name__ == '__main__':
                 print('SPAWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_spawavsep[0] ) )
                 print('SPAWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_spawavsep[1] ) )
                 print('SPAWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_spawavsep[2] ) )
+
+            #-------------------------------------------------------------------
+            # BCGWAVSEP
+            for lvl_sep in lvl_sep_l:
+                icl, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+                results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
+
+                print('BCGWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
+                print('BCGWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgwavsep[0] ) )
+                print('BCGWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgwavsep[1] ) )
+                print('BCGWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_bcgwavsep[2] ) )
+
+            #-------------------------------------------------------------------
+            # BCGSIZESEP
+            for lvl_sep in lvl_sep_l:
+                icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+                results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False )
+
+                print('BCGSIZESEP | %12s%9d |' %('LVL = ', lvl_sep ))
+                print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
+                print('BCGSIZESEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgsizesep[1] ) )
+                print('BCGSIZESEP | %12s%1.3e | ' %( 'fICL = ', results_bcgsizesep[2] ) )
+
 
             #rdc, gal, iclbcg, res, rim = make_results_hardsepBCG( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
 

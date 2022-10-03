@@ -10,7 +10,6 @@ from atom_props import *
 from make_results import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def create_circular_mask( h, w, center = None, radius = None ):
 
     if center is None: # use the middle of the image
@@ -25,7 +24,6 @@ def create_circular_mask( h, w, center = None, radius = None ):
     return mask
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep_big, n_levels, r_lsst, verbose = False ):
 
     # Paths, list & variables
@@ -135,7 +133,6 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep
     return flux_icl, flux_gal, frac_icl, flux_up_icl, flux_up_gal, frac_up_icl, flux_low_icl, flux_low_gal, frac_low_icl
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def measure_icl_quantities_sizesep_bckup_test( oim, nfp, gamma, lvl_sep_big, n_levels, n_iter = 1000, pdf = 'uniform', verbose = False ):
 
     # Paths, list & variables
@@ -222,7 +219,6 @@ def measure_icl_quantities_sizesep_bckup_test( oim, nfp, gamma, lvl_sep_big, n_l
     return flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_levels, r_lsst, verbose = False ):
 
     # Paths, list & variables
@@ -322,7 +318,6 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
     return flux_icl, flux_gal, frac_icl, flux_up_icl, flux_up_gal, frac_up_icl, flux_low_icl, flux_low_gal, frac_low_icl
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, norm, n_levels, r_lsst, verbose = False  ):
 
     # Paths, list & variables
@@ -357,7 +352,6 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, nor
     return flux_icl, flux_gal, frac_icl
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 def measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
 
     # path, list & variables
@@ -436,7 +430,99 @@ def measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc,
     return flux_icl, flux_gal, frac_icl
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
 
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+    xs, ys = oim.shape
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
+
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
+    for j, o in enumerate(ol):
+
+        x_min, y_min, x_max, y_max = o.bbox
+        sx = x_max - x_min
+        sy = y_max - y_min
+
+        if o.level >= lvl_sep_big:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image
+                else:
+                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    im_gal[ x_min : x_max, y_min : y_max ] += o.image
+        else:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                else:
+                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+    mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
+    flux_icl = np.sum( icl[mask] )
+    flux_gal = np.sum( gal[mask] )
+    frac_icl = flux_icl / ( flux_gal + flux_icl )
+
+    return flux_icl, flux_gal, frac_icl
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
+
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+    xs, ys = oim.shape
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
+
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
+    for j, o in enumerate(ol):
+
+        x_min, y_min, x_max, y_max = o.bbox
+        sx = x_max - x_min
+        sy = y_max - y_min
+
+        if o.level >= lvl_sep_big:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image
+                else:
+                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    im_gal[ x_min : x_max, y_min : y_max ] += o.image
+        else:
+            if (sx >= size_sep) or (sy >= size_sep):
+                atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+            else:
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #BCG
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                else:
+                    atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+    mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
+    flux_icl = np.sum( icl[mask] )
+    flux_gal = np.sum( gal[mask] )
+    frac_icl = flux_icl / ( flux_gal + flux_icl )
+
+    return flux_icl, flux_gal, frac_icl
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if __name__ == '__main__':
 
     # Paths, lists & variables
