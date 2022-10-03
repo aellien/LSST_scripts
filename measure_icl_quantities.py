@@ -358,7 +358,7 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, nor
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-def measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False ):
+def measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst, verbose = False ):
 
     # path, list & variables
     icl = np.zeros( (xs, ys) )
