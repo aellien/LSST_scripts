@@ -406,8 +406,8 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = gal / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = icl / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.spawavsep_%d.pdf'%lvl_sep, format = 'pdf' )
         plt.close('all')
@@ -470,8 +470,8 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = im_gal / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = im_icl / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(im_gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(im_icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.bcgwavsep_%d.pdf'%lvl_sep, format = 'pdf' )
         plt.close('all')
@@ -533,8 +533,8 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
     if plot_vignet == True:
 
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = im_gal / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = im_icl / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = np.max(im_gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = np.max(im_icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.bcgsizesep_%d.pdf'%size_sep, format = 'pdf' )
         plt.close('all')
