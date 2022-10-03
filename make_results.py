@@ -717,7 +717,7 @@ if __name__ == '__main__':
             # SPAWAVSEP
             for lvl_sep in lvl_sep_l:
 
-                icl, gal = make_results_spawavsep( oim, nfp, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+                icl, gal = make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
                 print('SPAWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
