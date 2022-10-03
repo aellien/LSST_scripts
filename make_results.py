@@ -62,7 +62,7 @@ def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_sep = 3, display =
     return np.array(cat)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
+def make_results_hardsepBCG( oim, nfp, gamma, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs, ys, n_levels ):
 
     # path, list & variables
     res = np.zeros( (xs, ys) )
@@ -149,7 +149,7 @@ def make_results_hardsepBCG( oim, nfp, lvl_sep_big, n_hard_icl, rc, ricl, nf, xs
     return rdc, gal, iclbcg, res, rim
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = False ):
+def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = False ):
     '''Simple separation based on wavelet scale, given by parameter 'lvl_sep'.
     '''
     # path, list & variables
@@ -225,7 +225,7 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plot_vignet = False ):
+def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, xs, ys, n_levels, plot_vignet = False ):
 
     # Paths, list & variables
     atom_icl = []
@@ -278,7 +278,7 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plo
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = False ):
+def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = False ):
 
     # Paths, list & variables
     atom_icl = []
@@ -325,7 +325,7 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_v
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = False  ):
+def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, rc, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = False  ):
     '''
     Wavelet + spatial separation. ICL and ICL+BCG.
     '''
@@ -663,7 +663,7 @@ if __name__ == '__main__':
             # WAVSEP
             for lvl_sep in lvl_sep_l:
 
-                #rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
+                #rdc, icl, gal, res, rim = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, lvl_sep, rc, ricl, nf, xs, ys, n_levels )
                 #flux_icl_l, flux_gal_l, frac_icl_l, err_wr_icl_l, err_wr_gal_l = measure_icl_quantities_sizesep(  oim, nfp, gamma, lvl_sep_big, n_levels, n_iter = 1000, pdf = 'uniform', verbose = True )
 
                 #lowFicl, upFicl = bootstrap_error( np.array(flux_icl_l), 1000, alpha = 0.95  )
@@ -674,7 +674,7 @@ if __name__ == '__main__':
                 #print('SIZESEP | Flux gal = %f +-(%f, %f), std = %f, Err_wr = %f' %(np.mean(flux_gal_l), np.mean(flux_gal_l) - lowFgal, upFgal - np.mean(flux_gal_l), np.std(flux_gal_l), np.sqrt(np.sum(np.array(err_wr_gal_l)**2))) )
                 #print('SIZESEP | Fraction ICL = %f +-(%f, %f), std = %f' %(np.mean(frac_icl_l), np.mean(frac_icl_l) - lowficl, upficl - np.mean(frac_icl_l), np.std(frac_icl_l)) )
 
-                icl, gal = make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+                icl, gal = make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
                 print('WAVSEP | %12s%9d | %12s%9d | %12s%9d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
@@ -695,7 +695,7 @@ if __name__ == '__main__':
             # SIZESEP
             for size_sep in size_sep_l:
                 size_sep_pix = size_sep * 2. / pixscale * physscale
-                icl, gal = make_results_sizesep( oim, nfp, lvl_sep_big, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
+                icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
                 results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[6], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[3] ) )
@@ -706,7 +706,7 @@ if __name__ == '__main__':
             # SBT
             for sbt in sbt_l:
                 norm = header['NORM']
-                icl, gal = make_results_sbt(oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = True)
+                icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = True)
                 results_wavsep = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
                 print('SBT | %12s%7.1f |' %('mu = ', sbt ))
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[0] ) )
@@ -718,7 +718,7 @@ if __name__ == '__main__':
             for lvl_sep in lvl_sep_l:
 
                 icl, gal = make_results_spawavsep( oim, nfp, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-                results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
+                results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
                 print('SPAWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
                 print('SPAWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_spawavsep[0] ) )
