@@ -219,11 +219,11 @@ def make_results_wavsep( oim, nfp, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_
 
     if plot_vignet == True:
 
-       fig, ax = plt.subplots(1, 2)
-       ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-       ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-       plt.tight_layout()
-       plt.savefig( nfp + 'results.wavsep_%d.fits'%lvl_sep, format = 'pdf' )
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        plt.tight_layout()
+        plt.savefig( nfp + 'results.wavsep_%d.fits'%lvl_sep, format = 'pdf' )
         plt.close('all')
     return None
 
@@ -271,12 +271,13 @@ def make_results_sizesep( oim, nfp, lvl_sep_big, size_sep, xs, ys, n_levels, plo
 
     if plot_vignet == True:
 
-       fig, ax = plt.subplots(1, 2)
-       ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-       ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-       plt.tight_layout()
-       plt.savefig( nfp + 'results.sizesep_%d.fits'%size_sep, format = 'pdf' )
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        plt.tight_layout()
+        plt.savefig( nfp + 'results.sizesep_%d.fits'%size_sep, format = 'pdf' )
         plt.close('all')
+        
     return
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,6 +325,7 @@ def make_results_sbt( oim, nfp, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_v
         plt.tight_layout()
         plt.savefig( nfp + 'results.sbt_%2.1f.fits'%sbt, format = 'pdf' )
         plt.close('all')
+
     return None
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
