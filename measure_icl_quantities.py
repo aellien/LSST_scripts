@@ -372,7 +372,7 @@ def measure_icl_quantities_spawavsep( oim, nfp, lvl_sep_big, rc, n_sig_gal, lvl_
     xc = xs / 2.
     yc = ys / 2.
 
-    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_sep = lvl_sep, dislay = False )
+    cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_sep = lvl_sep, display = False )
 
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
