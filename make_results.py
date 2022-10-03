@@ -495,7 +495,9 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, xs, ys,
         x_min, y_min, x_max, y_max = o.bbox
         sx = x_max - x_min
         sy = y_max - y_min
-
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
+        
         if o.level >= lvl_sep_big:
             if (sx >= size_sep) or (sy >= size_sep):
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
