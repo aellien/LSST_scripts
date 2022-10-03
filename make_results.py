@@ -475,6 +475,7 @@ if __name__ == '__main__':
     lvl_sep_big = 6
     lvl_sep_l = [ 3, 4, 5, 6, 7 ]
     size_sep_l = [ 20, 40, 60, 80, 100 ] # kpc
+    err_size = 0.2
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
     rc = 40 # pixels, distance to center to be classified as gal
@@ -537,7 +538,7 @@ if __name__ == '__main__':
             # SIZESEP
             for size_sep in size_sep_l:
 
-                results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep, err_size = 0.2, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
+                results_wavsep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
