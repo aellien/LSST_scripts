@@ -438,7 +438,8 @@ def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_
     xs, ys = oim.shape
     im_icl = np.zeros((xs, ys))
     im_gal = np.zeros((xs, ys))
-
+    xc = xs / 2.
+    yc = ys / 2.
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
     for j, object in enumerate(ol):
@@ -484,7 +485,8 @@ def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, siz
     xs, ys = oim.shape
     im_icl = np.zeros((xs, ys))
     im_gal = np.zeros((xs, ys))
-
+    xc = xs / 2.
+    yc = ys / 2.
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = True )
     for j, o in enumerate(ol):
