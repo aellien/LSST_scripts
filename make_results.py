@@ -861,19 +861,17 @@ if __name__ == '__main__':
 
             if flag_data == False:
                 results = pd.DataFrame( [[ dir, nf, results_wavsep[0] * norm, results_wavsep[1] * norm, results_wavsep[2], results_sizesep[0] * norm, results_sizesep[1] * norm, results_sizesep[2], \
-                                            results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2],
+                                            results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2], \
                                             results_bcgsizesep[0] * norm, results_bcgsizesep[1] * norm, results_bcgsizesep[2] ]], \
                             columns = [ 'dir', 'name', 'FICL_wavsep', 'Fgal_wavsep', 'fICL_wavsep', 'FICL_sizesep', 'Fgal_sizesep', 'fICL_sizesep', \
-                                            'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', \
-                                            'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
+                                            'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
                 flag_data = True
             else:
                 newresults = pd.DataFrame( [[ dir, nf, results_wavsep[0] * norm, results_wavsep[1] * norm, results_wavsep[2], results_sizesep[0] * norm, results_sizesep[1] * norm, results_sizesep[2], \
-                                            results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2],
+                                            results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2], \
                                             results_bcgsizesep[0] * norm, results_bcgsizesep[1] * norm, results_bcgsizesep[2] ]], \
                             columns = [ 'dir', 'name', 'FICL_wavsep', 'Fgal_wavsep', 'fICL_wavsep', 'FICL_sizesep', 'Fgal_sizesep', 'fICL_sizesep', \
-                                            'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', \
-                                            'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
-                results = pd.concat( [ results, newresults], ignore_index=True)
+                                            'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
+                results = pd.concat( [ results, newresults], ignore_index = True )
 
     results.to_excel('dawis_lsst_results.xlsx', sheetname = 'amael')
