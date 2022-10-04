@@ -874,4 +874,4 @@ if __name__ == '__main__':
                                             'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
                 results = pd.concat( [ results, newresults], ignore_index = True )
 
-    results.to_excel('dawis_lsst_results.xlsx', sheetname = 'amael')
+    results.to_excel('dawis_lsst_results.xlsx', sheet_name = 'amael')
