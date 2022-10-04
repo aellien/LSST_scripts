@@ -222,7 +222,7 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
         plt.savefig( nfp + 'results.wavsep_%d.pdf'%lvl_sep, format = 'pdf' )
         plt.close('all')
 
-    return im_icl, im_gal
+    return icl, gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = False ):
