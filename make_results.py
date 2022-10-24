@@ -219,7 +219,7 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
         ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.wavsep_%d.pdf'%lvl_sep, format = 'pdf' )
+        plt.savefig( nfp + 'results.wavsep_%d.png'%lvl_sep, format = 'png' )
         plt.close('all')
 
     return icl, gal
@@ -272,7 +272,7 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.sizesep_%d.pdf'%size_sep, format = 'pdf' )
+        plt.savefig( nfp + 'results.sizesep_%d.png'%size_sep, format = 'png' )
         plt.close('all')
 
     return im_icl, im_gal
@@ -319,7 +319,7 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels,
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), vmin = im_gal.min(), vmax = sbt, stretch = LinearStretch() ), cmap = 'binary_r')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), vmin = sbt, vmax = 35, stretch = LinearStretch() ), cmap ='binary_r')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.sbt_%2.1f.pdf'%sbt, format = 'pdf' )
+        plt.savefig( nfp + 'results.sbt_%2.1f.png'%sbt, format = 'png' )
         plt.close('all')
 
     return im_icl, im_gal
@@ -409,7 +409,7 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
         ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.spawavsep_%d.pdf'%lvl_sep, format = 'pdf' )
+        plt.savefig( nfp + 'results.spawavsep_%d.png'%lvl_sep, format = 'png' )
         plt.close('all')
 
     return icl, gal
@@ -473,7 +473,7 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
         ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.bcgwavsep_%d.pdf'%lvl_sep, format = 'pdf' )
+        plt.savefig( nfp + 'results.bcgwavsep_%d.png'%lvl_sep, format = 'png' )
         plt.close('all')
 
     return icl, gal
@@ -536,7 +536,7 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = np.max(im_gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = np.max(im_icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.bcgsizesep_%d.pdf'%size_sep, format = 'pdf' )
+        plt.savefig( nfp + 'results.bcgsizesep_%d.png'%size_sep, format = 'png' )
         plt.close('all')
 
     return im_icl, im_gal
@@ -769,6 +769,11 @@ if __name__ == '__main__':
         image_dir = os.path.join( path_data, dir )
         image_files = glob.glob(image_dir+'/*norm.fits')
 
+        names = []
+        for image in image_files:
+            names.append(image.split('.')[0])
+        names = np.unique(names)
+
         for nf in image_files:
 
             print('\n%s'%nf)
@@ -779,6 +784,8 @@ if __name__ == '__main__':
             oim = hdu[0].data
 
             xs, ys = oim.shape
+
+
 
             split = nf.split('/')
             nf = split[-1]
