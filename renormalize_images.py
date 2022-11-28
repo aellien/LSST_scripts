@@ -15,7 +15,7 @@ if __name__ == '__main__':
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
-        image_files = glob.glob(image_dir+'/*rebin.fits')
+        image_files = glob.glob(image_dir+'/*0000[01][016789]_0.05_*3.rebin.fits')
 
         for nf in image_files:
 
