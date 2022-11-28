@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
         image_dir = os.path.join( path_data, dir )
         print(image_dir)
-        image_files = glob.glob(image_dir+'/*0000[01][01789]_0.05_*_*hdf5') # /!\ TO CHANGE ACCORDINGLY
+        image_files = glob.glob(image_dir+'/*000006_0.05_*_*hdf5') # /!\ TO CHANGE ACCORDINGLY
 
 
         image_i = 0
@@ -64,6 +64,7 @@ if __name__ == '__main__':
                 fitsname = image_file[:-5]+'_mu%2.1f.fits' %(mu_lim)
                 hdu = fits.PrimaryHDU(imgflux)
                 hdul = fits.HDUList([hdu])
+                print('write to %s'%os.path.join( path_output, fitsname ))
                 hdul.writeto( os.path.join( path_output, fitsname ), overwrite = True )
 
             print('done')
