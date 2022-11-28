@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
         image_dir = os.path.join( path_data, dir )
         print(image_dir)
-        image_files = glob.glob(image_dir+'/*0000[01][01789]_0.05_xy*hdf5') # /!\ TO CHANGE ACCORDINGLY
+        image_files = glob.glob(image_dir+'/*0000[01][01789]_0.05_*_*hdf5') # /!\ TO CHANGE ACCORDINGLY
 
 
         image_i = 0
