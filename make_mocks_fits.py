@@ -29,13 +29,15 @@ if __name__ == '__main__':
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_output = '/n03data/ellien/LSST_ICL/simulations/out4'
 
-    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum']
+    dirl = ['TNG-100']
 
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
         print(image_dir)
-        image_files = glob.glob(image_dir+'/*.hdf5')
+        image_files = glob.glob(image_dir+'/*0000[01][01789]_0.05_xy*hdf5') # /!\ TO CHANGE ACCORDINGLY
+
+
         image_i = 0
         mu_lim = 30.3 # limiting SB, 3 sigma 10" X 10"
 
