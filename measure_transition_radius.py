@@ -61,7 +61,7 @@ if __name__ == '__main__':
         for dir in dirl:
 
             image_dir = os.path.join( path_wavelets, dir )
-            image_files = glob.glob(image_dir+'/*.results.icl.%d.fits'%sch)
+            image_files = glob.glob(image_dir+'/*.results.icl.%s.fits'%sch)
 
             for image in image_files:
 
