@@ -47,7 +47,7 @@ if __name__ == '__main__':
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out4/'
 
     dirl = ['HorizonAGN']
-    schl = ['wavsep_5', 'sizesep_60']
+    schl = [ 'sizesep_60','wavsep_5']
 
     norm = 1E4
     n_bins = 300
@@ -103,7 +103,7 @@ if __name__ == '__main__':
                 bin_r_trans = np.where(profile_icl > profile_bcg)[0][0]
                 r_trans_pix = bin_r_trans * size_image / 2. / n_bins
                 r_trans_kpc = r_trans_pix * pixscale * physscale
-                radii.append( [ name, r_trans_kpc ] )
+                radii.append( [ name, sch, r_trans_kpc ] )
 
                 print(r_trans_kpc)
 
