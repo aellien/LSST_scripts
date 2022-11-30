@@ -51,12 +51,12 @@ if __name__ == '__main__':
     path_data = '/n03data/ellien/LSST_ICL/simulations/out4'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
 
-    dirl = ['TNG-100']
+    dirl = ['Magneticum']
 
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
-        image_files = glob.glob(image_dir+'/*0000[01][016789]_0.05_*3.fits')
+        image_files = glob.glob(image_dir+'/*.fits')
 
         for im in image_files:
 

@@ -29,13 +29,13 @@ if __name__ == '__main__':
     path_scripts = '/home/ellien/LSST_ICL/scripts'
     path_output = '/n03data/ellien/LSST_ICL/simulations/out4'
 
-    dirl = ['TNG-100']
+    dirl = ['Magneticum']
 
     for dir in dirl:
 
         image_dir = os.path.join( path_data, dir )
         print(image_dir)
-        image_files = glob.glob(image_dir+'/*000006_0.05_*_*hdf5') # /!\ TO CHANGE ACCORDINGLY
+        image_files = glob.glob(image_dir+'/*hdf5') # /!\ TO CHANGE ACCORDINGLY
 
 
         image_i = 0
@@ -61,6 +61,7 @@ if __name__ == '__main__':
 
             if make_fits:
                 # produce fits image with scaling so that -2.5 log10(f) gives AB magnitudes
+                image_file = image_file.split('/')[-1]
                 fitsname = image_file[:-5]+'_mu%2.1f.fits' %(mu_lim)
                 hdu = fits.PrimaryHDU(imgflux)
                 hdul = fits.HDUList([hdu])
