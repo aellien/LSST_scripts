@@ -61,7 +61,7 @@ if __name__ == '__main__':
         for dir in dirl:
 
             image_dir = os.path.join( path_wavelets, dir )
-            image_files = glob.glob(image_dir+'/*.results.icl.%s.fits'%sch)
+            image_files = glob.glob(image_dir+'/run1/*.results.icl.%s.fits'%sch)
 
             for image in image_files:
 
@@ -71,21 +71,19 @@ if __name__ == '__main__':
 
                 path_icl = splt
                 path_icl[-3] = 'icl'
-                '.'.join(path_icl)
+                path_icl = '.'.join(path_icl)
                 print(path_icl)
 
                 path_gal = splt
                 path_gal[-3] = 'gal'
-                '.'.join(path_gal)
+                path_gal = '.'.join(path_gal)
                 print(path_gal)
 
                 path_sat = splt
                 path_sat[-3] = 'gal'
                 path_sat[-2] = 'bcg'+sch
-                '.'.join(path_sat)
+                path_sat = '.'.join(path_sat)
                 print(path_sat)
-
-                print('%s\n%s\n%s' %(path_icl))
 
                 # Read files
                 im_icl = fits.getdata(path_icl) * norm
