@@ -4,7 +4,7 @@
 
 path="/n03data/ellien/LSST_ICL/simulations/out4"
 
-for dir in HorizonAGN  Hydrangea  Magneticum TNG-100
+for dir in Magneticum
 do
     for file in $path/$dir/*norm.fits
     #for file in $path/*norm.fits
