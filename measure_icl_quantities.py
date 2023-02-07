@@ -340,13 +340,24 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, nor
     mask = create_circular_mask( xs, ys, center = None, radius = r_lsst )
     im_tot[~mask] = 0.
     im_tot *= norm # renormalize for SB
+    sbt_flux = 10**(-0.4 * sbt) * pixscale**2
+    sb_lim = 10**(-0.4 * 30.3) * pixscale**2
+
+    pos_icl = np.where( (im_tot < sbt_flux) & (im_tot > sb_lim) )
+    flux_icl = np.sum( im_tot[pos_icl] )
+    pos_gal = np.where(im_tot > sbt_flux)
+    flux_gal = np.sum( im_tot[pos_gal] )
+
+    '''
     im_tot[im_tot < 10E-30] = 10E-30 # get rid of nul pixels
     im_tot_sb = - 2.5 * np.log10(im_tot / pixscale**2 )
 
-    pos_icl = np.where(im_tot_sb > sbt)
+    pos_icl = np.where( (im_tot_sb > sbt) & (im_tot_sb <= 30.3) )
     flux_icl = np.sum( im_tot[pos_icl] )
     pos_gal = np.where(im_tot_sb <= sbt)
-    flux_gal = np.sum( im_tot[pos_gal] )
+    flux_gal = np.sum( im_tot[pos_gal] )'''
+
+
     frac_icl = flux_icl / ( flux_gal + flux_icl )
 
     return flux_icl, flux_gal, frac_icl
@@ -496,7 +507,7 @@ def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_se
         sy = y_max - y_min
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
-        
+
         if o.level >= lvl_sep_big:
             if (sx >= size_sep) or (sy >= size_sep):
                 atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )

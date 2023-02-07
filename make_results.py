@@ -12,7 +12,7 @@ import glob
 import pandas as pd
 from astropy.io import fits
 from astropy.visualization import LinearStretch, LogStretch
-from astropy.visualization import ZScaleInterval, MinMaxInterval
+from astropy.visualization import ZScaleInterval, MinMaxInterval, AsymmetricPercentileInterval
 from astropy.visualization import ImageNormalize
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import SymLogNorm
@@ -196,7 +196,7 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
             rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
 
     # Datacube
-    rdc = d.datacube( rdc_array, dctype = 'NONE', fheader = header )
+    rdc = d.datacube( rdc_array, dctype = 'NONE' )
     rim = np.sum( rdc_array, axis = 2 )
     res = oim - rim
 
@@ -205,21 +205,38 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
     hduo.writeto( nfp + 'results.residuals.fits', overwrite = True )
 
     hduo = fits.PrimaryHDU(icl)
-    hduo.writeto( nfp + 'results.icl.wavsep_%d.fits'%lvl_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.icl.wavsep_%03d.fits'%lvl_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(gal)
-    hduo.writeto( nfp + 'results.gal.wavsep_%d.fits'%lvl_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.gal.wavsep_%03d.fits'%lvl_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(rim)
     hduo.writeto( nfp + 'results.rim.fits', overwrite = True )
 
     if plot_vignet == True:
-
+        interval = AsymmetricPercentileInterval(5, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
         fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        poim = ax[0].imshow(gal, norm = ImageNormalize( gal, interval = interval, stretch = LogStretch()), cmap = 'binary')
+        divider = make_axes_locatable(ax[0])
+        cax = divider.append_axes("top", size="5%", pad=0.05)
+        caxre = fig.colorbar( poim, cax = cax, \
+                                    orientation = 'horizontal', \
+                                    format = '%2.1f',\
+                                    pad = 0,\
+                                    shrink = 1.0,\
+                                    ticklocation = 'top' )
+        poim = ax[1].imshow(icl, norm = ImageNormalize( icl, interval = interval, stretch = LogStretch()), cmap = 'binary')
+        divider = make_axes_locatable(ax[1])
+        cax = divider.append_axes("top", size="5%", pad=0.05)
+        caxre = fig.colorbar( poim, cax = cax, \
+                                    orientation = 'horizontal', \
+                                    format = '%2.1f',\
+                                    pad = 0,\
+                                    shrink = 1.0,\
+                                    ticklocation = 'top' )
         plt.tight_layout()
-        plt.savefig( nfp + 'results.wavsep_%d.png'%lvl_sep, format = 'png' )
+        plt.savefig( nfp + 'results.wavsep_%03d.png'%lvl_sep, format = 'png' )
+        print('Write vignet to' + nfp + 'results.wavsep_%03d.png'%(lvl_sep))
         plt.close('all')
 
     return icl, gal
@@ -261,10 +278,10 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
     atom_gal = np.array(atom_gal)
 
     hduo = fits.PrimaryHDU(im_icl)
-    hduo.writeto( nfp + 'results.icl.sizesep_%d.fits'%size_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.icl.sizesep_%03d.fits'%size_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(im_gal)
-    hduo.writeto( nfp + 'results.gal.sizesep_%d.fits'%size_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.gal.sizesep_%03d.fits'%size_sep, overwrite = True )
 
     if plot_vignet == True:
 
@@ -272,13 +289,13 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.sizesep_%d.png'%size_sep, format = 'png' )
+        plt.savefig( nfp + 'results.sizesep_%03d.png'%size_sep, format = 'png' )
         plt.close('all')
 
     return im_icl, im_gal
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = False ):
+def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys, n_levels, plot_vignet = False ):
 
     # Paths, list & variables
     atom_icl = []
@@ -297,14 +314,28 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels,
         else:
             im_tot[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
-    im_tot *= norm # renormalize for SB
+    #im_tot *= norm # renormalize for SB
+    sbt_flux = 10**(-0.4 * sbt) * pixscale**2 / norm # renormalize for SB
+    sb_lim = 10**(-0.4 * 30.3) * pixscale**2 / norm # renormalize for SB
+
+    im_icl = np.copy(im_tot)
+    im_icl[im_icl >= sbt_flux] = 0.
+    im_icl[im_icl < sb_lim] = 0.
+
+    im_gal = np.copy(im_tot)
+    im_gal[im_gal <= sbt_flux] = 0.
+
+
+    '''
     im_tot[im_tot < 10E-30] = 10E-30 # get rid of nul pixels
     im_tot_sb = - 2.5 * np.log10(im_tot / pixscale**2 )
 
     im_icl = np.copy(im_tot_sb)
     im_icl[im_icl <= sbt] = 0.
+    im_icl[im_icl > 30.3] = 0.
     im_gal = np.copy(im_tot_sb)
     im_gal[im_gal > sbt] = 0.
+    '''
 
     hduo = fits.PrimaryHDU(im_icl)
     hduo.writeto( nfp + 'results.icl.sbt_%2.1f.fits'%sbt, overwrite = True )
@@ -398,10 +429,10 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
                 icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
     hduo = fits.PrimaryHDU(icl)
-    hduo.writeto( nfp + 'results.iclbcg.spawavsep_%d.fits'%lvl_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.iclbcg.spawavsep_%03d.fits'%lvl_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(gal)
-    hduo.writeto( nfp + 'results.gal.spawavsep_%d.fits'%lvl_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.gal.spawavsep_%03d.fits'%lvl_sep, overwrite = True )
 
     if plot_vignet == True:
 
@@ -409,7 +440,7 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
         ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.spawavsep_%d.png'%lvl_sep, format = 'png' )
+        plt.savefig( nfp + 'results.spawavsep_%03d.png'%lvl_sep, format = 'png' )
         plt.close('all')
 
     return icl, gal
@@ -462,10 +493,10 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
                     gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
 
     hduo = fits.PrimaryHDU(icl)
-    hduo.writeto( nfp + 'results.iclbcg.bcgwavsep_%d.fits'%lvl_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.iclbcg.bcgwavsep_%03d.fits'%lvl_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(gal)
-    hduo.writeto( nfp + 'results.gal.bcgwavsep_%d.fits'%lvl_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.gal.bcgwavsep_%03d.fits'%lvl_sep, overwrite = True )
 
     if plot_vignet == True:
 
@@ -473,7 +504,7 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
         ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.bcgwavsep_%d.png'%lvl_sep, format = 'png' )
+        plt.savefig( nfp + 'results.bcgwavsep_%03d.png'%lvl_sep, format = 'png' )
         plt.close('all')
 
     return icl, gal
@@ -525,10 +556,10 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
     atom_gal = np.array(atom_gal)
 
     hduo = fits.PrimaryHDU(im_icl)
-    hduo.writeto( nfp + 'results.iclbcg.bcgsizesep_%d.fits'%size_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.iclbcg.bcgsizesep_%03d.fits'%size_sep, overwrite = True )
 
     hduo = fits.PrimaryHDU(im_gal)
-    hduo.writeto( nfp + 'results.gal.bcgsizesep_%d.fits'%size_sep, overwrite = True )
+    hduo.writeto( nfp + 'results.gal.bcgsizesep_%03d.fits'%size_sep, overwrite = True )
 
     if plot_vignet == True:
 
@@ -536,10 +567,87 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = np.max(im_gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = np.max(im_icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
-        plt.savefig( nfp + 'results.bcgsizesep_%d.png'%size_sep, format = 'png' )
+        plt.savefig( nfp + 'results.bcgsizesep_%03d.png'%size_sep, format = 'png' )
         plt.close('all')
 
     return im_icl, im_gal
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def make_results_sizesep2( oim, nfp, gamma, lvl_sep_big, rc, size_sep_bcg, size_sep_icl, size_sep_bcg_pix, size_sep_icl_pix, xs, ys, n_levels, plot_vignet = False ):
+    '''
+    02/2023: results for ICL only from sizesep (make_results_sizesep) are not good when compared to simulation values. Too much BCG flux in ICL.
+    --> new methodology: create BCG+ICL map, and then remove atoms smaller than size_sep_bcg_pix.
+    '''
+    # Paths, list & variables
+    atom_icl = []
+    atom_gal = []
+    xs, ys = oim.shape
+    im_icl = np.zeros((xs, ys))
+    im_gal = np.zeros((xs, ys))
+    xc = xs / 2.
+    yc = ys / 2.
+
+    # Read atoms and interscale trees
+    ol, itl = read_image_atoms( nfp, verbose = True )
+    for j, o in enumerate(ol):
+
+        x_min, y_min, x_max, y_max = o.bbox
+        sx = x_max - x_min
+        sy = y_max - y_min
+        xco = itl[j].interscale_maximum.x_max
+        yco = itl[j].interscale_maximum.y_max
+
+        if o.level >= lvl_sep_big:
+            if (sx >= size_sep_icl_pix) or (sy >= size_sep_icl_pix): # isolate ICL+BCG from satellite galaxies
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #if BCG
+                    if (sx >= size_sep_bcg_pix) or (sy >= size_sep_bcg_pix): #rm BCG from ICL+BCG
+                        im_icl[ x_min : x_max, y_min : y_max ] += o.image
+                        atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    else:
+                        atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                        im_gal[ x_min : x_max, y_min : y_max ] += o.image
+                else:
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image
+                    atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_gal[ x_min : x_max, y_min : y_max ] += o.image
+        else:
+            if (sx >= size_sep_icl_pix) or (sy >= size_sep_icl_pix): # isolate ICL+BCG from satellite galaxies
+                if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #if BCG
+                    if (sx >= 2*size_sep_bcg_pix) or (sy >= 2*size_sep_bcg_pix): #rm BCG from ICL+BCG
+                        im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                        atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                    else:
+                        atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                        im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                else:
+                    im_icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
+                    atom_icl.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+            else:
+                atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
+                im_gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
+
+    atom_icl = np.array(atom_icl)
+    atom_gal = np.array(atom_gal)
+
+    hduo = fits.PrimaryHDU(im_icl)
+    hduo.writeto( nfp + 'results.icl.sizesep2_%03d.fits'%size_sep_icl, overwrite = True )
+
+    hduo = fits.PrimaryHDU(im_gal)
+    hduo.writeto( nfp + 'results.gal.sizesep2_%03d.fits'%size_sep_icl, overwrite = True )
+
+    if plot_vignet == True:
+
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = np.max(im_gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = np.max(im_icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        plt.tight_layout()
+        plt.savefig( nfp + 'results.bcgsizesep_%03d.png'%size_sep, format = 'png' )
+        plt.close('all')
+
+    return im_icl, im_gal
+
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def trash():
@@ -746,14 +854,14 @@ if __name__ == '__main__':
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out4/'
 
-    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+    dirl = ['TNG-100']
 
     gamma = 0.8
     n_levels = 11
     lvl_sep_big = 6
-    lvl_sep_l = [ 3, 4, 5, 6, 7 ]
-    size_sep_l = [ 20, 40, 60, 80, 100 ] # kpc
-    sbt_l = [  26, 26.5, 27, 27.5, 28. ]
+    lvl_sep_l = [ 5 ]#[ 3, 4, 5, 6, 7 ]
+    size_sep_l = [ 200 ] # [ 20, 40, 60, 80, 100 ] # separation radius sat/icl kpc
+    sbt_l = [ 26 ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
@@ -774,6 +882,13 @@ if __name__ == '__main__':
             names.append(image.split('.')[0])
         names = np.unique(names)
 
+        #image_files = [ '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xz_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xy_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000005_0.05_xz_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000005_0.05_xy_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000005_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits' ]
+
         for nf in image_files:
 
             print('\n%s'%nf)
@@ -784,8 +899,6 @@ if __name__ == '__main__':
             oim = hdu[0].data
 
             xs, ys = oim.shape
-
-
 
             split = nf.split('/')
             nf = split[-1]
@@ -810,17 +923,37 @@ if __name__ == '__main__':
                 size_sep_pix = size_sep * 2. / pixscale * physscale
                 icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
                 results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
+                print('sizesep', np.sum(icl)/(np.sum(icl)+np.sum(gal) ))
                 print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_sizesep[6], 'Flux ICL = ', results_sizesep[0], 'Flux ICL = ', results_sizesep[3] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_sizesep[7], 'Flux gal = ', results_sizesep[1], 'Flux gal = ', results_sizesep[4] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_sizesep[8], 'fICL = ', results_sizesep[2], 'fICL = ', results_sizesep[5] ) )
 
-            #-------------------------------------------------------------size---
+            #-------------------------------------------------------------------
+            # SIZESEP 2 TEST
+            #for size_sep in size_sep_l:
+
+            #    size_sep_icl = size_sep
+            #    size_sep_bcg = size_sep + 100. # premier test radius kpc
+
+            #    size_sep_icl_pix = size_sep_icl * 2. / pixscale * physscale # separation diameter in pixel
+            #    size_sep_bcg_pix = size_sep_bcg * 2. / pixscale * physscale # separation diameter in pixel
+
+            #    icl, gal = make_results_sizesep2( oim, nfp, gamma, lvl_sep_big, ricl, size_sep_bcg, size_sep_icl, size_sep_bcg_pix, size_sep_icl_pix, xs, ys, n_levels, plot_vignet = False )
+            #    print('sizesep2', np.sum(icl)/(np.sum(icl)+np.sum(gal) ))
+            #    #results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
+            #    #print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
+            #    #print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_sizesep[6], 'Flux ICL = ', results_sizesep[0], 'Flux ICL = ', results_sizesep[3] ) )
+            #    #print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_sizesep[7], 'Flux gal = ', results_sizesep[1], 'Flux gal = ', results_sizesep[4] ) )
+            #    #print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_sizesep[8], 'fICL = ', results_sizesep[2], 'fICL = ', results_sizesep[5] ) )
+
+
+            #-------------------------------------------------------------------
             # SBT
             for sbt in sbt_l:
 
                 norm = header['NORM']
-                icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, xs, ys, n_levels, plot_vignet = True)
+                icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys, n_levels, plot_vignet = True)
                 results_sbt = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
                 print('SBT | %12s%7.1f |' %('mu = ', sbt ))
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_sbt[0] ) )
@@ -865,6 +998,7 @@ if __name__ == '__main__':
                 print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
                 print('BCGSIZESEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgsizesep[1] ) )
                 print('BCGSIZESEP | %12s%1.3e | ' %( 'fICL = ', results_bcgsizesep[2] ) )
+
 
             if flag_data == False:
                 results = pd.DataFrame( [[ dir, nf, results_wavsep[0] * norm, results_wavsep[1] * norm, results_wavsep[2], results_sizesep[0] * norm, results_sizesep[1] * norm, results_sizesep[2], \
