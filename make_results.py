@@ -169,31 +169,35 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
 
-    for j, object in enumerate(ol):
+    for j, o in enumerate(ol):
 
-        x_min, y_min, x_max, y_max = object.bbox
-        lvlo = object.level
+        x_min, y_min, x_max, y_max = o.bbox
+        k = kurtosis(o.image.flatten(), fisher=True)
+        if k < 0:
+            continue
+
+        lvlo = o.level
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
 
-        if object.level >= lvl_sep_big:
+        if o.level >= lvl_sep_big:
 
-            if object.level >= lvl_sep:
-                icl[ x_min : x_max, y_min : y_max ] += object.image
+            if o.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += o.image
             else:
-                gal[ x_min : x_max, y_min : y_max ] += object.image
+                gal[ x_min : x_max, y_min : y_max ] += o.image
 
         else:
 
-            if object.level >= lvl_sep:
-                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+            if o.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
             else:
-                gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
-        if object.level >= lvl_sep_big:
-            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image
+        if o.level >= lvl_sep_big:
+            rdc_array[ x_min : x_max, y_min : y_max, o.level ] += o.image
         else:
-            rdc_array[ x_min : x_max, y_min : y_max, object.level ] += object.image * gamma
+            rdc_array[ x_min : x_max, y_min : y_max, o.level ] += o.image * gamma
 
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE' )
@@ -256,6 +260,10 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
+        k = kurtosis(o.image.flatten(), fisher=True)
+        if k < 0:
+            continue
+
         sx = x_max - x_min
         sy = y_max - y_min
 
@@ -309,6 +317,10 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys,
     # Atom wavelet scale separation
     for j, o in enumerate(ol):
         x_min, y_min, x_max, y_max = o.bbox
+        k = kurtosis(o.image.flatten(), fisher=True)
+        if k < 0:
+            continue
+
         if o.level >= lvl_sep_big:
             im_tot[ x_min : x_max, y_min : y_max ] += o.image
         else:
@@ -317,6 +329,8 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys,
     #im_tot *= norm # renormalize for SB
     sbt_flux = 10**(-0.4 * sbt) * pixscale**2 / norm # renormalize for SB
     sb_lim = 10**(-0.4 * 30.3) * pixscale**2 / norm # renormalize for SB
+
+    print(sbt_flux * norm)
 
     im_icl = np.copy(im_tot)
     im_icl[im_icl >= sbt_flux] = 0.
@@ -465,32 +479,36 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
 
-    for j, object in enumerate(ol):
+    for j, o in enumerate(ol):
 
-        x_min, y_min, x_max, y_max = object.bbox
-        lvlo = object.level
+        x_min, y_min, x_max, y_max = o.bbox
+        k = kurtosis(o.image.flatten(), fisher=True)
+        if k < 0:
+            continue
+
+        lvlo = o.level
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
 
         if object.level >= lvl_sep_big:
 
-            if object.level >= lvl_sep:
-                icl[ x_min : x_max, y_min : y_max ] += object.image
+            if o.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += o.image
             else:
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                    icl[ x_min : x_max, y_min : y_max ] += o.image
                 else:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image
+                    gal[ x_min : x_max, y_min : y_max ] += o.image
 
         else:
 
-            if object.level >= lvl_sep:
-                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+            if o.level >= lvl_sep:
+                icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
             else:
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
                 else:
-                    gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
     hduo = fits.PrimaryHDU(icl)
     hduo.writeto( nfp + 'results.iclbcg.bcgwavsep_%03d.fits'%lvl_sep, overwrite = True )
@@ -526,6 +544,10 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
+        k = kurtosis(o.image.flatten(), fisher=True)
+        if k < 0:
+            continue
+
         sx = x_max - x_min
         sy = y_max - y_min
         xco = itl[j].interscale_maximum.x_max
@@ -854,14 +876,14 @@ if __name__ == '__main__':
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out4/'
 
-    dirl = ['TNG-100']
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
 
     gamma = 0.8
     n_levels = 11
     lvl_sep_big = 6
-    lvl_sep_l = [ 5 ]#[ 3, 4, 5, 6, 7 ]
-    size_sep_l = [ 200 ] # [ 20, 40, 60, 80, 100 ] # separation radius sat/icl kpc
-    sbt_l = [ 26 ]# [  26, 26.5, 27, 27.5, 28. ]
+    lvl_sep_l = [ 3, 4, 5, 6, 7 ]
+    size_sep_l = [ 100, 200, 300. ] # [ 20, 40, 60, 80, 100 ] # separation radius sat/icl kpc
+    sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
     physscale = 1 # kpc/''
