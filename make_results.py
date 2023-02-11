@@ -21,6 +21,7 @@ from skimage.measure import label, regionprops
 from sklearn.utils import resample
 from atom_props import *
 from measure_icl_quantities import *
+from scipy.stats import kurtosis
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_gal = 3, display = True ):
