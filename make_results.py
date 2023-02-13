@@ -22,6 +22,7 @@ from sklearn.utils import resample
 from atom_props import *
 from measure_icl_quantities import *
 from scipy.stats import kurtosis
+from measure_transition_radius import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def make_galaxy_catalog( oim, n_levels, n_sig_gal = 50, level_gal = 3, display = True ):
@@ -169,12 +170,15 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
 
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
+    onb = len(ol)
+    filtered_onb = 0
 
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
         k = kurtosis(o.image.flatten(), fisher=True)
         if k < 0:
+            filtered_onb += 1
             continue
 
         lvlo = o.level
@@ -199,6 +203,8 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
             rdc_array[ x_min : x_max, y_min : y_max, o.level ] += o.image
         else:
             rdc_array[ x_min : x_max, y_min : y_max, o.level ] += o.image * gamma
+
+    print('Kurtosis filtered: %d/%d'%(filtered_onb,onb))
 
     # Datacube
     rdc = d.datacube( rdc_array, dctype = 'NONE' )
@@ -878,12 +884,13 @@ if __name__ == '__main__':
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out4/'
 
     dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+    #dirl = ['TNG-100']
 
     gamma = 0.8
     n_levels = 11
     lvl_sep_big = 6
-    lvl_sep_l = [ 3, 4, 5, 6, 7 ]
-    size_sep_l = [ 100, 200, 300. ] # [ 20, 40, 60, 80, 100 ] # separation radius sat/icl kpc
+    lvl_sep_l = [ 5 ]
+    size_sep_l = [ 100, 150, 200, 250, 300. ] # [ 20, 40, 60, 80, 100 ] # separation radius sat/icl kpc
     sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
@@ -907,10 +914,7 @@ if __name__ == '__main__':
 
         #image_files = [ '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xz_r_4Mpc_mu30.3.rebin.norm.fits', \
         #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xy_r_4Mpc_mu30.3.rebin.norm.fits', \
-        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits', \
-        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000005_0.05_xz_r_4Mpc_mu30.3.rebin.norm.fits', \
-        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000005_0.05_xy_r_4Mpc_mu30.3.rebin.norm.fits', \
-        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000005_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits' ]
+        #                '/home/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits' ]
 
         for nf in image_files:
 
@@ -934,10 +938,10 @@ if __name__ == '__main__':
                 icl, gal = make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
-                print('WAVSEP | %12s%9d | %12s%9d | %12s%9d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
+                print('\nWAVSEP | %12s%9d | %12s%9d | %12s%9d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
                 print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
                 print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
-                print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
+                print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |\n' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
 
             #-------------------------------------------------------------------
             # SIZESEP
@@ -946,11 +950,11 @@ if __name__ == '__main__':
                 size_sep_pix = size_sep * 2. / pixscale * physscale
                 icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
                 results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
-                print('sizesep', np.sum(icl)/(np.sum(icl)+np.sum(gal) ))
-                print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
+
+                print('\nSIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_sizesep[6], 'Flux ICL = ', results_sizesep[0], 'Flux ICL = ', results_sizesep[3] ) )
                 print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_sizesep[7], 'Flux gal = ', results_sizesep[1], 'Flux gal = ', results_sizesep[4] ) )
-                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_sizesep[8], 'fICL = ', results_sizesep[2], 'fICL = ', results_sizesep[5] ) )
+                print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |\n ' %('fICL = ', results_sizesep[8], 'fICL = ', results_sizesep[2], 'fICL = ', results_sizesep[5] ) )
 
             #-------------------------------------------------------------------
             # SIZESEP 2 TEST
@@ -978,10 +982,10 @@ if __name__ == '__main__':
                 norm = header['NORM']
                 icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys, n_levels, plot_vignet = True)
                 results_sbt = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
-                print('SBT | %12s%7.1f |' %('mu = ', sbt ))
+                print('\nSBT | %12s%7.1f |' %('mu = ', sbt ))
                 print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_sbt[0] ) )
                 print('SBT | %12s%1.3e |  ' %( 'Flux gal = ', results_sbt[1] ) )
-                print('SBT | %12s%1.3e | ' %( 'fICL = ', results_sbt[2] ) )
+                print('SBT | %12s%1.3e |\n ' %( 'fICL = ', results_sbt[2] ) )
 
             '''
             #-------------------------------------------------------------------
@@ -1005,10 +1009,10 @@ if __name__ == '__main__':
                 icl, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
                 results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
-                print('BCGWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
+                print('\nBCGWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
                 print('BCGWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgwavsep[0] ) )
                 print('BCGWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgwavsep[1] ) )
-                print('BCGWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_bcgwavsep[2] ) )
+                print('BCGWAVSEP | %12s%1.3e | \n' %( 'fICL = ', results_bcgwavsep[2] ) )
 
             #-------------------------------------------------------------------
             # BCGSIZESEP
@@ -1017,10 +1021,10 @@ if __name__ == '__main__':
                 icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
                 results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
 
-                print('BCGSIZESEP | %12s%9d |' %('SIZE = ', size_sep ))
+                print('\nBCGSIZESEP | %12s%9d |' %('SIZE = ', size_sep ))
                 print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
                 print('BCGSIZESEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgsizesep[1] ) )
-                print('BCGSIZESEP | %12s%1.3e | ' %( 'fICL = ', results_bcgsizesep[2] ) )
+                print('BCGSIZESEP | %12s%1.3e | \n' %( 'fICL = ', results_bcgsizesep[2] ) )
 
 
             if flag_data == False:

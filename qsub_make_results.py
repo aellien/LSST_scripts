@@ -1,6 +1,7 @@
 #!/bin/bash
+#PBS -o /home/ellien/LSST_ICL/logs/make_results.out
 #PBS -j oe
-#PBS -N make_results.out
+#PBS -N maker
 #PBS -l nodes=1:ppn=1,walltime=47:00:00
 #PSB -S /bin/bash
 

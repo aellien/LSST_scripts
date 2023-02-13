@@ -1,4 +1,5 @@
 #!/bin/bash
+#PBS -o /home/ellien/LSST_ICL/logs/make_mock.out
 #PBS -j oe
 #PBS -N maker
 #PBS -l nodes=1:ppn=1,walltime=24:00:00
