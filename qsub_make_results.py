@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -j oe
-#PBS -N maker
+#PBS -N make_results.out
 #PBS -l nodes=1:ppn=1,walltime=47:00:00
 #PSB -S /bin/bash
 
