@@ -390,16 +390,16 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
     # Read atoms
     ol, itl = read_image_atoms( nfp, verbose = True )
 
-    for j, object in enumerate(ol):
+    for j, o in enumerate(ol):
 
-        x_min, y_min, x_max, y_max = object.bbox
-        lvlo = object.level
+        x_min, y_min, x_max, y_max = o.bbox
+        lvlo = o.level
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
 
-        if object.level >= lvl_sep_big:
+        if o.level >= lvl_sep_big:
 
-            if object.level < lvl_sep:
+            if o.level < lvl_sep:
 
                 flag_gal = False
                 for pos in cat_gal:
@@ -410,19 +410,19 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
 
                 if flag_gal == True:
                     if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                        icl[ x_min : x_max, y_min : y_max ] += object.image
+                        icl[ x_min : x_max, y_min : y_max ] += o.image
                     else:
-                        gal[ x_min : x_max, y_min : y_max ] += object.image
+                        gal[ x_min : x_max, y_min : y_max ] += o.image
 
                 if flag_gal == False:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image
+                    icl[ x_min : x_max, y_min : y_max ] += o.image
 
             else:
-                icl[ x_min : x_max, y_min : y_max ] += object.image
+                icl[ x_min : x_max, y_min : y_max ] += o.image
 
         else:
 
-            if object.level < lvl_sep:
+            if o.level < lvl_sep:
 
                 flag_gal = False
                 for pos in cat_gal:
@@ -433,15 +433,15 @@ def make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc, n_sig_gal
 
                 if flag_gal == True:
                     if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc:
-                        icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                        icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
                     else:
-                        gal[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                        gal[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
                 if flag_gal == False:
-                    icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                    icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
             else:
-                icl[ x_min : x_max, y_min : y_max ] += object.image * gamma
+                icl[ x_min : x_max, y_min : y_max ] += o.image * gamma
 
     hduo = fits.PrimaryHDU(icl)
     hduo.writeto( nfp + 'results.iclbcg.spawavsep_%03d.fits'%lvl_sep, overwrite = True )
@@ -491,7 +491,7 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
         xco = itl[j].interscale_maximum.x_max
         yco = itl[j].interscale_maximum.y_max
 
-        if object.level >= lvl_sep_big:
+        if o.level >= lvl_sep_big:
 
             if o.level >= lvl_sep:
                 icl[ x_min : x_max, y_min : y_max ] += o.image
