@@ -947,8 +947,8 @@ if __name__ == '__main__':
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
     path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out4/'
 
-    #dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
-    dirl = ['TNG-100']
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
+    #dirl = ['TNG-100']
 
     # Classification parameters
     gamma = 0.8
@@ -969,7 +969,7 @@ if __name__ == '__main__':
     # Ray parameters
     ray_refs = []
     ray_outputs = []
-    n_cpus = 2
+    n_cpus = 48
     ray.init(num_cpus = n_cpus)
     id_gamma = ray.put(gamma)
     id_n_levels = ray.put(n_levels)
@@ -998,9 +998,9 @@ if __name__ == '__main__':
             names.append(image.split('.')[0])
         names = np.unique(names)
 
-        image_files = [ '/n03data/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xz_r_4Mpc_mu30.3.rebin.norm.fits', \
-                        '/n03data/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xy_r_4Mpc_mu30.3.rebin.norm.fits', \
-                        '/n03data/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits' ]
+        #image_files = [ '/n03data/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xz_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/n03data/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_xy_r_4Mpc_mu30.3.rebin.norm.fits', \
+        #                '/n03data/ellien/LSST_ICL/simulations/out4/TNG-100/00099_0000004_0.05_yz_r_4Mpc_mu30.3.rebin.norm.fits' ]
 
         for nf in image_files:
 
@@ -1044,117 +1044,4 @@ if __name__ == '__main__':
     for output in ray_outputs[1:]:
         results = pd.concat( [ results, output], ignore_index = True )
 
-        '''
-        #-------------------------------------------------------------------
-        # WAVSEP
-        for lvl_sep in lvl_sep_l:
-
-            icl, gal = make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-            results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
-
-            print('\nWAVSEP | %12s%9d | %12s%9d | %12s%9d |' %('LVL = ', lvl_sep - 1, 'LVL = ',lvl_sep, 'LVL = ',lvl_sep + 1))
-            print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_wavsep[3], 'Flux ICL = ', results_wavsep[0], 'Flux ICL = ', results_wavsep[6] ) )
-            print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_wavsep[4], 'Flux gal = ', results_wavsep[1], 'Flux gal = ', results_wavsep[7] ) )
-            print('WAVSEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |\n' %('fICL = ', results_wavsep[5], 'fICL = ', results_wavsep[2], 'fICL = ', results_wavsep[8] ) )
-
-        #-------------------------------------------------------------------
-        # SIZESEP
-        for size_sep in size_sep_l:
-
-            size_sep_pix = size_sep * 2. / pixscale * physscale
-            icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
-            results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
-
-            print('\nSIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
-            print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_sizesep[6], 'Flux ICL = ', results_sizesep[0], 'Flux ICL = ', results_sizesep[3] ) )
-            print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_sizesep[7], 'Flux gal = ', results_sizesep[1], 'Flux gal = ', results_sizesep[4] ) )
-            print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |\n ' %('fICL = ', results_sizesep[8], 'fICL = ', results_sizesep[2], 'fICL = ', results_sizesep[5] ) )
-
-        #-------------------------------------------------------------------
-        # SIZESEP 2 TEST
-        #for size_sep in size_sep_l:
-
-        #    size_sep_icl = size_sep
-        #    size_sep_bcg = size_sep + 100. # premier test radius kpc
-
-        #    size_sep_icl_pix = size_sep_icl * 2. / pixscale * physscale # separation diameter in pixel
-        #    size_sep_bcg_pix = size_sep_bcg * 2. / pixscale * physscale # separation diameter in pixel
-
-        #    icl, gal = make_results_sizesep2( oim, nfp, gamma, lvl_sep_big, ricl, size_sep_bcg, size_sep_icl, size_sep_bcg_pix, size_sep_icl_pix, xs, ys, n_levels, plot_vignet = False )
-        #    print('sizesep2', np.sum(icl)/(np.sum(icl)+np.sum(gal) ))
-        #    #results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
-        #    #print('SIZESEP | %12s%9d | %12s%9d | %12s%9d |' %('SIZE_LOW = ', size_sep * ( 1 - err_size ) , 'SIZE = ', size_sep, 'SIZE_UP = ', size_sep * ( 1 + err_size ) ))
-        #    #print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |' %( 'Flux ICL = ', results_sizesep[6], 'Flux ICL = ', results_sizesep[0], 'Flux ICL = ', results_sizesep[3] ) )
-        #    #print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e |  ' %('Flux gal = ', results_sizesep[7], 'Flux gal = ', results_sizesep[1], 'Flux gal = ', results_sizesep[4] ) )
-        #    #print('SIZESEP | %12s%1.3e | %12s%1.3e | %12s%1.3e | ' %('fICL = ', results_sizesep[8], 'fICL = ', results_sizesep[2], 'fICL = ', results_sizesep[5] ) )
-
-
-        #-------------------------------------------------------------------
-        # SBT
-        for sbt in sbt_l:
-
-            norm = header['NORM']
-            icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys, n_levels, plot_vignet = True)
-            results_sbt = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
-            print('\nSBT | %12s%7.1f |' %('mu = ', sbt ))
-            print('SBT | %12s%1.3e |' %( 'Flux ICL = ', results_sbt[0] ) )
-            print('SBT | %12s%1.3e |  ' %( 'Flux gal = ', results_sbt[1] ) )
-            print('SBT | %12s%1.3e |\n ' %( 'fICL = ', results_sbt[2] ) )
-
-
-        #-------------------------------------------------------------------
-        # SPAWAVSEP
-        #cat_gal = make_galaxy_catalog( oim, n_levels, n_sig_gal = n_sig_gal, level_gal = 3, display = False )
-        #for lvl_sep in lvl_sep_l:
-
-        #    icl, gal = make_results_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-        #    results_spawavsep = measure_icl_quantities_spawavsep( oim, nfp, gamma, lvl_sep_big, cat_gal, rc_pix, n_sig_gal, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
-
-        #    print('SPAWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
-        #    print('SPAWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_spawavsep[0] ) )
-        #    print('SPAWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_spawavsep[1] ) )
-        #    print('SPAWAVSEP | %12s%1.3e | ' %( 'fICL = ', results_spawavsep[2] ) )
-
-
-        #-------------------------------------------------------------------
-        # BCGWAVSEP
-        for lvl_sep in lvl_sep_l:
-
-            icl, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-            results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
-
-            print('\nBCGWAVSEP | %12s%9d |' %('LVL = ', lvl_sep ))
-            print('BCGWAVSEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgwavsep[0] ) )
-            print('BCGWAVSEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgwavsep[1] ) )
-            print('BCGWAVSEP | %12s%1.3e | \n' %( 'fICL = ', results_bcgwavsep[2] ) )
-
-        #-------------------------------------------------------------------
-        # BCGSIZESEP
-        for size_sep in size_sep_l:
-            size_sep_pix = size_sep * 2. / pixscale * physscale
-            icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
-            results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
-
-            print('\nBCGSIZESEP | %12s%9d |' %('SIZE = ', size_sep ))
-            print('BCGSIZESEP | %12s%1.3e |' %( 'Flux ICL = ', results_bcgsizesep[0] ) )
-            print('BCGSIZESEP | %12s%1.3e |  ' %( 'Flux gal = ', results_bcgsizesep[1] ) )
-            print('BCGSIZESEP | %12s%1.3e | \n' %( 'fICL = ', results_bcgsizesep[2] ) )
-
-
-        if flag_data == False:
-            results = pd.DataFrame( [[ dir, nf, results_wavsep[0] * norm, results_wavsep[1] * norm, results_wavsep[2], results_sizesep[0] * norm, results_sizesep[1] * norm, results_sizesep[2], \
-                                        results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2], \
-                                        results_bcgsizesep[0] * norm, results_bcgsizesep[1] * norm, results_bcgsizesep[2] ]], \
-                        columns = [ 'dir', 'name', 'FICL_wavsep', 'Fgal_wavsep', 'fICL_wavsep', 'FICL_sizesep', 'Fgal_sizesep', 'fICL_sizesep', \
-                                        'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
-            flag_data = True
-        else:
-            newresults = pd.DataFrame( [[ dir, nf, results_wavsep[0] * norm, results_wavsep[1] * norm, results_wavsep[2], results_sizesep[0] * norm, results_sizesep[1] * norm, results_sizesep[2], \
-                                        results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2], \
-                                        results_bcgsizesep[0] * norm, results_bcgsizesep[1] * norm, results_bcgsizesep[2] ]], \
-                        columns = [ 'dir', 'name', 'FICL_wavsep', 'Fgal_wavsep', 'fICL_wavsep', 'FICL_sizesep', 'Fgal_sizesep', 'fICL_sizesep', \
-                                        'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
-            results = pd.concat( [ results, newresults], ignore_index = True )
-        '''
-    print(results)
     results.to_excel('/home/ellien/LSST_ICL/LSST_scripts/dawis_lsst_results.xlsx', sheet_name = 'amael')
