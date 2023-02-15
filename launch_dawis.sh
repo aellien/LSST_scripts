@@ -4,7 +4,7 @@
 
 path="/n03data/ellien/LSST_ICL/simulations/out4"
 
-for dir in Magneticum
+for dir in Magneticum Hydrangea
 do
     for file in $path/$dir/*norm.fits
     #for file in $path/*norm.fits
