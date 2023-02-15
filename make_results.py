@@ -1157,4 +1157,4 @@ if __name__ == '__main__':
             results = pd.concat( [ results, newresults], ignore_index = True )
         '''
     print(results)
-    results.to_excel('dawis_lsst_results.xlsx', sheet_name = 'amael')
+    results.to_excel('/home/ellien/LSST_ICL/LSST_scripts/dawis_lsst_results.xlsx', sheet_name = 'amael')
