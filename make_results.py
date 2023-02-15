@@ -969,7 +969,7 @@ if __name__ == '__main__':
     # Ray parameters
     ray_refs = []
     ray_outputs = []
-    n_cpus = 48
+    n_cpus = 144
     ray.init(num_cpus = n_cpus)
     id_gamma = ray.put(gamma)
     id_n_levels = ray.put(n_levels)
