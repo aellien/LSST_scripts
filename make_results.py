@@ -876,7 +876,7 @@ def trash():
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @ray.remote
-def make_results_cluster( oim, nfp, xs, ys, gamma, n_levels, lvl_sep_big, lvl_sep_l, size_sep_l, sbt_l, err_size, pixscale, physscale, rc, rc_pix, n_sig_gal, ricl, r_lsst):
+def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_big, lvl_sep_l, size_sep_l, sbt_l, err_size, pixscale, physscale, rc, rc_pix, n_sig_gal, ricl, r_lsst):
     '''
     Runs all classification schemes for a single cluster. Performed by a single ray worker.
     '''
@@ -1017,8 +1017,13 @@ if __name__ == '__main__':
             nf = split[-1]
             nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
 
+            id_nf = ray.put(nf)
+            id_dir = ray.put(dir)
+
             ray_refs.append( make_results_cluster.remote( oim,\
                                                           nfp, \
+                                                          id_dir,\
+                                                          id_nf,\
                                                           xs,\
                                                           ys,\
                                                           id_gamma,\
