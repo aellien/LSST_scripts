@@ -955,7 +955,7 @@ if __name__ == '__main__':
     n_levels = 11
     lvl_sep_big = 6
     lvl_sep_l = [ 5 ]
-    size_sep_l = [ 100, 150, 200, 250, 300. ] # [ 20, 40, 60, 80, 100 ] # separation radius sat/icl kpc
+    size_sep_l = [ 250 ] # separation radius sat/icl kpc
     sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
@@ -1049,4 +1049,4 @@ if __name__ == '__main__':
     for output in ray_outputs[1:]:
         results = pd.concat( [ results, output], ignore_index = True )
 
-    results.to_excel('/home/ellien/LSST_ICL/LSST_scripts/dawis_lsst_results.xlsx', sheet_name = 'amael')
+    results.to_excel('/home/ellien/LSST_ICL/LSST_scripts/dawis_lsst_results_%03d_%03d_%03d.xlsx'%(lvl_sep_l[0], size_sep_l[0], sbt_l[0]), sheet_name = 'amael')
