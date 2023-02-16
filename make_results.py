@@ -876,7 +876,7 @@ def trash():
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @ray.remote
-def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_big, lvl_sep_l, size_sep_l, sbt_l, err_size, pixscale, physscale, rc, rc_pix, n_sig_gal, ricl, r_lsst):
+def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_big, lvl_sep_l, size_sep_icl_l, size_sep_bcg_l, sbt_l, err_size, pixscale, physscale, rc, rc_pix, n_sig_gal, ricl, r_lsst):
     '''
     Runs all classification schemes for a single cluster. Performed by a single ray worker.
     '''
@@ -888,7 +888,7 @@ def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_bi
         results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
     # SIZESEP
-    for size_sep in size_sep_l:
+    for size_sep in size_sep_icl_l:
 
         size_sep_pix = size_sep * 2. / pixscale * physscale
         icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
@@ -925,7 +925,7 @@ def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_bi
         results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
 
     # BCGSIZESEP
-    for size_sep in size_sep_l:
+    for size_sep in size_sep_bcg_l:
         size_sep_pix = size_sep * 2. / pixscale * physscale
         icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
         results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
@@ -955,7 +955,8 @@ if __name__ == '__main__':
     n_levels = 11
     lvl_sep_big = 6
     lvl_sep_l = [ 5 ]
-    size_sep_l = [ 200 ] # separation radius sat/icl kpc
+    size_sep_icl_l = [ 200 ] # separation radius gal/icl kpc
+    size_sep_bcg_l = [ 60 ] # separation radius bcg/icl kpc
     sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
@@ -975,7 +976,8 @@ if __name__ == '__main__':
     id_n_levels = ray.put(n_levels)
     id_lvl_sep_big = ray.put(lvl_sep_big)
     id_lvl_sep_l = ray.put(lvl_sep_l)
-    id_size_sep_l = ray.put(size_sep_l)
+    id_size_sep_icl_l = ray.put(size_sep_icl_l)
+    id_size_sep_bcg_l = ray.put(size_sep_bcg_l)
     id_sbt_l = ray.put(sbt_l)
     id_err_size = ray.put(err_size)
     id_pixscale = ray.put(pixscale)
@@ -1030,7 +1032,8 @@ if __name__ == '__main__':
                                                           id_n_levels,\
                                                           id_lvl_sep_big,\
                                                           id_lvl_sep_l,\
-                                                          id_size_sep_l,\
+                                                          id_size_sep_icl_l,\
+                                                          id_size_sep_bcg_l,\
                                                           id_sbt_l,\
                                                           id_err_size,\
                                                           id_pixscale,\
