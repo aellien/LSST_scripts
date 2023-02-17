@@ -51,7 +51,7 @@ def measure_transition_radius(im_icl, im_bcg, n_bins, pixscale, physscale ):
         r_trans_pix = bin_r_trans * size_image / 2. / n_bins
         r_trans_kpc = r_trans_pix * pixscale * physscale
     except:
-        bin_r_trans = np.inf
+        r_trans_kpc = np.inf
     return r_trans_kpc
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
