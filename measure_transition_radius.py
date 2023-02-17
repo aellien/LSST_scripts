@@ -39,15 +39,29 @@ def convert_2D_to_1D(IMAGE, SIZE_IMAGE, L_BINS):
     return SUMBINS, BINS
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def measure_transition_radius(im_icl, im_bcg, n_bins, pixscale, physscale ):
+
+    size_image = im_icl.shape[0]
+    profile_icl, bins = convert_2D_to_1D(im_icl, size_image, n_bins)
+    profile_bcg, bins = convert_2D_to_1D(im_bcg, size_image, n_bins)
+
+    bin_r_trans = np.where(profile_icl > profile_bcg)[0][0]
+    print(np.where(profile_icl > profile_bcg))
+    r_trans_pix = bin_r_trans * size_image / 2. / n_bins
+    r_trans_kpc = r_trans_pix * pixscale * physscale
+
+    return r_trans_kpc
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if __name__ == '__main__':
 
     # Paths, lists & variables
-    path_data = '/n03data/ellien/LSST_ICL/simulations/out4/'
+    path_data = '/home/ellien/LSST_ICL/simulations/out4/'
     path_scripts = '/home/ellien/LSST_ICL/LSST_scripts'
-    path_wavelets = '/n03data/ellien/LSST_ICL/wavelets/out4/'
+    path_wavelets = '/home/ellien/LSST_ICL/wavelets/out4/'
 
-    dirl = ['HorizonAGN']
-    schl = [ 'sizesep_60','wavsep_5']
+    dirl = ['TNG-100']
+    schl = [ 'sizesep_200','wavsep_005']
 
     norm = 1E4
     n_bins = 300
@@ -61,7 +75,7 @@ if __name__ == '__main__':
         for dir in dirl:
 
             image_dir = os.path.join( path_wavelets, dir )
-            image_files = glob.glob(image_dir+'/run1/*.results.icl.%s.fits'%sch)
+            image_files = glob.glob(image_dir+'/run1/00099_0000004_0.05_yz_r_4Mpc_mu30.3.*.results.icl.%s.fits'%sch)
 
             for image in image_files:
 
@@ -97,22 +111,16 @@ if __name__ == '__main__':
                 #plt.imshow(im_bcg, norm = ImageNormalize(im_bcg, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
                 #plt.show()
 
-                profile_icl, bins = convert_2D_to_1D(im_icl, size_image, n_bins)
-                profile_bcg, bins = convert_2D_to_1D(im_bcg, size_image, n_bins)
-
-                bin_r_trans = np.where(profile_icl > profile_bcg)[0][0]
-                r_trans_pix = bin_r_trans * size_image / 2. / n_bins
-                r_trans_kpc = r_trans_pix * pixscale * physscale
+                r_trans_kpc = measure_transition_radius(im_icl, im_bcg, size_image, n_bins, pixscale, physscale )
                 radii.append( [ name, sch, r_trans_kpc ] )
 
                 print(r_trans_kpc)
 
-
-                #fig = plt.figure()
-                #plt.plot(bins[:-1] * pixscale * physscale, profile_icl, label = 'icl')
-                #plt.plot(bins[:-1] * pixscale * physscale, profile_bcg, label = 'bcg')
-                #plt.yscale('log')
-                #plt.xscale('log')
-                #plt.ylim(bottom=1E-2)
-                #plt.legend()
-                #plt.savefig( os.path.join(image_dir, ) )
+                fig = plt.figure()
+                plt.plot(bins[:-1] * pixscale * physscale, profile_icl, label = 'icl')
+                plt.plot(bins[:-1] * pixscale * physscale, profile_bcg, label = 'bcg')
+                plt.yscale('log')
+                plt.xscale('log')
+                plt.ylim(bottom=1E-3)
+                plt.legend()
+                plt.savefig( image[:-4] + 'profile.png', format = 'png' )
