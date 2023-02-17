@@ -887,12 +887,27 @@ def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_bi
         icl, gal = make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels, plot_vignet = True )
         results_wavsep = measure_icl_quantities_wavsep( oim, nfp, gamma = gamma, lvl_sep_big = lvl_sep_big, lvl_sep = lvl_sep, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
+    # BCGWAVSEP
+    for lvl_sep in lvl_sep_l:
+
+        iclbcg, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+        results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
+        r_trans_wavsep_kpc = measure_transition_radius(im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
+
     # SIZESEP
     for size_sep in size_sep_icl_l:
 
         size_sep_pix = size_sep * 2. / pixscale * physscale
         icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
         results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
+
+    # BCGSIZESEP
+    for size_sep in size_sep_bcg_l:
+
+        size_sep_pix = size_sep * 2. / pixscale * physscale
+        iclbcg, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
+        results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
+        r_trans_wavsep_kpc = measure_transition_radius(im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
 
     # SIZESEP 2 TEST
     #for size_sep in size_sep_l:
@@ -918,23 +933,14 @@ def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_bi
         icl, gal = make_results_sbt(oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys, n_levels, plot_vignet = True)
         results_sbt = measure_icl_quantities_sbt( oim, nfp, gamma = gamma, pixscale = pixscale, lvl_sep_big = lvl_sep_big, sbt = sbt, norm = norm, n_levels = n_levels, r_lsst = r_lsst, verbose = False  )
 
-    # BCGWAVSEP
-    for lvl_sep in lvl_sep_l:
-
-        icl, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
-        results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
-
-    # BCGSIZESEP
-    for size_sep in size_sep_bcg_l:
-        size_sep_pix = size_sep * 2. / pixscale * physscale
-        icl, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
-        results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
-
+    #----------------------------
+    # Store results in Dataframe
     results = pd.DataFrame( [[ dir, nf, results_wavsep[0] * norm, results_wavsep[1] * norm, results_wavsep[2], results_sizesep[0] * norm, results_sizesep[1] * norm, results_sizesep[2], \
-                                results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2], \
-                                results_bcgsizesep[0] * norm, results_bcgsizesep[1] * norm, results_bcgsizesep[2] ]], \
+                                results_sbt[0], results_sbt[1], results_sbt[2], results_bcgwavsep[0] * norm, results_bcgwavsep[1] * norm, results_bcgwavsep[2], r_trans_wavsep_kpc, \
+                                results_bcgsizesep[0] * norm, results_bcgsizesep[1] * norm, results_bcgsizesep[2], r_trans_sizesep_kpc ]], \
                 columns = [ 'dir', 'name', 'FICL_wavsep', 'Fgal_wavsep', 'fICL_wavsep', 'FICL_sizesep', 'Fgal_sizesep', 'fICL_sizesep', \
-                                'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep' ])
+                                'FICL_sbt', 'Fgal_sbt', 'fICL_sbt', 'FICL_bcgwavsep', 'Fgal_bcgwavsep', 'fICL_bcgwavsep', 'Trans_radius_wavesep', \
+                                'FICL_bcgsizesep', 'Fgal_bcgsizesep', 'fICL_bcgsizesep', 'Trans_radius_sizesep' ])
 
     return results
 
@@ -955,7 +961,7 @@ if __name__ == '__main__':
     n_levels = 11
     lvl_sep_big = 6
     lvl_sep_l = [ 5 ]
-    size_sep_icl_l = [ 200 ] # separation radius gal/icl kpc
+    size_sep_icl_l = [ 250 ] # separation radius gal/icl kpc
     size_sep_bcg_l = [ 60 ] # separation radius bcg/icl kpc
     sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
