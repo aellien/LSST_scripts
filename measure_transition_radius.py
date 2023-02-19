@@ -39,11 +39,13 @@ def convert_2D_to_1D(IMAGE, SIZE_IMAGE, L_BINS):
     return SUMBINS, BINS
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def measure_transition_radius(im_icl, im_bcg, n_bins, pixscale, physscale ):
+def measure_transition_radius(nfp, im_icl, im_bcg, n_bins, pixscale, physscale ):
 
     size_image = im_icl.shape[0]
     profile_icl, bins = convert_2D_to_1D(im_icl, size_image, n_bins)
     profile_bcg, bins = convert_2D_to_1D(im_bcg, size_image, n_bins)
+
+    plot_radial_profile(nfp, bins, pixscale, physscale, profile_icl, profile_bcg)
 
     try:
         bin_r_trans = np.where(profile_icl > profile_bcg)[0][0]
@@ -52,8 +54,22 @@ def measure_transition_radius(im_icl, im_bcg, n_bins, pixscale, physscale ):
         r_trans_kpc = r_trans_pix * pixscale * physscale
     except:
         r_trans_kpc = np.inf
+
     return r_trans_kpc
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def plot_radial_profile(nfp, bins, pixscale, physscale, profile_icl, profile_bcg):
+
+    fig = plt.figure()
+    plt.plot(bins[:-1] * pixscale * physscale, profile_icl, label = 'icl')
+    plt.plot(bins[:-1] * pixscale * physscale, profile_bcg, label = 'bcg')
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.ylim(bottom=1E-3)
+    plt.legend()
+    plt.savefig( image[:-4] + 'profile.png', format = 'png' )
+
+    return None
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if __name__ == '__main__':
 

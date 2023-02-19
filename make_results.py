@@ -892,14 +892,14 @@ def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_bi
 
         iclbcg, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
         results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
-        r_trans_wavsep_kpc = measure_transition_radius(im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
+        r_trans_wavsep_kpc = measure_transition_radius(nfp = nfp, im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
 
     # SIZESEP
     for size_sep in size_sep_icl_l:
 
         size_sep_pix = size_sep * 2. / pixscale * physscale
         icl, gal = make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
-        results_sizesep = measure_icl_quantities_sizesep( oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
+        results_sizesep = measure_icl_quantities_sizesep(oim, nfp, gamma = gamma, size_sep = size_sep_pix, err_size = err_size, lvl_sep_big = lvl_sep_big, n_levels = n_levels, r_lsst = r_lsst, verbose = False )
 
     # BCGSIZESEP
     for size_sep in size_sep_bcg_l:
@@ -907,7 +907,7 @@ def make_results_cluster( oim, nfp, dir, nf, xs, ys, gamma, n_levels, lvl_sep_bi
         size_sep_pix = size_sep * 2. / pixscale * physscale
         iclbcg, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
         results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
-        r_trans_sizesep_kpc = measure_transition_radius(im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
+        r_trans_sizesep_kpc = measure_transition_radius(nfp = nfp, im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
 
     # SIZESEP 2 TEST
     #for size_sep in size_sep_l:
