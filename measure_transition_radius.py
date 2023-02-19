@@ -67,7 +67,7 @@ def plot_radial_profile(nfp, bins, pixscale, physscale, profile_icl, profile_bcg
     plt.xscale('log')
     plt.ylim(bottom=1E-3)
     plt.legend()
-    plt.savefig( image[:-4] + 'profile.png', format = 'png' )
+    plt.savefig( nfp + 'profile.png', format = 'png' )
 
     return None
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
