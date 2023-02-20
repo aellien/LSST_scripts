@@ -2,7 +2,7 @@ import os
 import sys
 import glob
 
-def rebin_fits(FILENAME,XBIN=2,YBIN=2):
+def rebin_fits(FILENAME,XBIN=2,YBIN=2,type='MEAN'):
 
     #---------------------------------------------------------------------------
     # MODULES
@@ -24,8 +24,13 @@ def rebin_fits(FILENAME,XBIN=2,YBIN=2):
     yedge = np.shape(im)[1]%YBIN
     im = im[xedge:,yedge:]
     binim = np.reshape(im,(int(np.shape(im)[0]/XBIN),XBIN,int(np.shape(im)[1]/YBIN),YBIN))
-    binim = np.mean(binim,axis=3)
-    binim = np.mean(binim,axis=1)
+
+    if type == 'MEAN':
+        binim = np.mean(binim,axis=3)
+        binim = np.mean(binim,axis=1)
+    elif type == 'SUM':
+        binim = np.sum(binim,axis=3)
+        binim = np.sum(binim,axis=1)
     print('New shape: %d x %d' %( binim.shape[0], binim.shape[1]  ))
 
     #---------------------------------------------------------------------------
