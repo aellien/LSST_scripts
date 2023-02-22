@@ -5,7 +5,7 @@ import shutil
 
 indir = os.path.join( '/n03data/ellien/LSST_ICL/simulations/out4/', sys.argv[2] )
 infile = sys.argv[1]
-outdir = os.path.join( '/n03data/ellien/LSST_ICL/wavelets/out4/', sys.argv[2], 'run1' )
+outdir = os.path.join( '/n03data/ellien/LSST_ICL/wavelets/out4/', sys.argv[2], 'run2' )
 n_cpus = 1 # Number of CPUs
 tau = 0.1   # Relative Threshold
 gamma = 0.8   # Attenuation (CLEAN) factor
@@ -17,7 +17,7 @@ lvl_sep_big = 6     # Scale at wich mix_span & max_span are set to 1, and gamma 
 extent_sep = 1E-10    # Ratio n_pix/vignet under which the Haar wavelet is used for restoration
 lvl_sep_lin = -1     # Wavelet scale under which the Haar wavelet can be used for restoration
 max_iter = 1500      # Maximum number of iterations
-data_dump = True    # Write data at each iteration /!\ demands lot of space on hardware /!\
+data_dump = False    # Write data at each iteration /!\ demands lot of space on hardware /!\
 gif = True      # Make gifs of the run (need data_dump = True)
 starting_level = 2 # Starting wavelet scale (this is the third scale - Python convention 0 1 2)
 conditions = 'prolongation'
