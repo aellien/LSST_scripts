@@ -56,7 +56,7 @@ if __name__ == '__main__':
     path_data = '/n03data/ellien/LSST_ICL/simulations/out4'
     path_scripts = '/home/ellien/LSST_ICL/scripts'
 
-    dirl = ['Magneticum']
+    dirl = ['HorizonAGN', 'Hydrangea', 'Magneticum', 'TNG-100']
 
     for dir in dirl:
 
@@ -65,4 +65,4 @@ if __name__ == '__main__':
 
         for im in image_files:
 
-            rebin_fits( im, XBIN = 4, YBIN = 4)
+            rebin_fits( im, XBIN = 4, YBIN = 4, type = 'SUM')
