@@ -1023,7 +1023,7 @@ if __name__ == '__main__':
 
             split = nf.split('/')
             nf = split[-1]
-            nfp = os.path.join( path_wavelets, dir, 'run1', nf[:-4] )
+            nfp = os.path.join( path_wavelets, dir, 'run2', nf[:-4] )
 
             id_nf = ray.put(nf)
             id_dir = ray.put(dir)
@@ -1058,4 +1058,4 @@ if __name__ == '__main__':
     for output in ray_outputs[1:]:
         results = pd.concat( [ results, output], ignore_index = True )
 
-    results.to_excel('/home/ellien/LSST_ICL/catalogs/dawis_lsst_results_%03d_%03d_%03d_%03d.xlsx'%(lvl_sep_l[0], size_sep_icl_l[0], size_sep_bcg_l[0], sbt_l[0]), sheet_name = 'amael')
+    results.to_excel('/home/ellien/LSST_ICL/catalogs/dawis_lsst_results_%03d_%03d_%03d_%03d_run2.xlsx'%(lvl_sep_l[0], size_sep_icl_l[0], size_sep_bcg_l[0], sbt_l[0]), sheet_name = 'amael')
