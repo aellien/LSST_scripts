@@ -890,7 +890,7 @@ def make_results_cluster( oim, nfp, dir, nf, header, xs, ys, gamma, n_levels, lv
     # BCGWAVSEP
     for lvl_sep in lvl_sep_l:
 
-        iclbcg, gal = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
+        iclbcg, sat = make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, plot_vignet = True )
         results_bcgwavsep = measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc_pix, lvl_sep, xs, ys, n_levels, r_lsst = r_lsst, verbose = False )
         r_trans_wavsep_kpc = measure_transition_radius(nfp = nfp, im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
 
@@ -905,7 +905,7 @@ def make_results_cluster( oim, nfp, dir, nf, header, xs, ys, gamma, n_levels, lv
     for size_sep in size_sep_bcg_l:
 
         size_sep_pix = size_sep * 2. / pixscale * physscale
-        iclbcg, gal = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
+        iclbcg, sat = make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep, size_sep_pix, xs, ys, n_levels, plot_vignet = True )
         results_bcgsizesep = measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc_pix, size_sep_pix, xs, ys, n_levels, r_lsst, verbose = False )
         r_trans_sizesep_kpc = measure_transition_radius(nfp = nfp, im_icl = icl, im_bcg = iclbcg, n_bins = 200, pixscale = pixscale, physscale = physscale )
 
