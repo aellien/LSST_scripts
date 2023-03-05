@@ -34,7 +34,7 @@ def measure_icl_quantities_sizesep( oim, nfp, gamma, size_sep, err_size, lvl_sep
     im_gal = np.zeros((xs, ys))
 
     # Read atoms and interscale trees
-    ol, itl = read_image_atoms( nfp, verbose = True )
+    ol, itl = read_image_atoms( nfp, verbose = False )
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
@@ -144,7 +144,7 @@ def measure_icl_quantities_sizesep_bckup_test( oim, nfp, gamma, lvl_sep_big, n_l
     data_atom    = []
 
     # Read atoms and interscale trees
-    ol, itl = read_image_atoms( nfp, verbose = True )
+    ol, itl = read_image_atoms( nfp, verbose = False )
 
     # Compute mean size
     df_sizes = average_size_atom( ol, n_levels )
@@ -229,7 +229,7 @@ def measure_icl_quantities_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, n_leve
     im_gal = np.zeros((xs, ys))
 
     # Read atoms and interscale trees
-    ol, itl = read_image_atoms( nfp, verbose = True )
+    ol, itl = read_image_atoms( nfp, verbose = False )
 
     # Atom wavelet scale separation
     for j, o in enumerate(ol):
@@ -327,7 +327,7 @@ def measure_icl_quantities_sbt( oim, nfp, gamma, pixscale, lvl_sep_big, sbt, nor
     im_tot = np.zeros((xs, ys))
 
     # Read atoms and interscale trees
-    ol, itl = read_image_atoms( nfp, verbose = True )
+    ol, itl = read_image_atoms( nfp, verbose = False )
 
     # Atom wavelet scale separation
     for j, o in enumerate(ol):
@@ -452,7 +452,7 @@ def measure_icl_quantities_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep,
     xc = xs / 2.
     yc = ys / 2.
     # Read atoms and interscale trees
-    ol, itl = read_image_atoms( nfp, verbose = True )
+    ol, itl = read_image_atoms( nfp, verbose = False )
     for j, object in enumerate(ol):
 
         x_min, y_min, x_max, y_max = object.bbox
@@ -499,7 +499,7 @@ def measure_icl_quantities_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_se
     xc = xs / 2.
     yc = ys / 2.
     # Read atoms and interscale trees
-    ol, itl = read_image_atoms( nfp, verbose = True )
+    ol, itl = read_image_atoms( nfp, verbose = False )
     for j, o in enumerate(ol):
 
         x_min, y_min, x_max, y_max = o.bbox
