@@ -1000,7 +1000,7 @@ if __name__ == '__main__':
     lvl_sep_big = 6
     lvl_sep_l = [ 6 ]
     size_sep_icl_l = [ 250 ] # separation radius gal/icl kpc
-    size_sep_bcg_l = [ 250 ] # separation radius bcg/icl kpc
+    size_sep_bcg_l = [ 60 ] # separation radius bcg/icl kpc
     sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
