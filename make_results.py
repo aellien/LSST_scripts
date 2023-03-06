@@ -160,6 +160,7 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
     icl = np.zeros( (xs, ys) )
     gal = np.zeros( (xs, ys) )
     rim = np.zeros( (xs, ys) )
+    im_art = np.zeros((xs, ys))
 
     atom_gal = []
     coo_gal = []
@@ -180,6 +181,10 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
         k = kurtosis(o.image.flatten(), fisher=True)
         if k < 0:
             filtered_onb += 1
+            if o.level >= lvl_sep_big:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image * gamma
             continue
 
         lvlo = o.level
@@ -226,8 +231,8 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
     hduo.writeto( nfp + 'results.rim.fits', overwrite = True )
 
     if plot_vignet == True:
-        interval = AsymmetricPercentileInterval(5, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
-        fig, ax = plt.subplots(1, 2)
+        interval = AsymmetricPercentileInterval(0, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
+        fig, ax = plt.subplots(1, 3)
         poim = ax[0].imshow(gal, norm = ImageNormalize( gal, interval = interval, stretch = LogStretch()), cmap = 'binary')
         divider = make_axes_locatable(ax[0])
         cax = divider.append_axes("top", size="5%", pad=0.05)
@@ -246,6 +251,7 @@ def make_results_wavsep( oim, nfp, gamma, lvl_sep_big, lvl_sep, xs, ys, n_levels
                                     pad = 0,\
                                     shrink = 1.0,\
                                     ticklocation = 'top' )
+        ax[2].imshow(im_art, norm = ImageNormalize(im_art, interval = interval, stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.wavsep_%03d.png'%lvl_sep, format = 'png' )
         print('Write vignet to' + nfp + 'results.wavsep_%03d.png'%(lvl_sep))
@@ -262,6 +268,7 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
     xs, ys = oim.shape
     im_icl = np.zeros((xs, ys))
     im_gal = np.zeros((xs, ys))
+    im_art = np.zeros((xs, ys))
 
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = False )
@@ -270,6 +277,10 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
         x_min, y_min, x_max, y_max = o.bbox
         k = kurtosis(o.image.flatten(), fisher=True)
         if k < 0:
+            if o.level >= lvl_sep_big:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image * gamma
             continue
 
         sx = x_max - x_min
@@ -301,9 +312,11 @@ def make_results_sizesep( oim, nfp, gamma, lvl_sep_big, size_sep, size_sep_pix, 
 
     if plot_vignet == True:
 
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        fig, ax = plt.subplots(1, 3)
+        interval = AsymmetricPercentileInterval(0, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = interval, stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = interval, stretch = LogStretch() ), cmap = 'binary')
+        ax[2].imshow(im_art, norm = ImageNormalize(im_art, interval = interval, stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.sizesep_%03d.png'%size_sep, format = 'png' )
         plt.close('all')
@@ -316,8 +329,10 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys,
     # Paths, list & variables
     atom_icl = []
     atom_gal = []
+
     xs, ys = oim.shape
     im_tot = np.zeros((xs, ys))
+    im_art = np.zeros((xs, ys))
 
     # Read atoms and interscale trees
     ol, itl = read_image_atoms( nfp, verbose = False )
@@ -327,6 +342,10 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys,
         x_min, y_min, x_max, y_max = o.bbox
         k = kurtosis(o.image.flatten(), fisher=True)
         if k < 0:
+            if o.level >= lvl_sep_big:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image * gamma
             continue
 
         if o.level >= lvl_sep_big:
@@ -366,11 +385,13 @@ def make_results_sbt( oim, nfp, gamma, lvl_sep_big, sbt, norm, pixscale, xs, ys,
     hduo.writeto( nfp + 'results.gal.sbt_%2.1f.fits'%sbt, overwrite = True )
 
     if plot_vignet == True:
-        fig, ax = plt.subplots(1, 2)
+        fig, ax = plt.subplots(1, 3)
         im_gal[im_gal == 0. ] = sbt
         im_icl[im_icl == 0. ] = sbt
+        interval = AsymmetricPercentileInterval(0, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
         ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = MinMaxInterval(), vmin = im_gal.min(), vmax = sbt, stretch = LinearStretch() ), cmap = 'binary_r')
         ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = MinMaxInterval(), vmin = sbt, vmax = 35, stretch = LinearStretch() ), cmap ='binary_r')
+        ax[2].imshow(im_art, norm = ImageNormalize(im_art, interval = interval, stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.sbt_%2.1f.png'%sbt, format = 'png' )
         plt.close('all')
@@ -475,6 +496,7 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
     # path, list & variables
     icl = np.zeros( (xs, ys) )
     gal = np.zeros( (xs, ys) )
+    im_art = np.zeros((xs, ys))
 
     atom_gal = []
     coo_gal = []
@@ -492,6 +514,10 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
         x_min, y_min, x_max, y_max = o.bbox
         k = kurtosis(o.image.flatten(), fisher=True)
         if k < 0:
+            if o.level >= lvl_sep_big:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image * gamma
             continue
 
         lvlo = o.level
@@ -526,9 +552,11 @@ def make_results_bcgwavsep( oim, nfp, gamma, lvl_sep_big, rc, lvl_sep, xs, ys, n
 
     if plot_vignet == True:
 
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(gal, norm = ImageNormalize(gal, vmax = np.max(gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(icl, norm = ImageNormalize(icl, vmax = np.max(icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        fig, ax = plt.subplots(1, 3)
+        interval = AsymmetricPercentileInterval(0, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
+        ax[0].imshow(gal, norm = ImageNormalize(gal, interval = interval, stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(icl, norm = ImageNormalize(icl, interval = interval, stretch = LogStretch() ), cmap = 'binary')
+        ax[2].imshow(im_art, norm = ImageNormalize(im_art, interval = interval, stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.bcgwavsep_%03d.png'%lvl_sep, format = 'png' )
         plt.close('all')
@@ -544,6 +572,7 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
     xs, ys = oim.shape
     im_icl = np.zeros((xs, ys))
     im_gal = np.zeros((xs, ys))
+    im_art = np.zeros((xs, ys))
     xc = xs / 2.
     yc = ys / 2.
 
@@ -554,6 +583,10 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
         x_min, y_min, x_max, y_max = o.bbox
         k = kurtosis(o.image.flatten(), fisher=True)
         if k < 0:
+            if o.level >= lvl_sep_big:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image
+            else:
+                im_art[ x_min : x_max, y_min : y_max ] += o.image * gamma
             continue
 
         sx = x_max - x_min
@@ -593,9 +626,11 @@ def make_results_bcgsizesep( oim, nfp, gamma, lvl_sep_big, rc, size_sep, size_se
 
     if plot_vignet == True:
 
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, vmax = np.max(im_gal) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
-        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, vmax = np.max(im_icl) / 10., interval = MinMaxInterval(), stretch = LogStretch() ), cmap = 'binary')
+        fig, ax = plt.subplots(1, 3)
+        interval = AsymmetricPercentileInterval(0, 99.5) # meilleur rendu que MinMax or ZScale pour images reconstruites
+        ax[0].imshow(im_gal, norm = ImageNormalize(im_gal, interval = interval, stretch = LogStretch() ), cmap = 'binary')
+        ax[1].imshow(im_icl, norm = ImageNormalize(im_icl, interval = interval, stretch = LogStretch() ), cmap = 'binary')
+        ax[2].imshow(im_art, norm = ImageNormalize(im_art, interval = interval, stretch = LogStretch() ), cmap = 'binary')
         plt.tight_layout()
         plt.savefig( nfp + 'results.bcgsizesep_%03d.png'%size_sep, format = 'png' )
         plt.close('all')
@@ -628,7 +663,9 @@ def make_results_sizesep2( oim, nfp, gamma, lvl_sep_big, rc, size_sep_bcg, size_
         yco = itl[j].interscale_maximum.y_max
 
         if o.level >= lvl_sep_big:
+
             if (sx >= size_sep_icl_pix) or (sy >= size_sep_icl_pix): # isolate ICL+BCG from satellite galaxies
+
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #if BCG
                     if (sx >= size_sep_bcg_pix) or (sy >= size_sep_bcg_pix): #rm BCG from ICL+BCG
                         im_icl[ x_min : x_max, y_min : y_max ] += o.image
@@ -643,6 +680,7 @@ def make_results_sizesep2( oim, nfp, gamma, lvl_sep_big, rc, size_sep_bcg, size_
                 atom_gal.append( [ x_max - x_min, y_max - y_min, np.sum(o.image), o.level ] )
                 im_gal[ x_min : x_max, y_min : y_max ] += o.image
         else:
+
             if (sx >= size_sep_icl_pix) or (sy >= size_sep_icl_pix): # isolate ICL+BCG from satellite galaxies
                 if np.sqrt( ( xco - xc )**2 + ( yco - yc )**2 ) <= rc: #if BCG
                     if (sx >= 2*size_sep_bcg_pix) or (sy >= 2*size_sep_bcg_pix): #rm BCG from ICL+BCG
@@ -961,8 +999,8 @@ if __name__ == '__main__':
     n_levels = 11
     lvl_sep_big = 6
     lvl_sep_l = [ 6 ]
-    size_sep_icl_l = [ 250 ] # separation radius gal/icl kpc
-    size_sep_bcg_l = [ 250 ] # separation radius bcg/icl kpc
+    size_sep_icl_l = [ 350 ] # separation radius gal/icl kpc
+    size_sep_bcg_l = [ 150 ] # separation radius bcg/icl kpc
     sbt_l = [ 26. ]# [  26, 26.5, 27, 27.5, 28. ]
     err_size = 0.2
     pixscale = 0.8 # ''/pixel
