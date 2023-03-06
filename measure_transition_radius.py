@@ -39,16 +39,16 @@ def convert_2D_to_1D(IMAGE, SIZE_IMAGE, L_BINS):
     return SUMBINS, BINS
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def measure_transition_radius(nfp, im_icl, im_bcg, n_bins, pixscale, physscale ):
+def measure_transition_radius(nfp, im_icl, im_iclbcg, n_bins, pixscale, physscale ):
 
     size_image = im_icl.shape[0]
     profile_icl, bins = convert_2D_to_1D(im_icl, size_image, n_bins)
-    profile_bcg, bins = convert_2D_to_1D(im_bcg - im_icl, size_image, n_bins)
+    profile_bcg, bins = convert_2D_to_1D(im_iclbcg - im_icl, size_image, n_bins)
 
     plot_radial_profile(nfp, bins, pixscale, physscale, profile_icl, profile_bcg)
 
     try:
-        bin_r_trans = np.where( profile_icl >= profile_iclbcg )[0][0]
+        bin_r_trans = np.where( profile_icl >= profile_bcg )[0][0]
         print(np.where(profile_icl > profile_bcg))
         r_trans_pix = bin_r_trans * size_image / 2. / n_bins
         r_trans_kpc = r_trans_pix * pixscale * physscale
