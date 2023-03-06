@@ -34,7 +34,7 @@ def convert_2D_to_1D(IMAGE, SIZE_IMAGE, L_BINS):
     # Measure radial ICL profile
     for i in range(L_BINS - 1):
         NORM       = np.size(IMAGE[ (R >= BINS[i]) & ( R < BINS[i + 1] ) ])
-        SUMBINS[i] = np.sum(IMAGE[ (R >= BINS[i]) & ( R < BINS[i + 1] ) ])# / NORM
+        SUMBINS[i] = np.sum(IMAGE[ (R >= BINS[i]) & ( R < BINS[i + 1] ) ]) / NORM
 
     return SUMBINS, BINS
 
